@@ -122,6 +122,11 @@ Use these as a starting point — or write your own!
 | Resource | Description |
 |:---------|:------------|
 | [Azure Cosmos DB Shell](https://learn.microsoft.com/azure/cosmos-db/shell/overview) | Cross-platform interactive shell for exploring and managing Azure Cosmos DB databases |
+| [Data modeling in Azure Cosmos DB for NoSQL](https://learn.microsoft.com/azure/cosmos-db/modeling-data) | The reference page behind iteration 2 — embed vs reference, denormalization patterns, partition-key choice |
+| [Transactional batch operations in Azure Cosmos DB](https://learn.microsoft.com/azure/cosmos-db/transactional-batch) | The batch API the optimized place-order in iteration 2 uses |
+| [Indexing policies — composite indexes](https://learn.microsoft.com/azure/cosmos-db/index-policy#composite-indexes) | The feature iteration 3 turns on for multi-column `ORDER BY` queries |
+| [Azure Cosmos DB service quotas — per-item limits](https://learn.microsoft.com/azure/cosmos-db/concepts-limits#per-item-limits) | The 2 MB item ceiling that the unbounded-array simulator (`naive-b`) drives toward |
+| [Hierarchical partition keys (unlimited logical partition storage)](https://learn.microsoft.com/azure/cosmos-db/hierarchical-partition-keys-unlimited-scale) | The deferred next step called out in `04-takeaways.md` for customers whose history grows past 10 GB |
 | [https://aka.ms/build26-next-steps](https://aka.ms/build26-next-steps) | Explore lab and session repos to further your learning from Microsoft Build |
 
 
