@@ -1,0 +1,60 @@
+"""Shared helpers for iteration 1 (the naive 5-container design).
+
+Loads the master JSON, builds a Cosmos client pointed at the local emulator,
+and centralises container/partition-key names so seed.py and patterns.py
+stay short.
+"""
+
+from __future__ import annotations
+
+import json
+import os
+import urllib3
+from pathlib import Path
+
+from azure.cosmos import CosmosClient, PartitionKey
+
+# The Cosmos DB emulator ships with a well-known key. This is *not* secret.
+EMULATOR_ENDPOINT = os.environ.get(
+    "COSMOS_ENDPOINT", "https://localhost:8081"
+)
+EMULATOR_KEY = os.environ.get(
+    "COSMOS_KEY",
+    "C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==",
+)
+DATABASE_NAME = os.environ.get("COSMOS_DB", "Build26DEM310")
+
+# The emulator uses a self-signed certificate. Silence the warning when
+# running with verify=False.
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+
+MASTER_DIR = Path(__file__).resolve().parents[2] / "sample-data" / "master"
+
+
+# Container layout for iteration 1: one container per relational table,
+# each partitioned by the obvious "id" column.
+CONTAINERS: list[tuple[str, str]] = [
+    ("Customers", "/customerId"),
+    ("Orders", "/orderId"),
+    ("OrderItems", "/orderId"),
+    ("Products", "/productId"),
+    ("ProductCategories", "/categoryId"),
+]
+
+
+def get_client() -> CosmosClient:
+    return CosmosClient(
+        EMULATOR_ENDPOINT,
+        credential=EMULATOR_KEY,
+        connection_verify=False,
+    )
+
+
+def load_master(name: str) -> list[dict]:
+    with (MASTER_DIR / f"{name}.json").open("r", encoding="utf-8") as fh:
+        return json.load(fh)
+
+
+def print_ru(label: str, ru: float, doc_count: int | None = None) -> None:
+    suffix = f"  ({doc_count} docs)" if doc_count is not None else ""
+    print(f"  [RU] {label:<45} {ru:>8.2f}{suffix}")

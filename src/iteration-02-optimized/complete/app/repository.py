@@ -1,0 +1,164 @@
+"""Repository: every Cosmos call goes through here. Captures the RU charge
+from the response headers so the service layer can surface it.
+
+The repository is split by container, mirroring the iteration-2 design:
+
+* ``CustomerOrdersRepository`` — single container, ``/customerId`` partition,
+  two document ``type``s.
+* ``ProductsRepository``       — single container, ``/categoryId`` partition.
+"""
+
+from __future__ import annotations
+
+import json
+import os
+import urllib3
+from dataclasses import dataclass
+from pathlib import Path
+from typing import Any
+
+from azure.cosmos import CosmosClient, PartitionKey
+from azure.cosmos.exceptions import CosmosResourceNotFoundError
+
+EMULATOR_ENDPOINT = os.environ.get("COSMOS_ENDPOINT", "https://localhost:8081")
+EMULATOR_KEY = os.environ.get(
+    "COSMOS_KEY",
+    "C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==",
+)
+DATABASE_NAME = os.environ.get("COSMOS_DB", "Build26DEM310")
+
+CUSTOMER_ORDERS = "CustomerOrders"
+PRODUCTS = "Products"
+
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+
+
+@dataclass
+class Result:
+    """Wraps a query/read result so service callers can log RU charges."""
+
+    items: list[dict]
+    request_charge: float
+
+
+def _last_charge(container) -> float:
+    return float(
+        container.client_connection.last_response_headers.get(
+            "x-ms-request-charge", 0.0
+        )
+    )
+
+
+def get_client() -> CosmosClient:
+    return CosmosClient(
+        EMULATOR_ENDPOINT,
+        credential=EMULATOR_KEY,
+        connection_verify=False,
+    )
+
+
+def get_database():
+    return get_client().get_database_client(DATABASE_NAME)
+
+
+class CustomerOrdersRepository:
+    """All reads/writes against the CustomerOrders container."""
+
+    def __init__(self) -> None:
+        self._container = get_database().get_container_client(CUSTOMER_ORDERS)
+
+    # ---- reads ---------------------------------------------------------
+    def get_customer_and_orders(self, customer_id: str) -> Result:
+        """Single query — one partition — returns customer + all orders."""
+        items = list(
+            self._container.query_items(
+                query="SELECT * FROM c WHERE c.customerId = @cid",
+                parameters=[{"name": "@cid", "value": customer_id}],
+                partition_key=customer_id,
+            )
+        )
+        return Result(items=items, request_charge=_last_charge(self._container))
+
+    def get_recent_orders(self, customer_id: str, top: int = 5) -> Result:
+        items = list(
+            self._container.query_items(
+                query=(
+                    "SELECT TOP @n * FROM c WHERE c.customerId = @cid "
+                    "AND c.type = 'order' ORDER BY c.orderDate DESC"
+                ),
+                parameters=[
+                    {"name": "@n", "value": top},
+                    {"name": "@cid", "value": customer_id},
+                ],
+                partition_key=customer_id,
+            )
+        )
+        return Result(items=items, request_charge=_last_charge(self._container))
+
+    def get_order(self, customer_id: str, order_id: str) -> Result:
+        try:
+            item = self._container.read_item(
+                item=order_id, partition_key=customer_id
+            )
+            items = [item]
+        except CosmosResourceNotFoundError:
+            items = []
+        return Result(items=items, request_charge=_last_charge(self._container))
+
+    # ---- writes --------------------------------------------------------
+    def place_order_transactional(
+        self,
+        customer_id: str,
+        customer_doc: dict,
+        order_doc: dict,
+    ) -> float:
+        """Atomically update the customer's summary AND create the order.
+
+        Both documents share ``customerId`` as their partition key, so a
+        single transactional batch covers them.
+        """
+        batch = [
+            ("upsert", (customer_doc,)),
+            ("create", (order_doc,)),
+        ]
+        self._container.execute_item_batch(
+            batch_operations=batch,
+            partition_key=customer_id,
+        )
+        return _last_charge(self._container)
+
+
+class ProductsRepository:
+    """All reads/writes against the Products container."""
+
+    def __init__(self) -> None:
+        self._container = get_database().get_container_client(PRODUCTS)
+
+    def list_in_category(self, category_id: str) -> Result:
+        items = list(
+            self._container.query_items(
+                query=(
+                    "SELECT c.productId, c.name, c.price, c.rating "
+                    "FROM c WHERE c.categoryId = @cid ORDER BY c.price ASC"
+                ),
+                parameters=[{"name": "@cid", "value": category_id}],
+                partition_key=category_id,
+            )
+        )
+        return Result(items=items, request_charge=_last_charge(self._container))
+
+    def pick_a_few(self, category_id: str, n: int = 3) -> Result:
+        items = list(
+            self._container.query_items(
+                query=(
+                    "SELECT TOP @n c.productId, c.name, c.categoryId, c.price "
+                    "FROM c WHERE c.categoryId = @cid"
+                ),
+                parameters=[
+                    {"name": "@n", "value": n},
+                    {"name": "@cid", "value": category_id},
+                ],
+                partition_key=category_id,
+            )
+        )
+        return Result(items=items, request_charge=_last_charge(self._container))

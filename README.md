@@ -69,7 +69,13 @@ If you'd like to follow along with this demo at your own pace:
    - **Validate:** connect to the emulator started in step 2, create a database, and list databases to confirm end-to-end connectivity.
 
 5. **Walk through the three schema-evolution iterations covered in the demo**
-   - Use GitHub Copilot together with the Azure Cosmos DB Agent Toolkit to reproduce the schema iterations shown on stage.
+   - Install Python deps: `pip install -r src/requirements.txt`
+   - Start at [`docs/index.md`](./docs/index.md) for the at-home walkthrough.
+   - Or jump straight to the runnable code:
+     - [`src/iteration-01-naive/`](./src/iteration-01-naive/) — the naive 1:1 port from SQL Server
+     - [`src/iteration-02-optimized/`](./src/iteration-02-optimized/) — the agent-guided redesign
+     - [`src/iteration-03-composite-indexes/`](./src/iteration-03-composite-indexes/) — optional stretch: composite indexes for new access patterns
+   - The scenario, access patterns, and volumetrics that drive the agent's recommendations live in [`docs/02-scenario/`](./docs/02-scenario/).
 
 ### 🧠 Learning Outcomes
 

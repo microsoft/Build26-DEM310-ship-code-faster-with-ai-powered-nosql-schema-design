@@ -1,16 +1,16 @@
-# /docs
+# DEM310 — at-home walkthrough
 
-This folder is for documentation and step-by-step content for your session.
+Start at [`index.md`](./index.md). It links to the four sections of the
+walkthrough:
 
-## What goes here
+1. [Setup](./01-setup/) — emulator, VS Code, Cosmos DB Agent, Python env
+2. [Scenario](./02-scenario/) — business context, access patterns, volumetrics
+3. [Walkthrough](./03-walkthrough/) — the three iterations, end to end
+4. [Takeaways](./04-takeaways.md)
 
-- **Labs/Workshops**: Step-by-step instructions organized into numbered exercises (e.g., `01-setup/`, `02-first-exercise/`)
-- **Demos**: Walkthrough documentation explaining the demo code in `/src`
-- **Breakouts**: Supplementary documentation, diagrams, or reference material
+## Reference templates
 
-## Tips
+Adapt these to your own session/domain:
 
-- Use numbered prefixes for ordering: `01-setup/`, `02-exercise/`, `03-wrap-up/`
-- Each subfolder can have its own `README.md` or `index.md`
-- Keep images in an `assets/` subfolder if needed
-- If your session doesn't have documentation beyond the README, feel free to remove this folder
+- [`access-patterns-template.md`](./access-patterns-template.md)
+- [`volumetrics-template.md`](./volumetrics-template.md)
