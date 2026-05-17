@@ -1,5 +1,6 @@
-"""Same helpers as complete/shared.py — feel free to leave this file alone
-during the demo. The interesting changes happen in seed.py and patterns.py.
+"""Shared helpers for naive-b (the unbounded-array anti-pattern).
+
+One container, one document per customer, all orders embedded.
 """
 
 from __future__ import annotations
@@ -20,14 +21,11 @@ DATABASE_NAME = os.environ.get("COSMOS_DB", "Build26DEM310")
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
-MASTER_DIR = Path(__file__).resolve().parents[2] / "sample-data" / "master"
+# /src/sample-data/master from /src/iteration-01-naive/naive-b/complete/
+MASTER_DIR = Path(__file__).resolve().parents[3] / "sample-data" / "master"
 
-# TODO (demo): fill in the five containers and partition keys you want to
-# create for the naive 1:1 port of the relational schema.
-CONTAINERS: list[tuple[str, str]] = [
-    # ("Customers", "/customerId"),
-    # ...
-]
+CONTAINER_NAME = "CustomersWithEmbeddedOrders"
+PARTITION_KEY = "/customerId"
 
 
 def get_client() -> CosmosClient:
@@ -43,6 +41,12 @@ def load_master(name: str) -> list[dict]:
         return json.load(fh)
 
 
-def print_ru(label: str, ru: float, doc_count: int | None = None) -> None:
-    suffix = f"  ({doc_count} docs)" if doc_count is not None else ""
-    print(f"  [RU] {label:<45} {ru:>8.2f}{suffix}")
+def doc_size_bytes(doc: dict) -> int:
+    """Approximate the on-the-wire JSON size of the document."""
+    return len(json.dumps(doc, separators=(",", ":")).encode("utf-8"))
+
+
+def last_ru(container) -> float:
+    return float(container.client_connection.last_response_headers.get(
+        "x-ms-request-charge", 0.0
+    ))

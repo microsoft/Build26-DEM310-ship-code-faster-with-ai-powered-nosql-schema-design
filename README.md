@@ -72,7 +72,7 @@ If you'd like to follow along with this demo at your own pace:
    - Install Python deps: `pip install -r src/requirements.txt`
    - Start at [`docs/index.md`](./docs/index.md) for the at-home walkthrough.
    - Or jump straight to the runnable code:
-     - [`src/iteration-01-naive/`](./src/iteration-01-naive/) — the naive 1:1 port from SQL Server
+     - [`src/iteration-01-naive/`](./src/iteration-01-naive/) — two naive starting points: a 1:1 relational port (`naive-a/`) and the single-document unbounded-array anti-pattern with a growth simulator (`naive-b/`)
      - [`src/iteration-02-optimized/`](./src/iteration-02-optimized/) — the agent-guided redesign
      - [`src/iteration-03-composite-indexes/`](./src/iteration-03-composite-indexes/) — optional stretch: composite indexes for new access patterns
    - The scenario, access patterns, and volumetrics that drive the agent's recommendations live in [`docs/02-scenario/`](./docs/02-scenario/).

@@ -1,62 +1,27 @@
-# Iteration 1 — Naive port (the "anti-pattern")
+# Naive iteration 1 — two anti-patterns side by side
 
-This is the **starting point** for the demo. The data model is a 1:1 port of
-the AdventureWorksLT relational schema: every table becomes its own Cosmos DB
-container, partitioned by the most obvious column. This deliberately
-reproduces the choices a developer makes when modelling a relational schema
-in Cosmos DB without first considering access patterns or partitioning.
+This folder shows the **two most common mistakes** a developer makes the
+first time they port a relational order-management schema to Cosmos DB.
 
-## Containers
+Both versions seed and query the same domain (customers, orders, items),
+so attendees can compare RU and behavior directly.
 
-| Container           | Partition key  | One document per |
-|---------------------|----------------|------------------|
-| `Customers`         | `/customerId`  | Customer         |
-| `Orders`            | `/orderId`     | Order header     |
-| `OrderItems`        | `/orderId`     | Order line item  |
-| `Products`          | `/productId`   | Product          |
-| `ProductCategories` | `/categoryId`  | Category         |
+| Sub-folder | Anti-pattern | What it demonstrates |
+|------------|--------------|----------------------|
+| [`naive-a/`](./naive-a/) | **1:1 relational port** — one container per table, each partitioned by its own id | Cross-partition reads on every join; place-order is N writes spread across 2 containers and is **not atomic** |
+| [`naive-b/`](./naive-b/) | **Single document per customer** — all of a customer's orders live in one ever-growing `orders[]` array | **Unbounded array** anti-pattern: every write rewrites the whole document, RU and doc size grow linearly, and the doc will eventually hit the **2 MB Cosmos item limit** |
 
-> Every container uses its own document's id as the partition key. This is
-> the relational-developer reflex — it looks "safe" because every partition
-> has exactly one document, but it makes every read pattern below pay extra.
+Iteration 2 ([`/src/iteration-02-optimized`](../iteration-02-optimized/))
+fixes both at once: customers and orders live in the **same container**
+(so place-order is one transactional batch) but as **separate documents**
+sharing `/customerId` as the partition key (so the customer doc stays
+small and orders are bounded).
 
-## Folders
+## Recommended demo order
 
-```text
-iteration-01-naive/
-├── complete/      # ready-to-run reference solution
-│   ├── shared.py
-│   ├── seed.py
-│   └── patterns.py
-└── demo/          # the same files with the interesting bits removed
-    ├── shared.py  # (identical helper)
-    ├── seed.py    # TODOs for partition key + bulk insert
-    └── patterns.py# TODOs for each access-pattern query
-```
-
-## Run the complete solution
-
-From the repo root:
-
-```powershell
-pip install -r src/requirements.txt        # azure-cosmos
-cd src/iteration-01-naive
-python complete/seed.py                    # creates containers + bulk inserts
-python complete/patterns.py                # runs P1..P4 and prints RU charges
-```
-
-`patterns.py` prints, for each access pattern, the documents returned and
-the **RU charge** reported by the emulator. Capture those numbers — you'll
-compare them against iteration 2.
-
-## What to look for during the demo
-
-| Pattern | Why it hurts here |
-|---------|-------------------|
-| P1: Get customer + recent orders | Two cross-partition queries (one in `Customers`, one in `Orders`) |
-| P2: Get order + line items       | One point read + one cross-partition query in `OrderItems` |
-| P3: Place a new order            | Header write in `Orders` and N writes in `OrderItems` — no atomic transaction |
-| P4: List products in a category  | Cross-partition query in `Products` (it's partitioned by `/productId`) |
-
-These are exactly the problems the agent-guided redesign in iteration 2
-fixes.
+1. Run `naive-a` first — show the RU on the four access patterns from
+   [`docs/02-scenario/2-access-patterns.md`](../../docs/02-scenario/2-access-patterns.md).
+2. Run `naive-b/simulate.py` — show RU and doc-size growth across 20
+   write iterations and project when the 2 MB ceiling hits.
+3. Open the Cosmos DB Agent, paste both result sets, and ask for a
+   redesign — you should land on iteration 2.

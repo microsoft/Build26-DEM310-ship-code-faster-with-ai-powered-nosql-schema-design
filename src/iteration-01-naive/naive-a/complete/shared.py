@@ -28,7 +28,7 @@ DATABASE_NAME = os.environ.get("COSMOS_DB", "Build26DEM310")
 # running with verify=False.
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
-MASTER_DIR = Path(__file__).resolve().parents[2] / "sample-data" / "master"
+MASTER_DIR = Path(__file__).resolve().parents[3] / "sample-data" / "master"
 
 
 # Container layout for iteration 1: one container per relational table,
