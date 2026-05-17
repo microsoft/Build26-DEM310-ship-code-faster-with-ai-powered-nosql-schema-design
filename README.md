@@ -91,9 +91,23 @@ Try these prompts with GitHub Copilot to explore the topics from this demo. Open
 
 Use these as a starting point — or write your own!
 
-<!-- Prompts will be tailored to this session's content during repo setup. -->
+1. **Recommend a container layout from access patterns** — the move from iteration 1 to iteration 2:
 
-> *Prompts coming soon — check back after the session content is finalized.*
+   ```
+   I'm modeling an e-commerce backend on Azure Cosmos DB for NoSQL. Access patterns: (1) get a customer plus their 5 most recent orders, (2) get one order with line items, (3) place an order (1 header + N items, must be atomic), (4) list products in a category sorted by price. Using the Microsoft Learn MCP Server for current best practices, propose a container layout (containers, partition keys, embedded vs separate documents) that keeps most reads single-partition and place-order in a transactional batch. Show me the resulting JSON shape for one customer and one order.
+   ```
+
+2. **Spot the unbounded-array anti-pattern** — what `naive-b` demonstrates on stage:
+
+   ```
+   Review this Azure Cosmos DB design: one document per customer, with an `orders` array that grows every time the customer places an order. Each new order does a read-modify-upsert of the whole document. Using the Microsoft Learn MCP Server, explain (a) why the upsert RU charge grows over time, (b) what hard limit this design will hit, and (c) the cleanest way to refactor it without changing the partition key.
+   ```
+
+3. **Re-evaluate the design for cross-partition access and Black Friday scale** — the stretch beyond iteration 3:
+
+   ```
+   I have an Azure Cosmos DB for NoSQL container `CustomerOrders` partitioned by /customerId. It handles single-customer reads and place-order writes well, but I now also need cross-partition access patterns: (a) "all orders placed in the last 15 minutes across all customers" for a live operations dashboard, (b) "top-selling products in the last hour" for merchandising. Using the Microsoft Learn MCP Server, walk me through a what-if for Black Friday: 50x normal traffic, ~20,000 orders/minute globally, heavy concurrent reads on the same hot products. For each cross-partition query, recommend whether to solve it with indexing, a secondary container materialized from the change feed, a separate analytical path, or a different partition key — and explain the RU and latency tradeoffs of each option at that scale.
+   ```
 
 ### 💻 Technologies Used
 
