@@ -39,37 +39,33 @@ Once your content is in the repo, use these three phrases with Copilot to build 
 
 # [Microsoft Build 2026](https://build.microsoft.com)
 
-## 🔥 BRKXXX: SESSION TITLE
+## 🔥 DEM310: Ship code faster with AI-powered NoSQL schema design
 
 ### Session Description
 
-*Add Session Description*
+NoSQL schema design is hard—denormalization decisions, partition key selection, and data modeling patterns require expertise. Use GitHub Copilot and the new Azure Cosmos DB Agent Toolkit to accelerate development with AI-assisted schema generation, query optimization suggestions, and refactoring recommendations. Iterate rapidly with the new Mac/Linux emulator for local testing. Demo shows schema evolution across three iterations in 30 minutes versus days of manual design.
 
-### 🏫 Getting started in a guided session
+### 🚀 Getting started
 
-To get started in a guided lab session:
-- <!-- step 1 -->
-- <!-- step 2 -->
-- <!-- step 3 -->
+If you'd like to follow along with this demo at your own pace:
 
-### 🏠 Getting started in your own environment
-
-If you're following these steps at your own pace:
 - Clone this repository
-- Set up your development environment
-- <!-- step 3 -->
+- Install the Azure Cosmos DB emulator (Mac/Linux/Windows) for local testing
+- Install the Azure Cosmos DB Agent Toolkit and connect it to GitHub Copilot in Visual Studio Code
+- Optionally install the Azure Cosmos DB Shell to explore your database from the command line
+- Walk through the three schema-evolution iterations covered in the demo
 
 ### 🧠 Learning Outcomes
 
-By the end of this session, you will be able to:
+By the end of this demo, you will be able to:
 
-- <!-- outcome 1 -->
-- <!-- outcome 2 -->
-- <!-- outcome 3 -->
+- Use GitHub Copilot and the Azure Cosmos DB Agent Toolkit to generate and evolve NoSQL schemas with AI assistance.
+- Apply AI-recommended patterns for partition key selection, denormalization, and query optimization.
+- Iterate rapidly using the new cross-platform Azure Cosmos DB emulator on Mac and Linux for local testing.
 
 ### 💬 Keep Learning with Copilot
 
-Try these prompts with GitHub Copilot to explore the topics from this session. Open Copilot Chat in VS Code (`Ctrl+Alt+I` on Windows/Linux, `Cmd+Shift+I` on Mac), paste a prompt, and see what you learn. Try connecting the [Microsoft Learn MCP Server](#-microsoft-learn-mcp-server) for the latest official documentation.
+Try these prompts with GitHub Copilot to explore the topics from this demo. Open Copilot Chat in VS Code (`Ctrl+Alt+I` on Windows/Linux, `Cmd+Shift+I` on Mac), paste a prompt, and see what you learn. Try connecting the [Microsoft Learn MCP Server](#-microsoft-learn-mcp-server) for the latest official documentation.
 
 Use these as a starting point — or write your own!
 
@@ -79,14 +75,17 @@ Use these as a starting point — or write your own!
 
 ### 💻 Technologies Used
 
-1. <!-- technology 1 -->
-1. <!-- technology 2 -->
-1. <!-- technology 3 -->
+1. [Azure Cosmos DB for NoSQL — Data modeling](https://learn.microsoft.com/azure/cosmos-db/modeling-data)
+1. [Azure Cosmos DB Agent Kit for AI coding assistants](https://learn.microsoft.com/azure/cosmos-db/gen-ai/agent-kit)
+1. [Azure Cosmos DB emulator (local development)](https://learn.microsoft.com/azure/cosmos-db/how-to-develop-emulator)
+1. [Azure Cosmos DB Shell](https://learn.microsoft.com/azure/cosmos-db/shell/overview)
+1. [GitHub Copilot Chat in Visual Studio Code](https://learn.microsoft.com/visualstudio/ide/visual-studio-github-copilot-chat)
 
 ### 📚 Resources and Next Steps
 
 | Resource | Description |
 |:---------|:------------|
+| [Azure Cosmos DB Shell](https://learn.microsoft.com/azure/cosmos-db/shell/overview) | Cross-platform interactive shell for exploring and managing Azure Cosmos DB databases |
 | [https://aka.ms/build26-next-steps](https://aka.ms/build26-next-steps) | Explore lab and session repos to further your learning from Microsoft Build |
 
 
@@ -115,10 +114,15 @@ For more info, other clients, and to post questions, visit the [Learn MCP Server
 
 <table>
 <tr>
-    <td align="center"><a href="http://github.com/yourGitHubHandle">
-        <img src="https://github.com/yourGitHubHandle.png" width="100px;" alt="INSERT NAME HERE"/><br />
-        <sub><b>INSERT NAME HERE</b></sub></a><br />
-            <a href="https://github.com/yourGitHubHandle" title="talk">📢</a>
+    <td align="center"><a href="http://github.com/sesmyrnov">
+        <img src="https://github.com/sesmyrnov.png" width="100px;" alt="Sergiy Smyrnov"/><br />
+        <sub><b>Sergiy Smyrnov</b></sub></a><br />
+            <a href="https://github.com/sesmyrnov" title="talk">📢</a>
+    </td>
+    <td align="center"><a href="http://github.com/MarkoHot">
+        <img src="https://github.com/MarkoHot.png" width="100px;" alt="Marko Hotti"/><br />
+        <sub><b>Marko Hotti</b></sub></a><br />
+            <a href="https://github.com/MarkoHot" title="talk">📢</a>
     </td>
 </tr></table>
 
