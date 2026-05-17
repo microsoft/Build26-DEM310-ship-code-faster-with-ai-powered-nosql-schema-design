@@ -49,11 +49,27 @@ NoSQL schema design is hard—denormalization decisions, partition key selection
 
 If you'd like to follow along with this demo at your own pace:
 
-- Clone this repository
-- Install the Azure Cosmos DB emulator (Mac/Linux/Windows) for local testing
-- Install the Azure Cosmos DB Agent Toolkit and connect it to GitHub Copilot in Visual Studio Code
-- Optionally install the Azure Cosmos DB Shell to explore your database from the command line
-- Walk through the three schema-evolution iterations covered in the demo
+1. **Clone this repository**
+
+   ```
+   git clone https://github.com/microsoft/Build26-DEM310.git
+   ```
+
+2. **Install the Azure Cosmos DB emulator (local, free, cross-platform)**
+   - Follow [Develop locally using the Azure Cosmos DB emulator](https://learn.microsoft.com/azure/cosmos-db/how-to-develop-emulator#install-the-emulator) — the Docker image runs on Windows, macOS, and Linux.
+   - **Validate:** start the emulator container and confirm the Data Explorer loads at `https://localhost:8081/_explorer/index.html`.
+
+3. **Install the Azure Cosmos DB extension for Visual Studio Code (preferred path for the Agent Toolkit and Shell)**
+   - Install the extension following the steps in [Azure Cosmos DB for NoSQL best practices in GitHub Copilot for Visual Studio Code — Step 1: Install required extensions](https://learn.microsoft.com/azure/cosmos-db/github-copilot-visual-studio-code-best-practices#step-1-install-required-extensions). The same extension is documented in [Use Visual Studio Code to connect and query Azure Cosmos DB instances](https://learn.microsoft.com/azure/cosmos-db/visual-studio-code-extension).
+   - The extension bundles the **Azure Cosmos DB Agent Toolkit** (AI-assisted schema design with GitHub Copilot) and the **Azure Cosmos DB Shell** (interactive querying).
+   - **Validate:** open the Azure Cosmos DB view in the Activity Bar and connect to the local emulator account from step 2.
+
+4. **Try the Azure Cosmos DB Shell against the emulator**
+   - Open the Shell from the Azure Cosmos DB extension — see [Azure Cosmos DB Shell Visual Studio Code extension](https://learn.microsoft.com/azure/cosmos-db/shell/visual-studio-code).
+   - **Validate:** connect to the emulator started in step 2, create a database, and list databases to confirm end-to-end connectivity.
+
+5. **Walk through the three schema-evolution iterations covered in the demo**
+   - Use GitHub Copilot together with the Azure Cosmos DB Agent Toolkit to reproduce the schema iterations shown on stage.
 
 ### 🧠 Learning Outcomes
 
