@@ -1,8 +1,10 @@
 # Iteration 2 — Cosmos DB Shell demo
 
 Cosmos DB Shell scripts for the **optimized two-container design**.
-Same database name (`Build26DEM310`) as iteration 1, but the container
-shape and partition keys are picked to match the access patterns.
+Iteration 2 uses its own database (`Build26DEM310DB-i2`) so it can run
+side-by-side with the other iterations in a shared account; the
+container shape and partition keys are picked to match the access
+patterns.
 
 ## Folder contents
 

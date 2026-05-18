@@ -5,12 +5,12 @@
 // → "Open in Cosmos DB Shell"). Connects to whichever account/emulator the
 // shell is attached to.
 //
-// Creates: database `Build26DEM310` with five relational-style containers,
+// Creates: database `Build26DEM310DB-i1a` with five relational-style containers,
 // each partitioned by the obvious "id" column and using the default indexing
 // policy (everything indexed).
 // =============================================================================
 
-const DB_NAME = "Build26DEM310";
+const DB_NAME = "Build26DEM310DB-i1a";
 
 await cosmos.databases.createIfNotExists({ id: DB_NAME });
 const db = cosmos.database(DB_NAME);

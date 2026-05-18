@@ -14,7 +14,7 @@ param nameSuffix = 'dem310x'
 // writing; pick another region if your subscription is constrained.
 param location = 'eastus2'
 
-param databaseName  = 'Build26DEM310'
+param databaseName  = 'Build26DEM310DB-i4'
 param containerName = 'ProductsRich'
 
 // text-embedding-3-small is 1536-dim. Bump to 3072 (-large) only if you

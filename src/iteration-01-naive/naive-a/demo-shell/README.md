@@ -9,7 +9,7 @@ operations on stage without driving the Python CLI.
 
 | File | What it does |
 |------|--------------|
-| `01-setup.cosmos.js`           | Creates database `Build26DEM310`, the five relational-style containers, and seeds them from `seed-data/`. |
+| `01-setup.cosmos.js`           | Creates database `Build26DEM310DB-i1a`, the five relational-style containers, and seeds them from `seed-data/`. |
 | `02-access-patterns.cosmos.js` | Runs P1–P4 one block at a time and prints each step's `requestCharge` (RU). |
 | `seed-data/Customers.json`           | 10 customer docs (PK `/customerId`). |
 | `seed-data/ProductCategories.json`   | 5 category docs (PK `/categoryId`). |

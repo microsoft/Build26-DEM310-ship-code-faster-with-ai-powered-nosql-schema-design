@@ -13,7 +13,7 @@
 // Twiddle CUSTOMER_ID / ITERATIONS / ITEMS_PER_ORDER to taste.
 // =============================================================================
 
-const DB = "Build26DEM310";
+const DB = "Build26DEM310DB-i1b";
 const CONTAINER = "CustomersWithEmbeddedOrders";
 const CUSTOMER_ID = "C00005";
 const ITERATIONS = 20;

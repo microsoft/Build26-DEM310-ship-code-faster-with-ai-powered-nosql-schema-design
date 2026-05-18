@@ -21,7 +21,7 @@ SRC_DIR = Path(__file__).resolve().parents[2]
 load_dotenv(SRC_DIR / ".env")
 
 COSMOS_ENDPOINT  = os.environ.get("COSMOS_ENDPOINT")
-COSMOS_DB        = os.environ.get("COSMOS_DB", "Build26DEM310")
+COSMOS_DB        = os.environ.get("COSMOS_DB", "Build26DEM310DB-i4")
 COSMOS_CONTAINER = os.environ.get("COSMOS_CONTAINER_I4", "ProductsRich")
 FOUNDRY_ENDPOINT = os.environ.get("FOUNDRY_ENDPOINT")
 EMBED_DEPLOYMENT = os.environ.get("FOUNDRY_EMBEDDING_DEPLOYMENT",

@@ -64,7 +64,7 @@ az deployment group create `
 | --- | --- | --- |
 | `nameSuffix` | `dem310x` | 3–8 lowercase chars suffixed to every resource name |
 | `location` | `eastus2` | Must support Cosmos vector+FTS and your model SKUs |
-| `databaseName` | `Build26DEM310` | |
+| `databaseName` | `Build26DEM310DB-i4` | |
 | `containerName` | `ProductsRich` | |
 | `embeddingDimensions` | `1536` | Must match the embedding model below |
 | `chatDeploymentName` / `chatModelName` / `chatModelVersion` | `gpt-4o-mini` / `gpt-4o-mini` / `2024-07-18` | |

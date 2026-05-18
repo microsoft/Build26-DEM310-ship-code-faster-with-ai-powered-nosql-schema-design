@@ -17,13 +17,13 @@
 // Prerequisites:
 //   * iteration-2 data is seeded (run
 //     ../../iteration-02-optimized/demo-shell/01-setup.cosmos.js first).
-//   * The shell is in `Build26DEM310`.
+//   * The shell is in `Build26DEM310DB-i3`.
 //
 // Re-runnable — it always resets to baseline before the "before" pass,
 // so the comparison is honest no matter what the policy looked like.
 // =============================================================================
 
-const db = cosmos.database("Build26DEM310");
+const db = cosmos.database("Build26DEM310DB-i3");
 
 // -----------------------------------------------------------------------------
 // Policies — baseline (iteration-2) and composite (iteration-3).

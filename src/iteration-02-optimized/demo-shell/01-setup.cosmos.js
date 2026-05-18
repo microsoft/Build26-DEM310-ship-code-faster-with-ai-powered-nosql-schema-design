@@ -1,7 +1,7 @@
 // =============================================================================
 // Iteration 2 — 01-setup.cosmos.js
 //
-// Creates database `Build26DEM310` with TWO containers:
+// Creates database `Build26DEM310DB-i2` with TWO containers:
 //
 //   CustomerOrders  /customerId   — customer docs AND order docs share the
 //                                   same partition; a single `type` field
@@ -16,7 +16,7 @@
 // array) is excluded.
 // =============================================================================
 
-const DB_NAME = "Build26DEM310";
+const DB_NAME = "Build26DEM310DB-i2";
 
 await cosmos.databases.createIfNotExists({ id: DB_NAME });
 const db = cosmos.database(DB_NAME);

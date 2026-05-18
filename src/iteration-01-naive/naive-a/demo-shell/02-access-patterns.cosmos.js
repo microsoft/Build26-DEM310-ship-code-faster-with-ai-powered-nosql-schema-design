@@ -10,7 +10,7 @@
 // service does.
 // =============================================================================
 
-const db = cosmos.database("Build26DEM310");
+const db = cosmos.database("Build26DEM310DB-i1a");
 
 const customerId = "C00005";
 const orderId    = "O0000001";

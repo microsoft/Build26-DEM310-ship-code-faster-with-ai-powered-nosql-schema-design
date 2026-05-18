@@ -4,7 +4,7 @@
 // Provisions:
 //   * Azure Cosmos DB for NoSQL account (serverless) with the Vector Search
 //     and Full-Text Search capabilities enabled; local auth disabled.
-//   * The Build26DEM310 database with a single ProductsRich container that
+//   * The Build26DEM310DB-i4 database with a single ProductsRich container that
 //     carries both a Vector Embedding Policy and a Full-Text Policy.
 //   * An Azure AI Foundry (Cognitive Services / AIServices kind) account
 //     with two model deployments: a chat model and an embedding model.
@@ -42,7 +42,7 @@ param nameSuffix string
 param location string = resourceGroup().location
 
 @description('Cosmos DB database name created inside the account.')
-param databaseName string = 'Build26DEM310'
+param databaseName string = 'Build26DEM310DB-i4'
 
 @description('Container that will hold the embedding + description-bearing product documents.')
 param containerName string = 'ProductsRich'

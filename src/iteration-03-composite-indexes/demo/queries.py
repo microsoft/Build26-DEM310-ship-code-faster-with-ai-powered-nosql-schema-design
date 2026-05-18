@@ -23,7 +23,7 @@ load_dotenv(SRC_DIR / ".env")
 
 EMULATOR_ENDPOINT = os.environ.get("COSMOS_ENDPOINT")
 EMULATOR_KEY = os.environ.get("COSMOS_KEY")
-DATABASE_NAME = os.environ.get("COSMOS_DB", "Build26DEM310")
+DATABASE_NAME = os.environ.get("COSMOS_DB", "Build26DEM310DB-i3")
 
 if not EMULATOR_ENDPOINT or not EMULATOR_KEY:
     raise RuntimeError(

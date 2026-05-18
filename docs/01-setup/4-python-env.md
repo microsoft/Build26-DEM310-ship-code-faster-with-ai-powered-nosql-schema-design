@@ -43,7 +43,7 @@ Recognised variables:
 |-------------------|----------------------------------|--------------------------------------------------------|
 | `COSMOS_ENDPOINT` | `https://localhost:8081`         | Required. Set to your account URL for Azure.           |
 | `COSMOS_KEY`      | emulator well-known key          | Required. Replace with a real key for Azure.           |
-| `COSMOS_DB`       | `Build26DEM310`                  | Optional. Override to run parallel demos side-by-side. |
+| `COSMOS_DB`       | per-iteration default            | Optional override. Each iteration defaults to its own DB so you can run them side-by-side in one account (`Build26DEM310DB-i1a`, `-i1b`, `-i2`, `-i3`, `-i4`). |
 
 If `COSMOS_ENDPOINT` or `COSMOS_KEY` is missing, the scripts raise a
 clear error telling you to copy `.env.example` first.

@@ -14,7 +14,7 @@
 // 03-scenario-before-after.cosmos.js.
 // =============================================================================
 
-const db = cosmos.database("Build26DEM310");
+const db = cosmos.database("Build26DEM310DB-i3");
 
 // -----------------------------------------------------------------------------
 // Helper — run a query with index metrics on and pretty-print the result.

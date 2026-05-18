@@ -8,7 +8,7 @@ forever.
 
 | File | What it does |
 |------|--------------|
-| `01-setup.cosmos.js` | Creates database `Build26DEM310` and container `CustomersWithEmbeddedOrders` (PK `/customerId`). Seeds 10 customer docs with empty `orders[]`. |
+| `01-setup.cosmos.js` | Creates database `Build26DEM310DB-i1b` and container `CustomersWithEmbeddedOrders` (PK `/customerId`). Seeds 10 customer docs with empty `orders[]`. |
 | `02-simulate-unbounded-growth.cosmos.js` | Iteratively appends synthetic orders to one customer's `orders[]` array; prints doc size + read/upsert RU per iteration, then projects how many iterations until the 2 MB Cosmos item limit. |
 | `seed-data/CustomersWithEmbeddedOrders.json` | The 10 starter customer docs (PK `/customerId`, `orders: []`). |
 

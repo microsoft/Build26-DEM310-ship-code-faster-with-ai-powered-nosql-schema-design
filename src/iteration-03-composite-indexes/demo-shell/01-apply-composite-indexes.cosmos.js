@@ -20,7 +20,7 @@
 // are usable.
 // =============================================================================
 
-const db = cosmos.database("Build26DEM310");
+const db = cosmos.database("Build26DEM310DB-i3");
 
 const customerOrdersPolicy = {
   indexingMode: "consistent",

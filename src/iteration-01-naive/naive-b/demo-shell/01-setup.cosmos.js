@@ -7,7 +7,7 @@
 // without bound — the anti-pattern the demo is calling out.
 // =============================================================================
 
-const DB_NAME = "Build26DEM310";
+const DB_NAME = "Build26DEM310DB-i1b";
 const CONTAINER = "CustomersWithEmbeddedOrders";
 
 await cosmos.databases.createIfNotExists({ id: DB_NAME });
