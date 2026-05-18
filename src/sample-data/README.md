@@ -2,11 +2,12 @@
 
 This folder contains:
 
-| Path           | What it is                                                       |
-|----------------|------------------------------------------------------------------|
-| `source/`      | Raw AdventureWorksLT CSV exports (input to the generator)        |
-| `generate.py`  | Deterministic script that builds the trimmed master JSON         |
-| `master/`      | Generated JSON used by every iteration's `seed.py`               |
+| Path                  | What it is                                                       |
+|-----------------------|------------------------------------------------------------------|
+| `source/`             | Raw AdventureWorksLT CSV exports (input to the generator)        |
+| `generate.py`         | Deterministic script that builds the trimmed master JSON         |
+| `master/`             | Generated JSON used by every iteration's `seed.py`               |
+| `build_demo_shell.py` | Reshapes `master/` into each iteration's `demo-shell/seed-data/` |
 
 The `master/` files are committed so attendees can seed Cosmos DB without
 running the generator first. Regenerate them only if you want a different
@@ -36,3 +37,14 @@ python generate.py --customers 25 --orders-per-customer 50
 ```
 
 Run `python generate.py --help` for all flags.
+
+## Regenerate the per-iteration shell artifacts
+
+`build_demo_shell.py` reshapes `master/` into each iteration's
+`demo-shell/seed-data/<Container>.json` files (the exact document layout
+each container expects). Run it after re-generating `master/`:
+
+```powershell
+cd src/sample-data
+python build_demo_shell.py
+```

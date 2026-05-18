@@ -1,0 +1,32 @@
+[
+  {
+    "id": "CAT006",
+    "categoryId": "CAT006",
+    "name": "Road Bikes",
+    "parentCategoryId": "CAT001"
+  },
+  {
+    "id": "CAT007",
+    "categoryId": "CAT007",
+    "name": "Touring Bikes",
+    "parentCategoryId": "CAT001"
+  },
+  {
+    "id": "CAT011",
+    "categoryId": "CAT011",
+    "name": "Chains",
+    "parentCategoryId": "CAT002"
+  },
+  {
+    "id": "CAT012",
+    "categoryId": "CAT012",
+    "name": "Cranksets",
+    "parentCategoryId": "CAT002"
+  },
+  {
+    "id": "CAT033",
+    "categoryId": "CAT033",
+    "name": "Cleaners",
+    "parentCategoryId": "CAT004"
+  }
+]

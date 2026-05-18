@@ -15,18 +15,26 @@ src/
 │   ├── generate.py                 # deterministic generator
 │   └── master/                     # generated JSON consumed by every iteration
 ├── iteration-01-naive/             # 5 containers, 1:1 port of the SQL schema
-│   ├── complete/                   #   shared.py, seed.py, patterns.py
-│   └── demo/                       #   same files with TODOs
+│   ├── naive-a/                    #   relational-style access patterns
+│   │   ├── complete/               #     shared.py, seed.py, patterns.py
+│   │   ├── demo/                   #     same files with TODOs
+│   │   └── demo-shell/             #     Cosmos DB Shell .cosmos.js + per-container JSON
+│   └── naive-b/                    #   unbounded-array anti-pattern
+│       ├── complete/               #     shared.py, seed.py, simulate.py
+│       ├── demo/                   #     same files with TODOs
+│       └── demo-shell/             #     Cosmos DB Shell .cosmos.js + per-container JSON
 ├── iteration-02-optimized/         # CustomerOrders + Products (agent-guided)
 │   ├── complete/
 │   │   ├── app/                    #   FastAPI-ready: models / repository / service / main
 │   │   ├── seed.py
 │   │   ├── migrate_from_01.py
 │   │   └── indexing-policy.json
-│   └── demo/                       #   same shape, skeleton
+│   ├── demo/                       #   same shape, skeleton
+│   └── demo-shell/                 #   Cosmos DB Shell .cosmos.js + per-container JSON
 └── iteration-03-composite-indexes/ # optional stretch: 3 new access patterns
     ├── complete/                   #   extended-access-patterns.md, queries.py, policy
-    └── demo/
+    ├── demo/
+    └── demo-shell/                 #   Cosmos DB Shell .cosmos.js (policy + queries)
 ```
 
 ## Prerequisites
@@ -60,6 +68,29 @@ python complete/queries.py
 
 Compare the `[RU]` lines from iteration 1 vs iteration 2 — that's the
 demo's punchline.
+
+## Manual demos via the Cosmos DB Shell
+
+Every iteration also ships a `demo-shell/` folder with:
+
+* `seed-data/<Container>.json` — the master JSON reshaped into the exact
+  document layout that iteration's containers expect.
+* `01-setup.cosmos.js` — creates database, containers, and indexing
+  policies inside the Cosmos DB Shell.
+* `02-access-patterns.cosmos.js` (or `02-simulate-...` / `02-extended-queries.cosmos.js`)
+  — one runnable block per access pattern with `requestCharge` printed.
+
+Use these when you want to call out individual operations on stage
+without driving the Python CLI. See each iteration's
+[`demo-shell/README.md`](./iteration-01-naive/naive-a/demo-shell/README.md)
+for setup and walkthrough.
+
+To regenerate the per-container JSON after editing `sample-data/master/`:
+
+```powershell
+cd src/sample-data
+python build_demo_shell.py
+```
 
 ## FastAPI later
 

@@ -1,0 +1,112 @@
+[
+  {
+    "id": "C00005",
+    "customerId": "C00005",
+    "title": "Mr.",
+    "firstName": "Lucy",
+    "middleName": null,
+    "lastName": "Harrington",
+    "companyName": "Metropolitan Sports Supply",
+    "emailAddress": "lucy0@adventure-works.com",
+    "phone": "828-555-0186"
+  },
+  {
+    "id": "C00111",
+    "customerId": "C00111",
+    "title": "Mr.",
+    "firstName": "Scott",
+    "middleName": "A.",
+    "lastName": "Colvin",
+    "companyName": "Westside Cycle Store",
+    "emailAddress": "scott1@adventure-works.com",
+    "phone": "119-555-0144"
+  },
+  {
+    "id": "C00288",
+    "customerId": "C00288",
+    "title": "Mr.",
+    "firstName": "Robert",
+    "middleName": "L.",
+    "lastName": "Barker",
+    "companyName": "Kickstand Sellers",
+    "emailAddress": "robert3@adventure-works.com",
+    "phone": "241-555-0112"
+  },
+  {
+    "id": "C00289",
+    "customerId": "C00289",
+    "title": "Ms.",
+    "firstName": "Gabriel",
+    "middleName": "L.",
+    "lastName": "Bockenkamp",
+    "companyName": "Moderately-Priced Bikes Store",
+    "emailAddress": "gabriel0@adventure-works.com",
+    "phone": "763-555-0145"
+  },
+  {
+    "id": "C00311",
+    "customerId": "C00311",
+    "title": "Sr.",
+    "firstName": "Alvaro",
+    "middleName": null,
+    "lastName": "De Matos Miranda Filho",
+    "companyName": "Principal Bike Company",
+    "emailAddress": "alvaro0@adventure-works.com",
+    "phone": "551-555-0155"
+  },
+  {
+    "id": "C00559",
+    "customerId": "C00559",
+    "title": "Ms.",
+    "firstName": "Nkenge",
+    "middleName": null,
+    "lastName": "McLin",
+    "companyName": "Some Discount Store",
+    "emailAddress": "nkenge0@adventure-works.com",
+    "phone": "158-555-0123"
+  },
+  {
+    "id": "C00565",
+    "customerId": "C00565",
+    "title": "Mr.",
+    "firstName": "Richard",
+    "middleName": "M.",
+    "lastName": "Bentley",
+    "companyName": "Metallic Paint and Overcoat Co",
+    "emailAddress": "richard0@adventure-works.com",
+    "phone": "911-555-0153"
+  },
+  {
+    "id": "C29524",
+    "customerId": "C29524",
+    "title": "Mr.",
+    "firstName": "Chris",
+    "middleName": null,
+    "lastName": "Ashton",
+    "companyName": "Immense Manufacturing Company",
+    "emailAddress": "chris3@adventure-works.com",
+    "phone": "556-555-0145"
+  },
+  {
+    "id": "C29569",
+    "customerId": "C29569",
+    "title": "Ms.",
+    "firstName": "Linda",
+    "middleName": "E.",
+    "lastName": "Burnett",
+    "companyName": "Travel Systems",
+    "emailAddress": "linda4@adventure-works.com",
+    "phone": "121-555-0121"
+  },
+  {
+    "id": "C29753",
+    "customerId": "C29753",
+    "title": "Ms.",
+    "firstName": "Kathie",
+    "middleName": null,
+    "lastName": "Flood",
+    "companyName": "Coho Sports",
+    "emailAddress": "kathie1@adventure-works.com",
+    "phone": "627-555-0192"
+  }
+]

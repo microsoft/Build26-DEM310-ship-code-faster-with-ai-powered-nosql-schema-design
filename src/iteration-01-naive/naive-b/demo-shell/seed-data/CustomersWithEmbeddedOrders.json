@@ -1,0 +1,102 @@
+[
+  {
+    "id": "C00005",
+    "customerId": "C00005",
+    "type": "customer",
+    "firstName": "Lucy",
+    "lastName": "Harrington",
+    "email": "lucy0@adventure-works.com",
+    "phone": "828-555-0186",
+    "orders": []
+  },
+  {
+    "id": "C00111",
+    "customerId": "C00111",
+    "type": "customer",
+    "firstName": "Scott",
+    "lastName": "Colvin",
+    "email": "scott1@adventure-works.com",
+    "phone": "119-555-0144",
+    "orders": []
+  },
+  {
+    "id": "C00288",
+    "customerId": "C00288",
+    "type": "customer",
+    "firstName": "Robert",
+    "lastName": "Barker",
+    "email": "robert3@adventure-works.com",
+    "phone": "241-555-0112",
+    "orders": []
+  },
+  {
+    "id": "C00289",
+    "customerId": "C00289",
+    "type": "customer",
+    "firstName": "Gabriel",
+    "lastName": "Bockenkamp",
+    "email": "gabriel0@adventure-works.com",
+    "phone": "763-555-0145",
+    "orders": []
+  },
+  {
+    "id": "C00311",
+    "customerId": "C00311",
+    "type": "customer",
+    "firstName": "Alvaro",
+    "lastName": "De Matos Miranda Filho",
+    "email": "alvaro0@adventure-works.com",
+    "phone": "551-555-0155",
+    "orders": []
+  },
+  {
+    "id": "C00559",
+    "customerId": "C00559",
+    "type": "customer",
+    "firstName": "Nkenge",
+    "lastName": "McLin",
+    "email": "nkenge0@adventure-works.com",
+    "phone": "158-555-0123",
+    "orders": []
+  },
+  {
+    "id": "C00565",
+    "customerId": "C00565",
+    "type": "customer",
+    "firstName": "Richard",
+    "lastName": "Bentley",
+    "email": "richard0@adventure-works.com",
+    "phone": "911-555-0153",
+    "orders": []
+  },
+  {
+    "id": "C29524",
+    "customerId": "C29524",
+    "type": "customer",
+    "firstName": "Chris",
+    "lastName": "Ashton",
+    "email": "chris3@adventure-works.com",
+    "phone": "556-555-0145",
+    "orders": []
+  },
+  {
+    "id": "C29569",
+    "customerId": "C29569",
+    "type": "customer",
+    "firstName": "Linda",
+    "lastName": "Burnett",
+    "email": "linda4@adventure-works.com",
+    "phone": "121-555-0121",
+    "orders": []
+  },
+  {
+    "id": "C29753",
+    "customerId": "C29753",
+    "type": "customer",
+    "firstName": "Kathie",
+    "lastName": "Flood",
+    "email": "kathie1@adventure-works.com",
+    "phone": "627-555-0192",
+    "orders": []
+  }
+]
