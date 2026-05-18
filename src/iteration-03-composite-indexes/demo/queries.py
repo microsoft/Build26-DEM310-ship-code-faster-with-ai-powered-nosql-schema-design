@@ -42,19 +42,22 @@ def _client():
 
 def r_ext_1(db) -> None:
     """Customer order history by date range — needs [type ASC, orderDate DESC]."""
-    # TODO (demo): query CustomerOrders in-partition with date range + ORDER BY DESC
+    # TODO (demo): query CustomerOrders in-partition with date range + ORDER BY DESC.
+    # Pass populate_query_metrics=True and capture x-ms-request-charge,
+    # x-ms-item-count, and x-ms-documentdb-query-metrics from the response.
     print("R-EXT-1: not implemented")
 
 
 def r_ext_2(db) -> None:
     """Open-orders dashboard — needs [status ASC, orderDate DESC]."""
-    # TODO (demo): cross-partition query filtered by status, ORDER BY orderDate DESC
+    # TODO (demo): cross-partition query filtered by status, ORDER BY orderDate DESC.
+    # MUST pass enable_cross_partition_query=True (and populate_query_metrics=True).
     print("R-EXT-2: not implemented")
 
 
 def r_ext_3(db) -> None:
     """Products by rating DESC, price ASC — needs [rating DESC, price ASC]."""
-    # TODO (demo): in-partition query on Products
+    # TODO (demo): in-partition query on Products with populate_query_metrics=True.
     print("R-EXT-3: not implemented")
 
 

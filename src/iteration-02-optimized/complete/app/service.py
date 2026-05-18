@@ -10,12 +10,42 @@ from .models import Customer, Order, OrderItem, OrderSummary
 from .repository import (
     CustomerOrdersRepository,
     ProductsRepository,
+    Result,
 )
+
+
+# Fields we surface from `x-ms-documentdb-query-metrics`. The header is a
+# `key=value;key=value;...` blob with ~30 entries — we pick the four that
+# tell the RU story (retrieved vs output docs, index hits, total time).
+_METRIC_KEYS = (
+    "retrievedDocumentCount",
+    "outputDocumentCount",
+    "indexHitDocumentCount",
+    "totalExecutionTimeInMs",
+)
+
+
+def _format_metrics(metrics: str) -> str:
+    if not metrics:
+        return ""
+    parts = dict(p.split("=", 1) for p in metrics.split(";") if "=" in p)
+    return " ".join(f"{k}={parts[k]}" for k in _METRIC_KEYS if k in parts)
 
 
 def _print_ru(label: str, ru: float, count: int | None = None) -> None:
     suffix = f"  ({count} docs)" if count is not None else ""
     print(f"  [RU] {label:<45} {ru:>8.2f}{suffix}")
+
+
+def _print_query(label: str, result: Result) -> None:
+    """Print RU + server-reported item count + a compact metrics summary."""
+    print(
+        f"  [RU] {label:<45} {result.request_charge:>8.2f}"
+        f"  (client={len(result.items)} docs, server item-count={result.item_count})"
+    )
+    summary = _format_metrics(result.query_metrics)
+    if summary:
+        print(f"       metrics: {summary}")
 
 
 class CustomerOrderService:
@@ -26,8 +56,7 @@ class CustomerOrderService:
     # ---- P1 -------------------------------------------------------------
     def get_customer_with_orders(self, customer_id: str) -> dict[str, Any]:
         result = self.customer_orders.get_customer_and_orders(customer_id)
-        _print_ru("query CustomerOrders (single partition)", result.request_charge,
-                  len(result.items))
+        _print_query("query CustomerOrders (single partition)", result)
         customer = next(
             (d for d in result.items if d.get("type") == "customer"), None
         )
@@ -49,8 +78,7 @@ class CustomerOrderService:
     def place_order(self, customer_id: str, category_id: str = "CAT006") -> dict[str, Any]:
         # Pick a few products from the requested category.
         picks = self.products.pick_a_few(category_id, n=3)
-        _print_ru("pick products (single partition)", picks.request_charge,
-                  len(picks.items))
+        _print_query("pick products (single partition)", picks)
 
         items = [
             OrderItem(
@@ -67,8 +95,7 @@ class CustomerOrderService:
 
         # Read the current customer doc so we can roll up the summary.
         existing = self.customer_orders.get_customer_and_orders(customer_id)
-        _print_ru("re-read customer partition for summary",
-                  existing.request_charge, len(existing.items))
+        _print_query("re-read customer partition for summary", existing)
         customer_doc = next(
             (d for d in existing.items if d.get("type") == "customer"), None
         )
@@ -108,6 +135,5 @@ class CustomerOrderService:
     # ---- P4 -------------------------------------------------------------
     def list_products(self, category_id: str) -> list[dict]:
         result = self.products.list_in_category(category_id)
-        _print_ru("query Products (single partition)", result.request_charge,
-                  len(result.items))
+        _print_query("query Products (single partition)", result)
         return result.items

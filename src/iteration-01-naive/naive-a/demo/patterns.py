@@ -8,7 +8,7 @@ Look at complete/patterns.py if you get stuck.
 
 from __future__ import annotations
 
-from shared import DATABASE_NAME, get_client, print_ru
+from shared import DATABASE_NAME, get_client, print_query, print_ru
 
 
 def p1_customer_with_recent_orders(db, customer_id: str) -> None:
@@ -16,7 +16,11 @@ def p1_customer_with_recent_orders(db, customer_id: str) -> None:
     # TODO (demo):
     #   1. Query Customers WHERE customerId = @cid
     #   2. Query Orders WHERE customerId = @cid ORDER BY orderDate DESC, TOP 5
-    #   3. Read x-ms-request-charge from each response and print with print_ru
+    #      (cross-partition — pass enable_cross_partition_query=True)
+    #   3. Pass populate_query_metrics=True on every query_items call
+    #   4. Read x-ms-request-charge, x-ms-item-count, and
+    #      x-ms-documentdb-query-metrics from each response, then print
+    #      with print_query(label, ru, client_count, server_count, metrics)
     print(f"\nP1 — Customer {customer_id} (not implemented)")
 
 
@@ -31,7 +35,8 @@ def p2_order_with_items(db, order_id: str, customer_id: str) -> None:
 def p3_place_order(db, customer_id: str) -> None:
     """Place a new order: header + N line items, non-transactional."""
     # TODO (demo):
-    #   1. Pick a few products (cross-partition query on Products)
+    #   1. Pick a few products (cross-partition query on Products — pass
+    #      enable_cross_partition_query=True and populate_query_metrics=True)
     #   2. create_item on Orders for the header
     #   3. create_item on OrderItems for each line
     #   4. Notice there's no atomic transaction here. Why is that a problem?
@@ -43,7 +48,8 @@ def p4_products_in_category(db, category_id: str) -> None:
     # TODO (demo):
     #   Query Products WHERE categoryId = @cid ORDER BY price ASC
     #   (Notice: Products is partitioned by /productId, so this is
-    #    cross-partition.)
+    #    cross-partition — set enable_cross_partition_query=True and
+    #    populate_query_metrics=True, then print with print_query.)
     print(f"\nP4 — Products in category {category_id} (not implemented)")
 
 

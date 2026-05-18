@@ -50,8 +50,46 @@ def _ru(container) -> float:
     )
 
 
+# Pull all three diagnostic headers off the most recent response.
+# x-ms-request-charge          — RU cost
+# x-ms-item-count              — server-reported result count
+# x-ms-documentdb-query-metrics — engine breakdown (retrieved/output docs, timings)
+_METRIC_KEYS = (
+    "retrievedDocumentCount",
+    "outputDocumentCount",
+    "indexHitDocumentCount",
+    "totalExecutionTimeInMs",
+)
+
+
+def _capture(container) -> tuple[float, int, str]:
+    h = container.client_connection.last_response_headers
+    ru = float(h.get("x-ms-request-charge", 0.0) or 0.0)
+    count = int(h.get("x-ms-item-count", 0) or 0)
+    metrics = h.get("x-ms-documentdb-query-metrics", "") or ""
+    return ru, count, metrics
+
+
+def _format_metrics(metrics: str) -> str:
+    if not metrics:
+        return ""
+    parts = dict(p.split("=", 1) for p in metrics.split(";") if "=" in p)
+    return " ".join(f"{k}={parts[k]}" for k in _METRIC_KEYS if k in parts)
+
+
 def _print(label: str, ru: float, count: int) -> None:
     print(f"  [RU] {label:<55} {ru:>8.2f}  ({count} docs)")
+
+
+def _print_q(label: str, ru: float, client_count: int, server_count: int,
+             metrics: str) -> None:
+    print(
+        f"  [RU] {label:<55} {ru:>8.2f}  "
+        f"(client={client_count} docs, server item-count={server_count})"
+    )
+    summary = _format_metrics(metrics)
+    if summary:
+        print(f"       metrics: {summary}")
 
 
 # --- policy management --------------------------------------------------
@@ -90,9 +128,11 @@ def r_ext_1(db) -> None:
                 {"name": "@to", "value": end},
             ],
             partition_key="C00005",
+            populate_query_metrics=True,
         )
     )
-    _print("orders for C00005 (last 180d, DESC)", _ru(c), len(items))
+    ru, server_count, metrics = _capture(c)
+    _print_q("orders for C00005 (last 180d, DESC)", ru, len(items), server_count, metrics)
 
 
 def r_ext_2(db) -> None:
@@ -107,9 +147,11 @@ def r_ext_2(db) -> None:
             ),
             parameters=[{"name": "@s", "value": "Placed"}],
             enable_cross_partition_query=True,
+            populate_query_metrics=True,
         )
     )
-    _print("top-25 Placed orders DESC", _ru(c), len(items))
+    ru, server_count, metrics = _capture(c)
+    _print_q("top-25 Placed orders DESC", ru, len(items), server_count, metrics)
 
 
 def r_ext_3(db) -> None:
@@ -124,9 +166,11 @@ def r_ext_3(db) -> None:
             ),
             parameters=[{"name": "@cid", "value": "CAT006"}],
             partition_key="CAT006",
+            populate_query_metrics=True,
         )
     )
-    _print("products in CAT006 by rating/price", _ru(c), len(items))
+    ru, server_count, metrics = _capture(c)
+    _print_q("products in CAT006 by rating/price", ru, len(items), server_count, metrics)
 
 
 def main(argv: list[str]) -> int:

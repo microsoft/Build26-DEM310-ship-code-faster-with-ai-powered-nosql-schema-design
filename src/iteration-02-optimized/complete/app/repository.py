@@ -43,10 +43,13 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 @dataclass
 class Result:
-    """Wraps a query/read result so service callers can log RU charges."""
+    """Wraps a query/read result so service callers can log RU charges,
+    server-reported item count, and query metrics."""
 
     items: list[dict]
     request_charge: float
+    item_count: int = 0
+    query_metrics: str = ""
 
 
 def _last_charge(container) -> float:
@@ -55,6 +58,24 @@ def _last_charge(container) -> float:
             "x-ms-request-charge", 0.0
         )
     )
+
+
+def _capture(container) -> dict:
+    """Pull the three diagnostic headers off the most recent response:
+
+    * ``x-ms-request-charge``        — RU cost
+    * ``x-ms-item-count``            — number of docs the server returned
+    * ``x-ms-documentdb-query-metrics`` — engine-level breakdown
+      (retrieved/output doc counts, index hit count, timings)
+
+    Returned as kwargs ready to splat into ``Result(items=..., **_capture(c))``.
+    """
+    h = container.client_connection.last_response_headers
+    return {
+        "request_charge": float(h.get("x-ms-request-charge", 0.0) or 0.0),
+        "item_count":     int(h.get("x-ms-item-count", 0) or 0),
+        "query_metrics":  h.get("x-ms-documentdb-query-metrics", "") or "",
+    }
 
 
 def get_client() -> CosmosClient:
@@ -83,9 +104,10 @@ class CustomerOrdersRepository:
                 query="SELECT * FROM c WHERE c.customerId = @cid",
                 parameters=[{"name": "@cid", "value": customer_id}],
                 partition_key=customer_id,
+                populate_query_metrics=True,
             )
         )
-        return Result(items=items, request_charge=_last_charge(self._container))
+        return Result(items=items, **_capture(self._container))
 
     def get_recent_orders(self, customer_id: str, top: int = 5) -> Result:
         items = list(
@@ -99,9 +121,10 @@ class CustomerOrdersRepository:
                     {"name": "@cid", "value": customer_id},
                 ],
                 partition_key=customer_id,
+                populate_query_metrics=True,
             )
         )
-        return Result(items=items, request_charge=_last_charge(self._container))
+        return Result(items=items, **_capture(self._container))
 
     def get_order(self, customer_id: str, order_id: str) -> Result:
         try:
@@ -111,7 +134,9 @@ class CustomerOrdersRepository:
             items = [item]
         except CosmosResourceNotFoundError:
             items = []
-        return Result(items=items, request_charge=_last_charge(self._container))
+        # Point reads don't surface item-count or query-metrics headers,
+        # so _capture safely returns 0 / "" for those fields.
+        return Result(items=items, **_capture(self._container))
 
     # ---- writes --------------------------------------------------------
     def place_order_transactional(
@@ -151,9 +176,10 @@ class ProductsRepository:
                 ),
                 parameters=[{"name": "@cid", "value": category_id}],
                 partition_key=category_id,
+                populate_query_metrics=True,
             )
         )
-        return Result(items=items, request_charge=_last_charge(self._container))
+        return Result(items=items, **_capture(self._container))
 
     def pick_a_few(self, category_id: str, n: int = 3) -> Result:
         items = list(
@@ -167,6 +193,7 @@ class ProductsRepository:
                     {"name": "@cid", "value": category_id},
                 ],
                 partition_key=category_id,
+                populate_query_metrics=True,
             )
         )
-        return Result(items=items, request_charge=_last_charge(self._container))
+        return Result(items=items, **_capture(self._container))

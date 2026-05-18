@@ -65,3 +65,33 @@ def load_master(name: str) -> list[dict]:
 def print_ru(label: str, ru: float, doc_count: int | None = None) -> None:
     suffix = f"  ({doc_count} docs)" if doc_count is not None else ""
     print(f"  [RU] {label:<45} {ru:>8.2f}{suffix}")
+
+
+# A handful of `x-ms-documentdb-query-metrics` fields worth surfacing during
+# the demo. The full header is a verbose `key=value;key=value;...` blob.
+_METRIC_KEYS = (
+    "retrievedDocumentCount",
+    "outputDocumentCount",
+    "indexHitDocumentCount",
+    "totalExecutionTimeInMs",
+)
+
+
+def _format_metrics(metrics: str) -> str:
+    if not metrics:
+        return ""
+    parts = dict(p.split("=", 1) for p in metrics.split(";") if "=" in p)
+    return " ".join(f"{k}={parts[k]}" for k in _METRIC_KEYS if k in parts)
+
+
+def print_query(label: str, ru: float, client_count: int,
+                server_count: int | None, metrics: str | None) -> None:
+    """Print RU + server-reported item count + a compact query-metrics line."""
+    server = server_count if server_count is not None else client_count
+    print(
+        f"  [RU] {label:<45} {ru:>8.2f}"
+        f"  (client={client_count} docs, server item-count={server})"
+    )
+    summary = _format_metrics(metrics or "")
+    if summary:
+        print(f"       metrics: {summary}")

@@ -45,6 +45,8 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 class Result:
     items: list[dict]
     request_charge: float
+    item_count: int = 0
+    query_metrics: str = ""
 
 
 def get_client() -> CosmosClient:

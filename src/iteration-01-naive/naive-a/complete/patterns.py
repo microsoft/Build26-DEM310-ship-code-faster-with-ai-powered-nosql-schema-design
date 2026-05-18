@@ -17,21 +17,33 @@ from __future__ import annotations
 
 from datetime import datetime, timezone
 
-from shared import DATABASE_NAME, get_client, print_ru
+from shared import DATABASE_NAME, get_client, print_query, print_ru
 
 
 def _query(container, query, params=None, partition_key=None):
-    """Run a SQL query and return (items, total_ru)."""
-    kwargs = {"query": query, "parameters": params or []}
+    """Run a SQL query and return (items, ru, server_item_count, query_metrics).
+
+    When no ``partition_key`` is supplied we explicitly opt-in to a fan-out
+    query via ``enable_cross_partition_query=True`` so the SDK won't quietly
+    swallow the request. ``populate_query_metrics=True`` makes Cosmos return
+    the ``x-ms-documentdb-query-metrics`` response header with the engine
+    breakdown (retrieved/output doc counts, index lookup time, etc.).
+    """
+    kwargs = {
+        "query": query,
+        "parameters": params or [],
+        "populate_query_metrics": True,
+    }
     if partition_key is not None:
         kwargs["partition_key"] = partition_key
     else:
         kwargs["enable_cross_partition_query"] = True
     items = list(container.query_items(**kwargs))
-    ru = float(container.client_connection.last_response_headers.get(
-        "x-ms-request-charge", 0.0
-    ))
-    return items, ru
+    headers = container.client_connection.last_response_headers
+    ru = float(headers.get("x-ms-request-charge", 0.0) or 0.0)
+    count = int(headers.get("x-ms-item-count", 0) or 0)
+    metrics = headers.get("x-ms-documentdb-query-metrics", "") or ""
+    return items, ru, count, metrics
 
 
 def p1_customer_with_recent_orders(db, customer_id: str) -> None:
@@ -39,14 +51,14 @@ def p1_customer_with_recent_orders(db, customer_id: str) -> None:
     customers = db.get_container_client("Customers")
     orders = db.get_container_client("Orders")
 
-    cust, ru1 = _query(
+    cust, ru1, n1, m1 = _query(
         customers,
         "SELECT * FROM c WHERE c.customerId = @cid",
         [{"name": "@cid", "value": customer_id}],
     )
-    print_ru("query Customers by customerId", ru1, len(cust))
+    print_query("query Customers by customerId", ru1, len(cust), n1, m1)
 
-    recent, ru2 = _query(
+    recent, ru2, n2, m2 = _query(
         orders,
         (
             "SELECT TOP 5 * FROM c WHERE c.customerId = @cid "
@@ -54,7 +66,7 @@ def p1_customer_with_recent_orders(db, customer_id: str) -> None:
         ),
         [{"name": "@cid", "value": customer_id}],
     )
-    print_ru("cross-partition query on Orders", ru2, len(recent))
+    print_query("cross-partition query on Orders", ru2, len(recent), n2, m2)
     print_ru("TOTAL", ru1 + ru2)
 
 
@@ -69,13 +81,13 @@ def p2_order_with_items(db, order_id: str, customer_id: str) -> None:
     ))
     print_ru("point read Order header", ru1, 1)
 
-    items, ru2 = _query(
+    items, ru2, n2, m2 = _query(
         items_c,
         "SELECT * FROM c WHERE c.orderId = @oid",
         [{"name": "@oid", "value": order_id}],
         partition_key=order_id,
     )
-    print_ru("query OrderItems in partition", ru2, len(items))
+    print_query("query OrderItems in partition", ru2, len(items), n2, m2)
     print_ru("TOTAL", ru1 + ru2)
 
 
@@ -86,11 +98,11 @@ def p3_place_order(db, customer_id: str) -> None:
     products = db.get_container_client("Products")
 
     # Grab a couple of products to put in the cart.
-    cart_products, ru_q = _query(
+    cart_products, ru_q, n_q, m_q = _query(
         products,
         "SELECT TOP 3 c.productId, c.name, c.price FROM c",
     )
-    print_ru("cross-partition pick products", ru_q, len(cart_products))
+    print_query("cross-partition pick products", ru_q, len(cart_products), n_q, m_q)
 
     new_order_id = f"O{datetime.now(timezone.utc).strftime('%Y%m%d%H%M%S')}"
     header = {
@@ -136,7 +148,7 @@ def p3_place_order(db, customer_id: str) -> None:
 def p4_products_in_category(db, category_id: str) -> None:
     print(f"\nP4 — Products in category {category_id} (price ASC)")
     products = db.get_container_client("Products")
-    rows, ru = _query(
+    rows, ru, n, m = _query(
         products,
         (
             "SELECT c.productId, c.name, c.price FROM c "
@@ -144,7 +156,7 @@ def p4_products_in_category(db, category_id: str) -> None:
         ),
         [{"name": "@cid", "value": category_id}],
     )
-    print_ru("cross-partition query on Products", ru, len(rows))
+    print_query("cross-partition query on Products", ru, len(rows), n, m)
 
 
 def main() -> None:
