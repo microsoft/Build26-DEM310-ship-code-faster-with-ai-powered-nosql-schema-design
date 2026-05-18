@@ -9,7 +9,8 @@ is upgraded.
 | File | What it does |
 |------|--------------|
 | `01-apply-composite-indexes.cosmos.js` | Replaces the indexing policy on `CustomerOrders` and `Products` to add three composite indexes. |
-| `02-extended-queries.cosmos.js`        | Runs R-EXT-1, R-EXT-2, R-EXT-3 and prints `requestCharge` per query. |
+| `02-extended-queries.cosmos.js`        | Runs R-EXT-1, R-EXT-2, R-EXT-3 with `populateIndexMetrics: true` and prints `requestCharge` + the engine's `indexMetrics` block per query. |
+| `03-scenario-before-after.cosmos.js`   | Self-contained simulation: resets to the iteration-2 baseline policy, runs the three queries, applies the composite policy, re-runs the queries, then prints a RU before/after diff table. |
 | `seed-data/README.md`                  | Pointer — uses iteration-2's seed data unchanged. |
 
 There is **no separate seed data** for iteration 3. Run iteration-2's
@@ -29,14 +30,45 @@ for the full rationale.
 
 ## How to demo
 
+Pick one of the two flows below.
+
+### Option A — One-paste before/after simulation (recommended on stage)
+
 1. Make sure iteration-2 is set up (database, containers, seed). If not,
    run [iteration-02-optimized/demo-shell/01-setup.cosmos.js](../../iteration-02-optimized/demo-shell/01-setup.cosmos.js).
-2. (Optional baseline) Run `02-extended-queries.cosmos.js` **before**
-   applying the new policy and note the RU values.
-3. Paste `01-apply-composite-indexes.cosmos.js` and run it. Wait a few
-   seconds for the indexer to rebuild.
-4. Run `02-extended-queries.cosmos.js` again and call out the lower
-   `RU:` values — that delta is the iteration-3 takeaway.
+2. Paste `03-scenario-before-after.cosmos.js` and run it. The script:
+   * forces both containers back to the baseline (no composites) policy,
+   * runs R-EXT-1/2/3 once and captures RU + `indexMetrics`,
+   * applies the composite policy,
+   * re-runs the same three queries,
+   * prints a side-by-side table with `RU before`, `RU after`, `delta %`,
+     and the composite that the engine reports as utilized.
+
+### Option B — Manual three-step walkthrough
+
+1. (Optional baseline) Paste `02-extended-queries.cosmos.js` **before**
+   applying the new policy. Each query prints its full `indexMetrics`
+   block — point at the empty "Utilized Composite Indexes" section.
+2. Paste `01-apply-composite-indexes.cosmos.js`. Wait a few seconds for
+   the indexer to rebuild.
+3. Paste `02-extended-queries.cosmos.js` again. Call out the lower
+   `RU:` values and the composite now listed under "Utilized Composite
+   Indexes" — that delta is the iteration-3 takeaway.
+
+## Index metrics
+
+All three scripts pass `populateIndexMetrics: true` on every query.
+Cosmos returns an `indexMetrics` string on each response that lists:
+
+* **Utilized Single Indexes** — which `/path/?` includes the engine read.
+* **Utilized Composite Indexes** — the exact `[path ORDER, path ORDER]`
+  pair the engine matched (empty before iteration 3 lands).
+* **Potential Composite Indexes** — composites the engine *would* have
+  used if they existed. Useful for future tuning.
+
+`02-extended-queries.cosmos.js` prints the raw block;
+`03-scenario-before-after.cosmos.js` collapses it to a one-line
+"composite utilized" column in the diff table.
 
 ## Cross-reference
 
