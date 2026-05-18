@@ -64,15 +64,11 @@ fixes.
 ## What you should see
 
 A successful run of `complete/patterns.py` prints one block per access
-pattern with the RU charge of every operation and a `TOTAL` line. The
-absolute numbers depend on your emulator build, the seeded row counts, and
-whether indexing has caught up, but the **shape** of the output and the
-**relative cost** between operations should match what you see here.
-
-> The values below are representative from a run against the local Cosmos DB
-> emulator with the default seed (10 customers, ~50 orders, ~150 order
-> items, ~30 products across 8 categories). Treat them as ballpark — your
-> own numbers will be close but not identical.
+pattern with the RU charge of every operation and a `TOTAL` line. Captured
+from a real run against the local Linux Cosmos DB emulator
+(`mcr.microsoft.com/cosmosdb/linux/azure-cosmos-emulator:vnext-preview`)
+with the default seed (10 customers, 200 orders, 1,140 order items, 50
+products across 5 categories):
 
 ```text
 ======================================================================
@@ -80,36 +76,50 @@ Iteration 1 — naive 5-container design
 ======================================================================
 
 P1 — Customer C00005 + 5 most recent orders
-  [RU] query Customers by customerId                  2.89  (1 docs)
-  [RU] cross-partition query on Orders                7.43  (5 docs)
-  [RU] TOTAL                                         10.32
+  [RU] query Customers by customerId                     1.00  (1 docs)
+  [RU] cross-partition query on Orders                   1.00  (5 docs)
+  [RU] TOTAL                                             2.00
 
 P2 — Order O0000001 with line items
-  [RU] point read Order header                        1.00  (1 docs)
-  [RU] query OrderItems in partition                  2.95  (3 docs)
-  [RU] TOTAL                                          3.95
+  [RU] point read Order header                           1.00  (1 docs)
+  [RU] query OrderItems in partition                     1.00  (10 docs)
+  [RU] TOTAL                                             2.00
 
 P3 — Place a new order for C00005
-  [RU] cross-partition pick products                  4.62  (3 docs)
-  [RU] create Order header                            6.71  (1 docs)
-  [RU] create 3 OrderItem rows                       20.13
-  [RU] TOTAL (non-transactional!)                    31.46
+  [RU] cross-partition pick products                     1.00  (3 docs)
+  [RU] create Order header                               1.00  (1 docs)
+  [RU] create 3 OrderItem rows                           3.00
+  [RU] TOTAL (non-transactional!)                        5.00
 
 P4 — Products in category CAT006 (price ASC)
-  [RU] cross-partition query on Products              5.84  (4 docs)
+  [RU] cross-partition query on Products                 1.00  (10 docs)
 ```
+
+> ⚠️ **Heads up about RU values on the preview emulator.** The vNext Linux
+> emulator currently reports a flat synthetic charge (~1.00 RU per request)
+> rather than the differentiated charges you would see on a real Azure
+> Cosmos DB account or the Windows emulator. The *shape* of the output —
+> which operations happen, how many round trips, which queries fan out
+> cross-partition, and whether P3 is atomic — is exactly what attendees
+> should be focused on. The talking points below are about that **shape**,
+> not the RU magnitudes. When you run this same code against a real Cosmos
+> DB account, expect P1's cross-partition step, P3's three line-item
+> writes, and P4's category scan to cost meaningfully more than the
+> single-partition operations.
 
 Three things should stand out as you read the output:
 
-1. **P1 cost is dominated by a cross-partition query.** Even though we only
-   want one customer's recent orders, the `Orders` container is partitioned
-   by `/orderId`, so the engine fans out across every partition just to find
-   the five that belong to `C00005`.
+1. **P1 needs a cross-partition query.** Even though we only want one
+   customer's recent orders, the `Orders` container is partitioned by
+   `/orderId`, so the engine has to consider every partition just to find
+   the five that belong to `C00005`. On a real account that overhead grows
+   linearly with the number of physical partitions.
 2. **P3 prints `(non-transactional!)`.** The header write and the line
-   writes go to two different containers, so there is no way to commit them
-   atomically — a crash between them leaves a half-placed order.
-3. **P4 is also cross-partition** even though category is the whole filter,
-   because `Products` is partitioned by `/productId`.
+   writes go to two different containers, so there is no way to commit
+   them atomically — a crash between them leaves a half-placed order.
+3. **P4 is also cross-partition** even though category is the whole
+   filter, because `Products` is partitioned by `/productId`. The "obvious"
+   relational key is the wrong choice for this query.
 
 ## Why this design is not recommended
 
