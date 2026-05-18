@@ -33,9 +33,17 @@ src/
 │   ├── demo/                       #   same shape, skeleton
 │   └── demo-shell/                 #   Cosmos DB Shell .cosmos.js + per-container JSON
 └── iteration-03-composite-indexes/ # optional stretch: 3 new access patterns
-    ├── complete/                   #   extended-access-patterns.md, queries.py, policy
-    ├── demo/
-    └── demo-shell/                 #   Cosmos DB Shell .cosmos.js (policy + queries)
+│   ├── complete/                   #   extended-access-patterns.md, queries.py, policy
+│   ├── demo/
+│   └── demo-shell/                 #   Cosmos DB Shell .cosmos.js (policy + queries)
+└── iteration-04-hybrid-vector-search/ # optional, cloud-only: vector + FTS + RRF
+    ├── README.md                   #   runbook (provision, seed, search)
+    ├── access-patterns.md          #   R-VEC-1 / R-FTS-1 / R-HYB-1
+    ├── requirements.txt            #   azure-identity + openai (additive)
+    ├── infra/                      #   parameterized Bicep + deploy.ps1
+    │   └── modules/                #     cosmos / foundry / rbac
+    ├── complete/                   #   keyless: shared / seed / search
+    └── demo/                       #   skeletons with TODOs
 ```
 
 ## Prerequisites
@@ -76,6 +84,13 @@ python -m complete.app.main place-order C00005
 cd ../iteration-03-composite-indexes
 python complete/queries.py --apply-policy
 python complete/queries.py
+
+# 4) iteration 4 (optional, cloud-only) — vector + full-text + hybrid search
+#    See iteration-04-hybrid-vector-search/README.md — provisions a small
+#    Azure footprint via Bicep, then:
+cd ../iteration-04-hybrid-vector-search
+python complete/seed.py
+python complete/search.py
 ```
 
 Compare the `[RU]` lines from iteration 1 vs iteration 2 — that's the
