@@ -64,11 +64,10 @@ fixes.
 ## What you should see
 
 A successful run of `complete/patterns.py` prints one block per access
-pattern with the RU charge of every operation and a `TOTAL` line. Captured
-from a real run against the local Linux Cosmos DB emulator
-(`mcr.microsoft.com/cosmosdb/linux/azure-cosmos-emulator:vnext-preview`)
-with the default seed (10 customers, 200 orders, 1,140 order items, 50
-products across 5 categories):
+pattern with the RU charge of every operation and a `TOTAL` line. The
+shape of the output looks like this (RU values are placeholders until the
+run is captured against the classic Windows emulator — see the note
+below):
 
 ```text
 ======================================================================
@@ -76,38 +75,37 @@ Iteration 1 — naive 5-container design
 ======================================================================
 
 P1 — Customer C00005 + 5 most recent orders
-  [RU] query Customers by customerId                     1.00  (1 docs)
-  [RU] cross-partition query on Orders                   1.00  (5 docs)
-  [RU] TOTAL                                             2.00
+  [RU] query Customers by customerId                     <ru>  (1 docs)
+  [RU] cross-partition query on Orders                   <ru>  (5 docs)
+  [RU] TOTAL                                             <ru>
 
 P2 — Order O0000001 with line items
-  [RU] point read Order header                           1.00  (1 docs)
-  [RU] query OrderItems in partition                     1.00  (10 docs)
-  [RU] TOTAL                                             2.00
+  [RU] point read Order header                           <ru>  (1 docs)
+  [RU] query OrderItems in partition                     <ru>  (N docs)
+  [RU] TOTAL                                             <ru>
 
 P3 — Place a new order for C00005
-  [RU] cross-partition pick products                     1.00  (3 docs)
-  [RU] create Order header                               1.00  (1 docs)
-  [RU] create 3 OrderItem rows                           3.00
-  [RU] TOTAL (non-transactional!)                        5.00
+  [RU] cross-partition pick products                     <ru>  (3 docs)
+  [RU] create Order header                               <ru>  (1 docs)
+  [RU] create 3 OrderItem rows                           <ru>
+  [RU] TOTAL (non-transactional!)                        <ru>
 
 P4 — Products in category CAT006 (price ASC)
-  [RU] cross-partition query on Products                 1.00  (10 docs)
+  [RU] cross-partition query on Products                 <ru>  (N docs)
 ```
 
-> ⚠️ **Heads up about RU values on the preview emulator.** The vNext Linux
-> emulator currently reports a flat synthetic charge (~1.00 RU per request)
-> rather than the differentiated charges you would see on a real Azure
-> Cosmos DB account or the Windows emulator. The *shape* of the output —
-> which operations happen, how many round trips, which queries fan out
-> cross-partition, and whether P3 is atomic — is exactly what attendees
-> should be focused on. The talking points below are about that **shape**,
-> not the RU magnitudes. When you run this same code against a real Cosmos
-> DB account, expect P1's cross-partition step, P3's three line-item
-> writes, and P4's category scan to cost meaningfully more than the
-> single-partition operations.
+> 📝 **About the RU numbers.** The captured RU values will be filled in
+> from a run against the **classic Azure Cosmos DB emulator on Windows**,
+> which reports differentiated, production-like RU charges. The vNext
+> Linux preview emulator (Docker image
+> `mcr.microsoft.com/cosmosdb/linux/azure-cosmos-emulator:vnext-preview`)
+> is convenient on macOS/Linux but currently reports a flat synthetic
+> charge (~1.00 RU per request), so it is **not** the right target for
+> reasoning about cost. Use it for connectivity and shape, the classic
+> emulator (or a real Azure Cosmos DB account) for RU comparisons.
 
-Three things should stand out as you read the output:
+Independent of the exact numbers, three things should stand out as you
+read the output:
 
 1. **P1 needs a cross-partition query.** Even though we only want one
    customer's recent orders, the `Orders` container is partitioned by

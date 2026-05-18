@@ -55,8 +55,9 @@ If you'd like to follow along with this demo at your own pace:
    git clone https://github.com/microsoft/Build26-DEM310.git
    ```
 
-2. **Install the Azure Cosmos DB emulator (local, free, cross-platform)**
-   - Follow [Develop locally using the Azure Cosmos DB emulator](https://learn.microsoft.com/azure/cosmos-db/how-to-develop-emulator#install-the-emulator) — the Docker image runs on Windows, macOS, and Linux.
+2. **Install the Azure Cosmos DB emulator (local, free)**
+   - Recommended: install the **classic Azure Cosmos DB Emulator** for Windows from [Install and develop locally with the Azure Cosmos DB Emulator](https://learn.microsoft.com/azure/cosmos-db/emulator). It reports differentiated, production-like RU charges, which is what makes the iteration-to-iteration comparison in this demo land.
+   - Cross-platform alternative (preview): the [Linux Docker emulator](https://learn.microsoft.com/azure/cosmos-db/how-to-develop-emulator#install-the-emulator) (`mcr.microsoft.com/cosmosdb/linux/azure-cosmos-emulator:vnext-preview`) runs on Windows, macOS, and Linux — useful for connectivity, but it currently returns a flat synthetic RU per request, so prefer the classic emulator when comparing iterations.
    - **Validate:** start the emulator container and confirm the Data Explorer loads at `https://localhost:8081/_explorer/index.html`.
 
 3. **Install the Azure Cosmos DB extension for Visual Studio Code (preferred path for the Agent Toolkit and Shell)**
@@ -83,7 +84,7 @@ By the end of this demo, you will be able to:
 
 - Use GitHub Copilot and the Azure Cosmos DB Agent Toolkit to generate and evolve NoSQL schemas with AI assistance.
 - Apply AI-recommended patterns for partition key selection, denormalization, and query optimization.
-- Iterate rapidly using the new cross-platform Azure Cosmos DB emulator on Mac and Linux for local testing.
+- Iterate rapidly against a local Azure Cosmos DB emulator (classic Windows emulator for RU-accurate comparisons; cross-platform Linux preview also available).
 
 ### 💬 Keep Learning with Copilot
 
