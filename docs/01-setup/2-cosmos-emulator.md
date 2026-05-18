@@ -41,8 +41,11 @@ accepts connections before the data plane is fully ready.
 
 > The emulator ships with a **well-known** primary key:
 > `C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==`
-> The seed and pattern scripts default to it. Override via the
-> `COSMOS_ENDPOINT` and `COSMOS_KEY` environment variables.
+> It is baked into [`src/.env.example`](../../src/.env.example) — copy
+> that file to `src/.env` once and you're done. Override `COSMOS_ENDPOINT`
+> / `COSMOS_KEY` in `src/.env` if you point at a different emulator or a
+> real Azure Cosmos DB account. See
+> [4 — Python environment](./4-python-env.md) for details.
 
 ## Additional references
 
@@ -53,9 +56,8 @@ accepts connections before the data plane is fully ready.
   `http://localhost:8081`, data explorer on `https://localhost:1234`. Good
   for verifying the code runs on macOS/Linux; **not** recommended for the
   RU comparison story because it currently returns a flat synthetic
-  charge per request. To use it, set
-  `$env:COSMOS_ENDPOINT = "http://localhost:8081"` before running the
-  scripts.
+  charge per request. To use it, set `COSMOS_ENDPOINT=http://localhost:8081`
+  in `src/.env`.
 - [Develop locally using the Azure Cosmos DB emulator](https://learn.microsoft.com/azure/cosmos-db/how-to-develop-emulator)
   — top-level Microsoft Learn page covering both emulators.
 

@@ -1,6 +1,7 @@
 # 4. Python environment
 
-The scripts are stdlib + `azure-cosmos` + `pydantic`. No web framework.
+The scripts are stdlib + `azure-cosmos` + `pydantic` + `python-dotenv`.
+No web framework.
 
 ```powershell
 # from the repo root
@@ -14,15 +15,37 @@ pip install -r src/requirements.txt
 Validate:
 
 ```powershell
-python -c "import azure.cosmos, pydantic; print('ok')"
+python -c "import azure.cosmos, pydantic, dotenv; print('ok')"
 ```
 
-Optional environment overrides (defaults are the well-known emulator):
+## Cosmos connection settings (`.env`)
+
+Every Python entry point loads `src/.env` via `python-dotenv` before it
+constructs the `CosmosClient`. Copy the example file once:
 
 ```powershell
-$env:COSMOS_ENDPOINT = "https://localhost:8081"
-$env:COSMOS_KEY      = "<emulator key>"
-$env:COSMOS_DB       = "Build26DEM310"
+# PowerShell
+Copy-Item src/.env.example src/.env
+
+# bash / zsh
+cp src/.env.example src/.env
 ```
+
+The defaults in `.env.example` already point at the local Cosmos DB
+emulator with its well-known public key, so on a stock setup you can
+copy and move on. Edit `src/.env` only if you need a different profile
+(Linux vNext preview emulator, real Azure Cosmos DB account, custom
+database name). The file is gitignored — never commit it.
+
+Recognised variables:
+
+| Variable          | Default in `.env.example`        | Notes                                                  |
+|-------------------|----------------------------------|--------------------------------------------------------|
+| `COSMOS_ENDPOINT` | `https://localhost:8081`         | Required. Set to your account URL for Azure.           |
+| `COSMOS_KEY`      | emulator well-known key          | Required. Replace with a real key for Azure.           |
+| `COSMOS_DB`       | `Build26DEM310`                  | Optional. Override to run parallel demos side-by-side. |
+
+If `COSMOS_ENDPOINT` or `COSMOS_KEY` is missing, the scripts raise a
+clear error telling you to copy `.env.example` first.
 
 You're ready to run the walkthrough.

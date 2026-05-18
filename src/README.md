@@ -10,6 +10,7 @@ interesting bits removed for live-coding.
 ```text
 src/
 ├── requirements.txt
+├── .env.example                    # copy to .env; loaded by every script
 ├── sample-data/                    # AdventureWorksLT -> trimmed master JSON
 │   ├── source/                     # raw CSVs (regeneration input)
 │   ├── generate.py                 # deterministic generator
@@ -43,6 +44,17 @@ src/
 2. The local Cosmos DB emulator running on `https://localhost:8081`
    (see [`/docs/01-setup`](../docs/01-setup/)).
 3. `pip install -r src/requirements.txt`
+4. Copy [`.env.example`](./.env.example) to `src/.env` — every Python
+   entry point loads it via `python-dotenv` to pick up
+   `COSMOS_ENDPOINT` / `COSMOS_KEY` / `COSMOS_DB`. The defaults already
+   point at the local emulator; edit only if you target a different
+   profile (Linux vNext, real Azure account, alt DB name). `.env` is
+   gitignored — never commit it.
+
+   ```powershell
+   Copy-Item src/.env.example src/.env   # PowerShell
+   # cp src/.env.example src/.env        # bash / zsh
+   ```
 
 ## Quick start
 

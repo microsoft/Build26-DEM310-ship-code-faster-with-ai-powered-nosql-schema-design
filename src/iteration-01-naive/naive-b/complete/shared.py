@@ -11,13 +11,21 @@ import urllib3
 from pathlib import Path
 
 from azure.cosmos import CosmosClient, PartitionKey
+from dotenv import load_dotenv
 
-EMULATOR_ENDPOINT = os.environ.get("COSMOS_ENDPOINT", "https://localhost:8081")
-EMULATOR_KEY = os.environ.get(
-    "COSMOS_KEY",
-    "C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==",
-)
+# Load /src/.env (copy /src/.env.example -> /src/.env on first run).
+SRC_DIR = Path(__file__).resolve().parents[3]
+load_dotenv(SRC_DIR / ".env")
+
+EMULATOR_ENDPOINT = os.environ.get("COSMOS_ENDPOINT")
+EMULATOR_KEY = os.environ.get("COSMOS_KEY")
 DATABASE_NAME = os.environ.get("COSMOS_DB", "Build26DEM310")
+
+if not EMULATOR_ENDPOINT or not EMULATOR_KEY:
+    raise RuntimeError(
+        "COSMOS_ENDPOINT / COSMOS_KEY not set. "
+        "Copy src/.env.example to src/.env, then re-run."
+    )
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
