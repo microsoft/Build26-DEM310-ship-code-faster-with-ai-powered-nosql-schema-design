@@ -3,6 +3,24 @@
 > This iteration **requires Azure**. The local Cosmos DB emulator does not
 > support vector or full-text search today, so we provision a small cloud
 > footprint via the included Bicep templates.
+>
+> **Cosmos DB Agent Kit — why it matters here.** Iteration 4 stresses
+> the kit's newest rule areas: **Indexing Strategies** for vector
+> indexes (`quantizedFlat` vs `diskANN`, dimension/distance choices),
+> **Data Modeling** for hybrid documents that carry both embeddings and
+> text, and **Query Optimization** for `VectorDistance` + `FullTextScore`
+> + `RANK RRF(...)` shapes. Ask the agent *"review my vector embedding
+> policy and full-text policy on `ProductsRich`"* — the kit knows the
+> current preview surface.
+>
+> **Observability.** The complete scripts in this iteration print the
+> same RU + item-count + query-metrics triplet as iterations 1–3 plus
+> the embedding token usage from Azure AI Foundry — so you can see both
+> the Cosmos-side and the model-side cost of every hybrid query.
+>
+> Outside VS Code? `npx skills add AzureCosmosDB/cosmosdb-agent-kit`
+> (see [setup step 3](../01-setup/3-vscode-agent.md)) brings the same
+> rules into Claude Code, Gemini CLI, or JetBrains.
 
 ## What you'll do
 

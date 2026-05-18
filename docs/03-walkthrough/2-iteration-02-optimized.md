@@ -2,6 +2,23 @@
 
 Source code: [`/src/iteration-02-optimized`](../../src/iteration-02-optimized/)
 
+> **Cosmos DB Agent Kit — why it matters here.** Iteration 2 is the
+> turning point where modeling decisions stop being intuition and become
+> rule-driven. The [Agent Kit](https://learn.microsoft.com/azure/cosmos-db/gen-ai/agent-kit)
+> activates four skill categories on this content: **Data Modeling**
+> (embed vs reference), **Partition Key Design** (cardinality + access
+> pattern fit), **Query Optimization** (RU reduction), and **SDK Best
+> Practices** (singleton client, transactional batch, retry). If you're
+> not on VS Code, install it with
+> `npx skills add AzureCosmosDB/cosmosdb-agent-kit` (see
+> [setup step 3](../01-setup/3-vscode-agent.md)) and the same prompts
+> below work with Claude Code, Gemini CLI, or Copilot in JetBrains.
+>
+> **Observability built in.** The kit's Monitoring & Diagnostics rules
+> are why every example script logs `requestCharge`, `x-ms-item-count`,
+> and `x-ms-documentdb-query-metrics` — the same triplet you'll see
+> printed by `repository.py`. That's how you spot a regression on stage.
+
 ## What the agent recommends
 
 Open the Cosmos DB Agent with iteration 1's RU output, plus the
