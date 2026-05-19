@@ -99,7 +99,7 @@ Use these as a starting point — or write your own!
    I'm modeling an e-commerce backend on Azure Cosmos DB for NoSQL. Access patterns: (1) get a customer plus their 5 most recent orders, (2) get one order with line items, (3) place an order (1 header + N items, must be atomic), (4) list products in a category sorted by price. Using the Microsoft Learn MCP Server for current best practices, propose a container layout (containers, partition keys, embedded vs separate documents) that keeps most reads single-partition and place-order in a transactional batch. Show me the resulting JSON shape for one customer and one order.
    ```
 
-2. **Spot the unbounded-array anti-pattern** — what `naive-b` demonstrates on stage:
+2. **Spot the unbounded-array anti-pattern** — what `naive-b` demonstrates:
 
    ```
    Review this Azure Cosmos DB design: one document per customer, with an `orders` array that grows every time the customer places an order. Each new order does a read-modify-upsert of the whole document. Using the Microsoft Learn MCP Server, explain (a) why the upsert RU charge grows over time, (b) what hard limit this design will hit, and (c) the cleanest way to refactor it without changing the partition key.

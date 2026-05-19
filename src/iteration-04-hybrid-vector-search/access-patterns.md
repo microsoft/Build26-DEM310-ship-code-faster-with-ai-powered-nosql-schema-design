@@ -70,6 +70,5 @@ ORDER BY RANK RRF(
 
 It demonstrates capabilities that are **not available in the local
 Cosmos DB emulator** today. Treat iterations 1–3 as the core narrative;
-add this on stage only if your audience cares about RAG / search /
-recommendations and you have an Azure subscription you can spin a
-resource group in.
+run this one only if you care about RAG / search / recommendations and
+you have an Azure subscription you can spin a resource group in.

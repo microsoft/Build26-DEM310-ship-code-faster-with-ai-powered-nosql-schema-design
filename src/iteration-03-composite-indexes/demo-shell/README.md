@@ -32,7 +32,7 @@ for the full rationale.
 
 Pick one of the two flows below.
 
-### Option A — One-paste before/after simulation (recommended on stage)
+### Option A — One-paste before/after simulation (recommended)
 
 1. Make sure iteration-2 is set up (database, containers, seed). If not,
    run [iteration-02-optimized/demo-shell/01-setup.cosmos.js](../../iteration-02-optimized/demo-shell/01-setup.cosmos.js).

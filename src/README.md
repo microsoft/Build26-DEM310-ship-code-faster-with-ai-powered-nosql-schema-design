@@ -3,7 +3,7 @@
 All the runnable assets for **DEM310 — Ship code faster with AI-powered
 NoSQL schema design**. Walk through the three iterations in order; each one
 has a `complete/` folder you can run and a `demo/` folder with the
-interesting bits removed for live-coding.
+interesting bits removed so you can fill them in yourself.
 
 ## Layout
 
@@ -107,7 +107,7 @@ Every iteration also ships a `demo-shell/` folder with:
 * `02-access-patterns.cosmos.js` (or `02-simulate-...` / `02-extended-queries.cosmos.js`)
   — one runnable block per access pattern with `requestCharge` printed.
 
-Use these when you want to call out individual operations on stage
+Use these when you want to call out individual operations interactively
 without driving the Python CLI. See each iteration's
 [`demo-shell/README.md`](./iteration-01-naive/naive-a/demo-shell/README.md)
 for setup and walkthrough.

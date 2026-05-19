@@ -1,10 +1,17 @@
-# Iteration 1 — Naive port (two anti-patterns)
+# Iteration 1 — Manual-design anti-patterns
 
 Source code: [`/src/iteration-01-naive`](../../src/iteration-01-naive/)
 
-This iteration shows the **two most common ways** a developer ports an
-order-management schema to Cosmos DB on the first try. Both are wrong,
-in interestingly different ways — and iteration 2 fixes both at once.
+Before the Cosmos DB Agent Kit + GitHub Copilot enter the picture, this
+iteration shows the **two most common mistakes** developers make when
+hand-rolling a NoSQL schema from a relational mental model. Both are
+real patterns observed in customer code; both are wrong, in
+interestingly different ways; and iteration 2 — driven by the Agent Kit
+— fixes both at once.
+
+Think of this iteration as the *"what humans do unaided"* baseline. We
+capture the RU charges here so the after-Agent-Kit numbers in iteration 2
+have something concrete to beat.
 
 ## naive-a — 1:1 relational port
 
@@ -94,10 +101,12 @@ data and then **stops working entirely** in production once a single
 customer's history crosses the limit. It's the harder one to migrate out
 of later because every consumer is reading "the customer document".
 
-## Live-coding tip
+## Hands-on tip
 
-Both `naive-a/demo/` and `naive-b/demo/` are skeletons with TODOs. Open
-the Cosmos DB Agent in chat and walk through the gaps; reveal
-`complete/` only if you run out of time. The punchline lands hardest if
-you run `naive-b/complete/simulate.py` on stage and let the audience
-watch the RU column climb.
+Both `naive-a/demo/` and `naive-b/demo/` are skeletons with TODOs —
+filled in **by hand**, deliberately without the Cosmos DB Agent Kit, so
+you see what these designs look like when they emerge from
+intuition alone. The matching `complete/` folders are there as a
+fallback if you run out of time. Running `naive-b/complete/simulate.py`
+is the most visceral way to land the point: watch the RU column climb
+in real time and project the day this design breaks.

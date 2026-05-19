@@ -45,7 +45,7 @@ iteration-04-hybrid-vector-search/
 │   ├── shared.py                 #   DefaultAzureCredential + AAD CosmosClient + AzureOpenAI client
 │   ├── seed.py                   #   generates embeddings, creates container, upserts
 │   └── search.py                 #   vector, full-text, hybrid demos with RU + metrics
-└── demo/                         # same shape with TODOs for live coding
+└── demo/                         # same shape with TODOs for you to fill in
     ├── shared.py
     ├── seed.py
     └── search.py

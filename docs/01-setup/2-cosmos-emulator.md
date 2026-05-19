@@ -3,7 +3,7 @@
 The demo runs against the local Azure Cosmos DB emulator. The **classic
 Windows emulator** is the recommended target — it reports differentiated,
 production-like RU charges, which is the whole point of comparing the
-three iterations on stage. The Linux Docker preview is fine for
+three iterations side by side. The Linux Docker preview is fine for
 connectivity and shape, but it currently reports a flat synthetic charge
 per request and is not suitable for RU comparisons (see
 *Additional references* at the bottom).

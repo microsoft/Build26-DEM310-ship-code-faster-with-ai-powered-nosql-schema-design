@@ -17,43 +17,107 @@ Source code: [`/src/iteration-02-optimized`](../../src/iteration-02-optimized/)
 > **Observability built in.** The kit's Monitoring & Diagnostics rules
 > are why every example script logs `requestCharge`, `x-ms-item-count`,
 > and `x-ms-documentdb-query-metrics` — the same triplet you'll see
-> printed by `repository.py`. That's how you spot a regression on stage.
+> printed by `repository.py`. That's how you spot a database request or query regression directly in the code.
 
-## What the agent recommends
+Start with iteration 1's RU output, the access patterns, and the
+volumetrics open. Drive the demo with the prompt sequence below and let
+the Agent Kit derive the new schema as you go. The
+[Expected outcomes](#expected-outcomes--reference-key) section at the
+bottom of this page is the reference key; skip it on the first run if
+you want to see what the kit proposes without anchoring on the answer.
 
-Open the Cosmos DB Agent with iteration 1's RU output, plus the
-[access patterns](../02-scenario/2-access-patterns.md) and
-[volumetrics](../02-scenario/3-volumetrics.md) pasted in. Ask:
+## Demo flow — recommended Copilot prompts
 
-> @cosmos given these four access patterns and projected volumes, propose
-> a container layout that keeps most reads in a single partition and
-> place-order atomic.
+This is the prompt sequence to walk through. Each prompt builds on the
+previous one: problem statement → design → validate the deployed shapes
+→ seed → scaffold code → execute and compare.
 
-The agent should converge on:
+### Step 1 — From problem statement to target design
 
-1. **Collapse `Customers`, `Orders`, `OrderItems` → `CustomerOrders`**
-   partitioned by `/customerId`, with a `type` discriminator (`customer`
-   vs `order`).
-2. **Embed `items[]` inside the order document** so P2 becomes a single
-   point read.
-3. **Embed `orderSummary` inside the customer document** so the
-   customer-profile widget doesn't need an aggregation query.
-4. **Repartition `Products` by `/categoryId`** so P4 stays in-partition.
-5. **Use a transactional batch** for place-order — possible because the
-   customer doc and the new order doc share the partition key.
+Paste iteration 1's RU output and the scenario links into the agent:
 
-## Run it
+```text
+@cosmos Here is what we have today:
+
+- Five containers ported 1:1 from a SQL schema (see iteration-01-naive).
+- Access patterns P1–P4 in docs/02-scenario/2-access-patterns.md.
+- Volumetrics in docs/02-scenario/3-volumetrics.md.
+- Captured RU per pattern from naive-a/patterns.py.
+
+Propose a container layout that:
+  1. Keeps P1 and P2 single-partition or point reads.
+  2. Makes P3 (place order) atomic in one transactional batch.
+  3. Keeps P4 in-partition.
+Explain each partition-key choice in one sentence and show the JSON
+shape for a customer document and an order document.
+```
+
+### Step 2 — Validate the deployed container structures
+
+After creating the new containers, ask the agent to verify they match the
+proposed design:
+
+```text
+@cosmos Inspect the local emulator account and confirm:
+  - A container named `CustomerOrders` exists, partitioned by /customerId.
+  - A container named `Products` exists, partitioned by /categoryId.
+  - Both have the default indexing policy (we'll tune in iteration 3).
+Report any drift between what I proposed and what is actually deployed.
+```
+
+### Step 3 — Seed and validate data shapes
+
+```text
+@cosmos Generate a seed script that loads 10 customers, 5 categories,
+50 products, and ~20 orders per customer from the AdventureWorksLT CSVs
+in _remove-before-publish/AdventureWorksLT/ into the two new containers.
+Use the `type` discriminator on CustomerOrders. After seeding, query the
+emulator and show me one customer document and one order document so I
+can verify the embedded shapes are right.
+```
+
+Use `complete/seed.py` as the reference output — the agent should
+produce something equivalent.
+
+### Step 4 — Scaffold the application code
+
+```text
+@cosmos Generate a small Python package with this layout:
+
+  complete/app/
+  ├── models.py       # Pydantic shapes for customer + order + item
+  ├── repository.py   # Cosmos calls that capture and log requestCharge
+  ├── service.py      # business logic; P3 must use a transactional batch
+  └── main.py         # argv -> service -> stdout
+
+Follow the Agent Kit's SDK Best Practices rules: singleton CosmosClient,
+async where appropriate, retry on 429, and log requestCharge +
+x-ms-item-count + a compact query-metrics summary on every call.
+```
+
+### Step 5 — Execute and capture RU
 
 ```powershell
 cd src/iteration-02-optimized
 python complete/seed.py
-python -m complete.app.main get-customer C00005
-python -m complete.app.main get-order   C00005 O0000003
-python -m complete.app.main place-order C00005
-python -m complete.app.main list-products CAT006
+python -m complete.app.main get-customer C00005   # P1
+python -m complete.app.main get-order   C00005 O0000003   # P2
+python -m complete.app.main place-order C00005             # P3
+python -m complete.app.main list-products CAT006           # P4
 ```
 
-## Code layout — FastAPI-ready
+### Step 6 — Ask the agent to interpret the results
+
+```text
+@cosmos Here are the RU charges per pattern from iteration 1 and
+iteration 2 (paste both). For each pattern, explain which design choice
+(partition key, embedding, transactional batch, repartitioning) drove
+the delta, and flag any pattern where the gain is smaller than expected.
+```
+
+## Code layout — FastAPI-ready (reference)
+
+The package scaffolded in Step 4 lands at this shape:
 
 ```text
 complete/app/
@@ -79,16 +143,38 @@ def get_customer(cid: str):
 
 No edits to `service.py` or `repository.py` are required.
 
-## The punchline
+## Expected outcomes — reference key
 
-For every pattern, compare RU between iterations:
+> **Reference section.** This is what the Cosmos DB Agent Kit *should*
+> propose for this iteration. Use it to validate the recommendations
+> and RU numbers you observe when you run the demo flow above. Skip it
+> on a first pass if you'd rather see the kit derive the answer without
+> anchoring on it.
 
-| Pattern | Iter 1 (typical)                         | Iter 2 (typical)                                    |
+### Recommended container design (expected)
+
+1. **Collapse `Customers`, `Orders`, `OrderItems` → `CustomerOrders`**
+   partitioned by `/customerId`, with a `type` discriminator (`customer`
+   vs `order`).
+2. **Embed `items[]` inside the order document** so P2 becomes a single
+   point read.
+3. **Embed `orderSummary` inside the customer document** so the
+   customer-profile widget doesn't need an aggregation query.
+4. **Repartition `Products` by `/categoryId`** so P4 stays in-partition.
+5. **Use a transactional batch** for place-order — possible because the
+   customer doc and the new order doc share the partition key.
+
+### Expected RU comparison
+
+For every pattern, compare observed RU between iterations:
+
+| Pattern | Iter 1 (typical)                         | Iter 2 (expected)                                   |
 |---------|------------------------------------------|-----------------------------------------------------|
 | P1      | 2 cross-partition queries ≈ 8–15 RU       | 1 single-partition query ≈ 2–4 RU                   |
 | P2      | 1 point read + 1 in-partition query       | 1 point read only                                   |
 | P3      | 1 + N non-transactional writes            | 1 transactional batch (customer + order)            |
 | P4      | Cross-partition query ≈ 6–10 RU           | Single-partition query ≈ 2–3 RU                     |
 
-(Exact numbers depend on emulator build and seed size — what matters is
-the order-of-magnitude shape.)
+Exact numbers depend on emulator build and seed size — what matters is
+the order-of-magnitude shape. If the numbers you observe don't match,
+use Step 6's interpretation prompt to find out why.

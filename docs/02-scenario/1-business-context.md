@@ -1,7 +1,7 @@
 # 1. Business context
 
 The demo's storyline is intentionally familiar so the modeling decisions
-are the only thing competing for the audience's attention.
+are the only thing competing for your attention.
 
 ## The product
 

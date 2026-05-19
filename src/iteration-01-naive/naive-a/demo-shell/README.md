@@ -3,7 +3,7 @@
 Everything you need to run the iteration-1 access patterns **by hand**
 inside the Cosmos DB Shell (Visual Studio Code → Cosmos DB extension →
 Open in Cosmos DB Shell). Useful when you want to call out individual
-operations on stage without driving the Python CLI.
+operations interactively without driving the Python CLI.
 
 ## Folder contents
 
@@ -42,10 +42,10 @@ and what motivates iteration 2.
 3. Walk through `02-access-patterns.cosmos.js` block by block. After each
    query call out the printed `RU:` value — that's the talking point.
 
-> **Prefer the Python CLI on stage?** The same patterns run via
+> **Prefer the Python CLI?** The same patterns run via
 > `python complete/patterns.py` from the parent folder, and the same
-> seeding via `python complete/seed.py`. Use whichever surface the
-> audience finds more familiar.
+> seeding via `python complete/seed.py`. Use whichever surface you
+> find more familiar.
 
 ## Cross-reference
 
