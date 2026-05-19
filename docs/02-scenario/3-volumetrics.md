@@ -6,13 +6,13 @@ are driven by the production projections.
 
 | Entity                        | Production target | Demo seed |
 |-------------------------------|-------------------|-----------|
-| Customers                     | 1 M               | 10        |
-| Categories                    | 50                | 5         |
-| Products                      | 50 k              | 50        |
+| Customers                     | 10 M               | 10        |
+| Categories                    | 100                | 5         |
+| Products                      | 100 k              | 50        |
 | Orders / customer / year      | 10–40             | 20        |
-| Items / order                 | 1–10              | 1–10      |
-| Read RPS (P1+P2)              | 500 sustained     | n/a       |
-| Write RPS (P3)                | 100 sustained     | n/a       |
+| Items / order                 | 1–100              | 1–10      |
+| Read RPS (P1+P2)              | 3000 sustained     | n/a       |
+| Write RPS (P3)                | 500 sustained     | n/a       |
 | Retention                     | 7 years           | 7 years   |
 
 These projections — alongside the [access patterns](./2-access-patterns.md)
