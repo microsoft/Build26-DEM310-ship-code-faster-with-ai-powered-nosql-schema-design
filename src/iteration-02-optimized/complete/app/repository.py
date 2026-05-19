@@ -109,6 +109,26 @@ class CustomerOrdersRepository:
         )
         return Result(items=items, **_capture(self._container))
 
+    def get_customer_doc(self, customer_id: str) -> Result:
+        """Point-read **only** the customer document.
+
+        Both the document's ``id`` and its partition-key value are the
+        customer id, so this is a 1.0 RU point read — it pulls a single
+        document out of the partition instead of returning every order
+        the customer has ever placed (the cost of which scales with
+        partition size). Use this any time you only need the
+        ``customer`` doc (e.g. to update ``orderSummary`` before a
+        transactional batch).
+        """
+        try:
+            item = self._container.read_item(
+                item=customer_id, partition_key=customer_id
+            )
+            items = [item]
+        except CosmosResourceNotFoundError:
+            items = []
+        return Result(items=items, **_capture(self._container))
+
     def get_recent_orders(self, customer_id: str, top: int = 5) -> Result:
         items = list(
             self._container.query_items(

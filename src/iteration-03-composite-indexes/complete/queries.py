@@ -15,6 +15,7 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 from azure.cosmos import CosmosClient
+from azure.cosmos.exceptions import CosmosHttpResponseError
 from dotenv import load_dotenv
 
 # Load /src/.env (copy /src/.env.example -> /src/.env on first run).
@@ -95,6 +96,40 @@ def _print_q(label: str, ru: float, client_count: int, server_count: int,
         print(f"       metrics: {summary}")
 
 
+# Patterns whose ORDER BY shape REQUIRES a composite index. Listed here so
+# we can both (a) surface a clear message when the policy isn't applied
+# yet and (b) print a single summary at the end of the run.
+_REQUIRED_COMPOSITES: dict[str, str] = {
+    "R-EXT-1": "[type ASC, orderDate DESC] on CustomerOrders "
+               "(WHERE type='order' + ORDER BY orderDate DESC)",
+    "R-EXT-2": "[status ASC, orderDate DESC] on CustomerOrders "
+               "(WHERE status='Placed' + ORDER BY orderDate DESC)",
+    "R-EXT-3": "[rating DESC, price ASC] on Products "
+               "(ORDER BY rating DESC, price ASC — multi-key)",
+}
+
+
+def _is_missing_composite_index(err: CosmosHttpResponseError) -> bool:
+    """Return True when the SDK error indicates the ORDER BY query
+    needs a composite index that isn't deployed yet."""
+    msg = (str(err) or "").lower()
+    return (
+        getattr(err, "status_code", None) == 400
+        and "composite index" in msg
+    )
+
+
+def _print_missing_composite(pattern_id: str) -> None:
+    requirement = _REQUIRED_COMPOSITES.get(pattern_id, "")
+    print(
+        f"  [SKIP] {pattern_id}: REQUIRES a composite index — query refused "
+        f"by the engine.\n"
+        f"         Composite index required: {requirement}\n"
+        f"         Run `python complete/queries.py --apply-policy` first, "
+        f"then re-run."
+    )
+
+
 # --- policy management --------------------------------------------------
 def apply_policy() -> None:
     with POLICY_FILE.open("r", encoding="utf-8") as fh:
@@ -111,69 +146,113 @@ def apply_policy() -> None:
 
 
 # --- queries ------------------------------------------------------------
-def r_ext_1(db) -> None:
+# Each r_ext_* returns True if the query ran, False if it was skipped
+# because the required composite index is missing. main() uses these to
+# print a single REQUIREMENTS summary at the end of the run.
+
+def r_ext_1(db) -> bool:
     print("\nR-EXT-1 — customer order history by date range")
     c = db.get_container_client("CustomerOrders")
     now = datetime.now(timezone.utc)
     end = now.isoformat()
     start = (now - timedelta(days=180)).isoformat()
-    items = list(
-        c.query_items(
-            query=(
-                "SELECT c.orderId, c.orderDate, c.totalAmount FROM c "
-                "WHERE c.type = 'order' AND c.customerId = @cid "
-                "AND c.orderDate >= @from AND c.orderDate < @to "
-                "ORDER BY c.orderDate DESC"
-            ),
-            parameters=[
-                {"name": "@cid", "value": "C00005"},
-                {"name": "@from", "value": start},
-                {"name": "@to", "value": end},
-            ],
-            partition_key="C00005",
-            populate_query_metrics=True,
+    try:
+        items = list(
+            c.query_items(
+                query=(
+                    "SELECT c.orderId, c.orderDate, c.totalAmount FROM c "
+                    "WHERE c.type = 'order' AND c.customerId = @cid "
+                    "AND c.orderDate >= @from AND c.orderDate < @to "
+                    "ORDER BY c.orderDate DESC"
+                ),
+                parameters=[
+                    {"name": "@cid", "value": "C00005"},
+                    {"name": "@from", "value": start},
+                    {"name": "@to", "value": end},
+                ],
+                partition_key="C00005",
+                populate_query_metrics=True,
+            )
         )
-    )
+    except CosmosHttpResponseError as err:
+        if _is_missing_composite_index(err):
+            _print_missing_composite("R-EXT-1")
+            return False
+        raise
     ru, server_count, metrics = _capture(c)
     _print_q("orders for C00005 (last 180d, DESC)", ru, len(items), server_count, metrics)
+    return True
 
 
-def r_ext_2(db) -> None:
+def r_ext_2(db) -> bool:
     print("\nR-EXT-2 — open-orders dashboard (cross-partition)")
     c = db.get_container_client("CustomerOrders")
-    items = list(
-        c.query_items(
-            query=(
-                "SELECT TOP 25 c.orderId, c.customerId, c.orderDate, c.totalAmount "
-                "FROM c WHERE c.type = 'order' AND c.status = @s "
-                "ORDER BY c.orderDate DESC"
-            ),
-            parameters=[{"name": "@s", "value": "Placed"}],
-            enable_cross_partition_query=True,
-            populate_query_metrics=True,
+    try:
+        items = list(
+            c.query_items(
+                query=(
+                    "SELECT TOP 25 c.orderId, c.customerId, c.orderDate, c.totalAmount "
+                    "FROM c WHERE c.type = 'order' AND c.status = @s "
+                    "ORDER BY c.orderDate DESC"
+                ),
+                parameters=[{"name": "@s", "value": "Placed"}],
+                enable_cross_partition_query=True,
+                populate_query_metrics=True,
+            )
         )
-    )
+    except CosmosHttpResponseError as err:
+        if _is_missing_composite_index(err):
+            _print_missing_composite("R-EXT-2")
+            return False
+        raise
     ru, server_count, metrics = _capture(c)
     _print_q("top-25 Placed orders DESC", ru, len(items), server_count, metrics)
+    return True
 
 
-def r_ext_3(db) -> None:
+def r_ext_3(db) -> bool:
     print("\nR-EXT-3 — products by rating DESC, price ASC")
     c = db.get_container_client("Products")
-    items = list(
-        c.query_items(
-            query=(
-                "SELECT c.productId, c.name, c.rating, c.price FROM c "
-                "WHERE c.categoryId = @cid "
-                "ORDER BY c.rating DESC, c.price ASC"
-            ),
-            parameters=[{"name": "@cid", "value": "CAT006"}],
-            partition_key="CAT006",
-            populate_query_metrics=True,
+    try:
+        items = list(
+            c.query_items(
+                query=(
+                    "SELECT c.productId, c.name, c.rating, c.price FROM c "
+                    "WHERE c.categoryId = @cid "
+                    "ORDER BY c.rating DESC, c.price ASC"
+                ),
+                parameters=[{"name": "@cid", "value": "CAT006"}],
+                partition_key="CAT006",
+                populate_query_metrics=True,
+            )
         )
-    )
+    except CosmosHttpResponseError as err:
+        if _is_missing_composite_index(err):
+            _print_missing_composite("R-EXT-3")
+            return False
+        raise
     ru, server_count, metrics = _capture(c)
     _print_q("products in CAT006 by rating/price", ru, len(items), server_count, metrics)
+    return True
+
+
+def _print_requirements_summary(results: dict[str, bool]) -> None:
+    print()
+    print("=" * 70)
+    print("Composite-index requirements summary")
+    print("=" * 70)
+    for pattern_id, requirement in _REQUIRED_COMPOSITES.items():
+        ran = results.get(pattern_id, False)
+        status = "OK   " if ran else "MISSING"
+        print(f"  [{status}] {pattern_id}: requires {requirement}")
+    if not all(results.values()):
+        print()
+        print("One or more patterns are missing their composite index. The")
+        print("Cosmos DB engine refuses these ORDER BY queries until the")
+        print("matching composite is in place — there is no 'before' run for")
+        print("them. Apply the indexing policy and re-run:")
+        print("    python complete/queries.py --apply-policy")
+        print("    python complete/queries.py")
 
 
 def main(argv: list[str]) -> int:
@@ -185,10 +264,13 @@ def main(argv: list[str]) -> int:
     print("=" * 70)
     print("Iteration 3 — composite indexes")
     print("=" * 70)
-    r_ext_1(db)
-    r_ext_2(db)
-    r_ext_3(db)
-    return 0
+    results = {
+        "R-EXT-1": r_ext_1(db),
+        "R-EXT-2": r_ext_2(db),
+        "R-EXT-3": r_ext_3(db),
+    }
+    _print_requirements_summary(results)
+    return 0 if all(results.values()) else 2
 
 
 if __name__ == "__main__":

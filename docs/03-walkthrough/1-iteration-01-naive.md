@@ -62,37 +62,39 @@ order ever placed embedded in a growing `orders[]` array.
 ```powershell
 cd src/iteration-01-naive/naive-b
 python complete/seed.py
-python complete/simulate.py                              # 20 iterations, 5 items/order
+python complete/simulate.py                              # defaults: 50 iterations, 50 items/order
 python complete/simulate.py --iterations 20 --items-per-order 10
 ```
 
 ### What you should see
 
-`simulate.py` picks one customer and, for 20 iterations, reads the doc,
-appends one new order, and upserts the doc. It prints a per-iteration
-table:
+`simulate.py` picks one customer and, for `--iterations` rounds (default
+50), reads the doc, appends one new order, and upserts the doc. It
+prints a per-iteration table. With the defaults (50 iterations × 50
+items/order) the tail of the run looks like:
 
 ```text
-iter    doc KB   read RU   upsert RU   orders
-----    ------   -------   ---------   ------
-   1      0.74      1.00       12.30        1
-   2      1.42      1.00       14.10        2
-   3      2.10      1.00       15.80        3
-  ...
-  20     13.60      2.10       42.40       20
+iter    doc KB    read RU   upsert RU   orders
+----    ------    -------   ---------   ------
+   1      6.65       1.00       69.05        1
+  10     63.15       1.00       69.05       10
+  20    126.27       2.10       89.04       20
+  30    189.54       9.95      110.24       30
+  40    252.61       9.95      131.81       40
+  50    315.68       9.95      131.81       50
 ```
 
 Two trends, both bad:
 
-1. **Upsert RU grows roughly linearly with the array.** Every write
-   rewrites the whole document and reindexes the full array.
+1. **Upsert RU grows roughly with the array.** Every write rewrites the
+   whole document and reindexes the full array.
 2. **Read RU grows too** — even reading the customer name pulls back the
    complete order history.
 
-And then the brick wall: the doc will eventually cross Cosmos DB's
-**2 MB item limit** and writes will start returning 413. The simulator
-prints a projection of how many more iterations until that hits, given
-the current per-iteration growth rate.
+At the end of the run the simulator also prints a projection of how many
+more iterations until the document crosses Cosmos DB's **2 MB item
+limit** and writes start returning 413 — at the default item size, that
+is roughly another ~270 iterations past iter 50.
 
 ### Why this is the more dangerous of the two
 

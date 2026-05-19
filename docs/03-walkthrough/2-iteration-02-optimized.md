@@ -192,7 +192,7 @@ For every pattern, compare observed RU between iterations:
 |---------|------------------------------------------|-----------------------------------------------------|
 | P1      | 2 cross-partition queries ≈ 8–15 RU       | 1 single-partition query ≈ 2–4 RU                   |
 | P2      | 1 point read + 1 in-partition query       | 1 point read only                                   |
-| P3      | 1 + N non-transactional writes            | 1 transactional batch (customer + order)            |
+| P3      | 1 + N non-transactional writes            | 1 point read (customer doc) + 1 transactional batch (upsert customer + create order) |
 | P4      | Cross-partition query ≈ 6–10 RU           | Single-partition query ≈ 2–3 RU                     |
 
 Exact numbers depend on emulator build and seed size — what matters is

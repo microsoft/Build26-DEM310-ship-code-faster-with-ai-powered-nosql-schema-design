@@ -30,6 +30,9 @@ iteration-02-output.md
 iteration-03-output.md
 iteration-04-output.md
 
+# Local validation findings reports (timestamped, not for publication)
+findings-*.md
+
 # Dependencies (if applicable)
 node_modules/
 __pycache__/

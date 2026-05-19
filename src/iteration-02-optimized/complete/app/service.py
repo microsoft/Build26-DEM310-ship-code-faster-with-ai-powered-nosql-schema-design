@@ -132,12 +132,25 @@ class CustomerOrderService:
         ]
         total = round(sum(it.lineTotal for it in items), 2)
 
-        # Read the current customer doc so we can roll up the summary.
-        existing = self.customer_orders.get_customer_and_orders(customer_id)
-        _print_query("re-read customer partition for summary", existing)
-        customer_doc = next(
-            (d for d in existing.items if d.get("type") == "customer"), None
+        # P3 is a *read + transactional batch* pattern, not a single
+        # write. We need the current `orderSummary` on the customer doc
+        # so we can roll the new order into it, then upsert the customer
+        # and create the order in one batch on the same partition key.
+        #
+        # The read MUST be filtered to a single document — a point read
+        # by `id` + partition key — instead of a partition-wide
+        # `SELECT * WHERE customerId = @cid`. The unfiltered query would
+        # return every order in the partition (cost scales with partition
+        # size, ~3–4 RU on a 20-order customer, much more in production);
+        # the point read is a fixed ~1.0 RU regardless of how many orders
+        # the customer has.
+        existing = self.customer_orders.get_customer_doc(customer_id)
+        _print_ru(
+            "point read customer doc (filtered by id+pk)",
+            existing.request_charge,
+            len(existing.items),
         )
+        customer_doc = existing.items[0] if existing.items else None
         if customer_doc is None:
             raise ValueError(f"customer {customer_id} not found")
 
@@ -168,7 +181,8 @@ class CustomerOrderService:
             customer_doc=customer_doc,
             order_doc=order.model_dump(),
         )
-        _print_ru("transactional batch (customer + order)", ru, 2)
+        _print_ru("transactional batch (upsert customer + create order)",
+                  ru, 2)
         return {"orderId": order_id, "totalAmount": total}
 
     # ---- P4 -------------------------------------------------------------
