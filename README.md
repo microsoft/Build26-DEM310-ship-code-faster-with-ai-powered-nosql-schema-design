@@ -73,7 +73,10 @@ If you'd like to follow along with this demo at your own pace:
    - Install Python deps: `pip install -r src/requirements.txt`
    - **Drive the demo from the walkthrough scenario.** Start at [`docs/index.md`](./docs/index.md) and follow the four-section flow — *Setup → Scenario → Walkthrough → Takeaways*. Each iteration page is a prompt-first script: feed the listed Copilot prompts to the Cosmos DB Agent Toolkit in order, let the agent propose the design, generate the seed/queries, and capture the RU numbers.
      1. [Setup](./docs/01-setup/) — prerequisites, emulator, VS Code + agent, Python env.
-     2. [Scenario](./docs/02-scenario/) — [business context](./docs/02-scenario/1-business-context.md), [access patterns](./docs/02-scenario/2-access-patterns.md), [volumetrics](./docs/02-scenario/3-volumetrics.md). These three docs are what you paste into the agent in Step 1 of every iteration.
+     2. [Scenario](./docs/02-scenario/) — the inputs you paste into the agent in Step 1 of every iteration. Each one is a worked example you can lift for your own domain (reusable templates: [access-patterns-template.md](./docs/access-patterns-template.md), [volumetrics-template.md](./docs/volumetrics-template.md)):
+        - [Business context](./docs/02-scenario/1-business-context.md) — bike-shop e-commerce backend, AdventureWorksLT-style, the "why" the agent needs.
+        - [Access patterns](./docs/02-scenario/2-access-patterns.md) — P1–P4 (the four core patterns) plus R-EXT-1/2/3 (the post-launch extensions used in iteration 3).
+        - [Volumetrics](./docs/02-scenario/3-volumetrics.md) — document counts, sizes, and TPS estimates that drive the partition-key and indexing recommendations.
      3. **Walkthrough — run these in order:**
         - [Iteration 1 — Naive port](./docs/03-walkthrough/1-iteration-01-naive.md) (baseline RU)
         - [Iteration 2 — Agent-guided redesign](./docs/03-walkthrough/2-iteration-02-optimized.md) (the punchline)
