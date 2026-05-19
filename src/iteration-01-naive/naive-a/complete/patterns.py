@@ -164,6 +164,21 @@ def main() -> None:
     db = client.get_database_client(DATABASE_NAME)
 
     # Pick stable demo IDs that exist in the seeded data.
+    #
+    # These values come from sample-data/master/ as committed:
+    #   - C00005 is the 5th of 10 seeded customers (customers.json).
+    #   - O0000001 is the first order in orders.json, owned by C00001.
+    #     P2 reads it by orderId only (the Orders container is partitioned
+    #     by /orderId, not /customerId), so customer ownership doesn't
+    #     matter for the demo — we just need an order that exists.
+    #   - CAT006 is one of the 5 seeded categories. Note the seeded
+    #     category IDs are non-sequential (CAT006/007/011/012/033) —
+    #     they map back to the original AdventureWorksLT category keys.
+    #
+    # If you re-run sample-data/generate.py these IDs stay stable as long
+    # as the generator's --seed argument doesn't change. If you change the
+    # seed or the input CSVs, re-pick values that exist in the new
+    # master/*.json files.
     sample_customer = "C00005"
     sample_order = "O0000001"
     sample_category = "CAT006"

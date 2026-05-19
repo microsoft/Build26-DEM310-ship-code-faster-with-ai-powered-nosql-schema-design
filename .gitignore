@@ -22,6 +22,9 @@ Thumbs.db
 .env.local
 .env.*.local
 
+# Local-only validation / change-tracking log (not for publication)
+change-recommendation.md
+
 # Dependencies (if applicable)
 node_modules/
 __pycache__/

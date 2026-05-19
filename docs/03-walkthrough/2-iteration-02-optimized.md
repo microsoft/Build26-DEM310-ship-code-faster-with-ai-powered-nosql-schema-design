@@ -97,9 +97,21 @@ cd src/iteration-02-optimized
 python complete/seed.py
 python -m complete.app.main get-customer C00005   # P1
 python -m complete.app.main get-order   C00005 O0000003   # P2
+python -m complete.app.main compare-reads C00005 O0000003 # P2b: point read vs query
 python -m complete.app.main place-order C00005             # P3
 python -m complete.app.main list-products CAT006           # P4
 ```
+
+> **P2b — why the point read wins.** `compare-reads` fetches the same
+> single document two ways: the SDK's `read_item(id, partition_key)`
+> (~1.0 RU) and an equivalent in-partition SQL query
+> `WHERE c.customerId=@cid AND c.id=@oid` (~2.9 RU). Both return one
+> document from one partition; the query still pays ~3× the RU because
+> it goes through the query engine (parsing, planning, item-count and
+> metrics headers) instead of dispatching a direct GET against the
+> replica's primary index. The takeaway baked into iteration 2's
+> schema choice: when you know id + partition key, reach for the
+> point-read API.
 
 ### Step 6 — Ask the agent to interpret the results
 

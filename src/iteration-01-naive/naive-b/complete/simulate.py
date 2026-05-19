@@ -9,8 +9,14 @@ At the end, print a per-iteration table and a projection of how many more
 iterations until the doc crosses the 2 MB Cosmos item limit.
 
 Usage:
-  python simulate.py                            # 20 iter, 5 items/order, customer C00005
+  python simulate.py                            # 50 iter, 50 items/order, customer C00005
   python simulate.py --iterations 30 --items-per-order 10 --customer C00003
+
+Defaults push the document to ~315 KB across 50 iterations — large enough
+that the classic Windows emulator's step-function RU billing becomes
+visible (upsert RU climbs from ~16 RU to ~130 RU, read RU from 1 RU to
+~10 RU). Smaller payloads stay below the first RU billing boundary
+(~128 KB) and the growth is hidden behind fixed overhead.
 """
 
 from __future__ import annotations
@@ -37,10 +43,10 @@ def parse_args() -> argparse.Namespace:
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("--customer", default="C00005",
                    help="customerId to grow (default: C00005)")
-    p.add_argument("--iterations", type=int, default=20,
-                   help="number of orders to append (default: 20)")
-    p.add_argument("--items-per-order", type=int, default=5,
-                   help="line items per appended order (default: 5)")
+    p.add_argument("--iterations", type=int, default=50,
+                   help="number of orders to append (default: 50)")
+    p.add_argument("--items-per-order", type=int, default=50,
+                   help="line items per appended order (default: 50)")
     return p.parse_args()
 
 

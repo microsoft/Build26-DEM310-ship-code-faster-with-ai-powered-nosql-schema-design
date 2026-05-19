@@ -23,7 +23,10 @@ load_dotenv(SRC_DIR / ".env")
 
 EMULATOR_ENDPOINT = os.environ.get("COSMOS_ENDPOINT")
 EMULATOR_KEY = os.environ.get("COSMOS_KEY")
-DATABASE_NAME = os.environ.get("COSMOS_DB", "Build26DEM310DB-i3")
+# Iteration 3 is a tuning pass on the iteration-2 containers (CustomerOrders +
+# Products). It does NOT own its own database — point at iteration 2's by
+# default. Override via COSMOS_DB env var if iteration 2 was seeded elsewhere.
+DATABASE_NAME = os.environ.get("COSMOS_DB", "Build26DEM310DB-i2")
 
 if not EMULATOR_ENDPOINT or not EMULATOR_KEY:
     raise RuntimeError(

@@ -74,6 +74,45 @@ class CustomerOrderService:
                   len(result.items))
         return result.items[0] if result.items else {}
 
+    # ---- P2b ------------------------------------------------------------
+    def compare_order_reads(
+        self, customer_id: str, order_id: str
+    ) -> dict[str, Any]:
+        """Fetch the same single document two ways — point read vs
+        in-partition SQL query — and print both RU charges so attendees
+        can see the SDK's read_item() advantage over a SELECT that
+        targets the exact same id + partition key.
+        """
+        point = self.customer_orders.get_order(customer_id, order_id)
+        _print_ru(
+            "point read   read_item(id, pk)",
+            point.request_charge,
+            len(point.items),
+        )
+
+        query = self.customer_orders.get_order_via_query(customer_id, order_id)
+        _print_query(
+            "query        WHERE customerId=@cid AND id=@oid", query
+        )
+
+        delta = query.request_charge - point.request_charge
+        ratio = (
+            query.request_charge / point.request_charge
+            if point.request_charge
+            else 0.0
+        )
+        print(
+            f"  [RU] {'difference (query - point)':<45} "
+            f"{delta:>+8.2f}  ({ratio:.1f}x)"
+        )
+        return {
+            "orderId": order_id,
+            "pointReadRU": point.request_charge,
+            "queryRU": query.request_charge,
+            "deltaRU": round(delta, 2),
+            "ratio": round(ratio, 2),
+        }
+
     # ---- P3 -------------------------------------------------------------
     def place_order(self, customer_id: str, category_id: str = "CAT006") -> dict[str, Any]:
         # Pick a few products from the requested category.

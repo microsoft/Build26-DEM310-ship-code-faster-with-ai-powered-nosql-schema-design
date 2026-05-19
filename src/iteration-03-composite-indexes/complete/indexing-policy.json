@@ -3,6 +3,7 @@
     "indexingMode": "consistent",
     "automatic": true,
     "includedPaths": [
+      { "path": "/*" },
       { "path": "/customerId/?" },
       { "path": "/type/?" },
       { "path": "/orderDate/?" },
@@ -27,6 +28,7 @@
     "indexingMode": "consistent",
     "automatic": true,
     "includedPaths": [
+      { "path": "/*" },
       { "path": "/categoryId/?" },
       { "path": "/price/?" },
       { "path": "/rating/?" }

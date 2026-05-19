@@ -138,6 +138,28 @@ class CustomerOrdersRepository:
         # so _capture safely returns 0 / "" for those fields.
         return Result(items=items, **_capture(self._container))
 
+    def get_order_via_query(self, customer_id: str, order_id: str) -> Result:
+        """Fetch the same single document via a SQL query filtered by
+        partition key + id. Functionally identical to ``get_order`` but
+        goes through the query engine — included so callers can compare
+        the RU charge against the point read.
+        """
+        items = list(
+            self._container.query_items(
+                query=(
+                    "SELECT * FROM c WHERE c.customerId = @cid "
+                    "AND c.id = @oid"
+                ),
+                parameters=[
+                    {"name": "@cid", "value": customer_id},
+                    {"name": "@oid", "value": order_id},
+                ],
+                partition_key=customer_id,
+                populate_query_metrics=True,
+            )
+        )
+        return Result(items=items, **_capture(self._container))
+
     # ---- writes --------------------------------------------------------
     def place_order_transactional(
         self,

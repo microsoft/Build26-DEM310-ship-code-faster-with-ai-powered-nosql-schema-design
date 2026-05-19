@@ -68,6 +68,7 @@ customer in the **same logical partition**.
 |---------|------------------------------|
 | P1: Get customer + recent orders | **One query, one partition** — `SELECT * FROM c WHERE c.customerId = @cid` returns the customer doc *and* their orders. |
 | P2: Get order + line items       | **One point read** — items are embedded in the order document. |
+| P2b: Point read vs in-partition query for the same doc | **~3× cheaper** — `read_item(id, pk)` lands at ~1.00 RU; the equivalent `SELECT * FROM c WHERE c.customerId=@cid AND c.id=@oid` pays ~2.9 RU for query parsing/planning even though both return the exact same single document. Lesson: **if you know id + partition key, never use a query.** Run `python -m complete.app.main compare-reads C00005 O0000001` to see it. |
 | P3: Place a new order            | **One transactional batch** — update the customer's `orderSummary` and create the order atomically (same partition key). |
 | P4: List products in a category  | **In-partition query** — `Products` is partitioned by `/categoryId`. |
 
@@ -101,6 +102,8 @@ iteration-02-optimized/
 cd src/iteration-02-optimized
 python complete/seed.py                       # creates CustomerOrders + Products
 python -m complete.app.main get-customer C00005
+python -m complete.app.main get-order C00005 O0000001
+python -m complete.app.main compare-reads C00005 O0000001   # point read vs query for the same doc
 python -m complete.app.main place-order C00005
 python -m complete.app.main list-products CAT006
 ```

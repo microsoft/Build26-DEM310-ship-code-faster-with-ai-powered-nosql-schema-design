@@ -2,10 +2,11 @@
 
 Available verbs:
 
-    get-customer   <customerId>
-    get-order      <customerId> <orderId>
-    place-order    <customerId> [categoryId]
-    list-products  <categoryId>
+    get-customer    <customerId>
+    get-order       <customerId> <orderId>
+    compare-reads   <customerId> <orderId>
+    place-order     <customerId> [categoryId]
+    list-products   <categoryId>
 
 The CLI is intentionally tiny: parse argv, hand off to the service, pretty-
 print the result. No argparse, no click — when FastAPI is wired in later,
@@ -37,6 +38,8 @@ def main(argv: list[str]) -> int:
             _dump(svc.get_customer_with_orders(argv[2]))
         elif verb == "get-order" and len(argv) == 4:
             _dump(svc.get_order(argv[2], argv[3]))
+        elif verb == "compare-reads" and len(argv) == 4:
+            _dump(svc.compare_order_reads(argv[2], argv[3]))
         elif verb == "place-order" and len(argv) in (3, 4):
             category = argv[3] if len(argv) == 4 else "CAT006"
             _dump(svc.place_order(argv[2], category))
