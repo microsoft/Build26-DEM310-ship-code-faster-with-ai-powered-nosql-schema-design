@@ -1,7 +1,8 @@
-# AdventureWorksLT source data
+# Sample source data
 
 These files are the raw inputs used by [`../generate.py`](../generate.py) to
-produce the trimmed master JSON in [`../master/`](../master/).
+produce the trimmed master JSON in [`../master/`](../master/). They are
+CSV exports from a classic RDBMS schema for a small e-commerce backend.
 
 | File                     | Purpose                                                       |
 |--------------------------|---------------------------------------------------------------|

@@ -4,7 +4,7 @@ This folder contains:
 
 | Path                  | What it is                                                       |
 |-----------------------|------------------------------------------------------------------|
-| `source/`             | Raw AdventureWorksLT CSV exports (input to the generator)        |
+| `source/`             | Raw sample CSV exports from a classic RDBMS schema (input to the generator) |
 | `generate.py`         | Deterministic script that builds the trimmed master JSON         |
 | `master/`             | Generated JSON used by every iteration's `seed.py`               |
 | `build_demo_shell.py` | Reshapes `master/` into each iteration's `demo-shell/seed-data/` |

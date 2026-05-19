@@ -77,8 +77,8 @@ deployed.
 
 ```text
 @cosmos Generate a seed script that loads 10 customers, 5 categories,
-50 products, and ~20 orders per customer from the AdventureWorksLT CSVs
-in _remove-before-publish/AdventureWorksLT/ into the two new containers.
+50 products, and ~20 orders per customer from the sample CSVs in
+src/sample-data/source/ into the two new containers.
 Use the `type` discriminator on CustomerOrders. After seeding, query the
 emulator and show me one customer document and one order document so I
 can verify the embedded shapes are right.

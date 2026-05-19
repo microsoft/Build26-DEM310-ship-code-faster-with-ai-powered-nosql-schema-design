@@ -11,7 +11,7 @@ interesting bits removed so you can fill them in yourself.
 src/
 ├── requirements.txt
 ├── .env.example                    # copy to .env; loaded by every script
-├── sample-data/                    # AdventureWorksLT -> trimmed master JSON
+├── sample-data/                    # Sample CSVs (classic RDBMS schema) -> trimmed master JSON
 │   ├── source/                     # raw CSVs (regeneration input)
 │   ├── generate.py                 # deterministic generator
 │   └── master/                     # generated JSON consumed by every iteration

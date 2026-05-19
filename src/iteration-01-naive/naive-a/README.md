@@ -1,7 +1,7 @@
 # Iteration 1 — Naive port (the "anti-pattern")
 
 This is the **starting point** for the demo. The data model is a 1:1 port of
-the AdventureWorksLT relational schema: every table becomes its own Cosmos DB
+the classic RDBMS relational schema: every table becomes its own Cosmos DB
 container, partitioned by the most obvious column. This deliberately
 reproduces the choices a developer makes when modelling a relational schema
 in Cosmos DB without first considering access patterns or partitioning.

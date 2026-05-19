@@ -74,7 +74,7 @@ If you'd like to follow along with this demo at your own pace:
    - **Drive the demo from the walkthrough scenario.** Start at [`docs/index.md`](./docs/index.md) and follow the four-section flow — *Setup → Scenario → Walkthrough → Takeaways*. Each iteration page is a prompt-first script: feed the listed Copilot prompts to the Cosmos DB Agent Toolkit in order, let the agent propose the design, generate the seed/queries, and capture the RU numbers.
      1. [Setup](./docs/01-setup/) — prerequisites, emulator, VS Code + agent, Python env.
      2. [Scenario](./docs/02-scenario/) — the inputs you paste into the agent in Step 1 of every iteration. Each one is a worked example you can lift for your own domain (reusable templates: [access-patterns-template.md](./docs/access-patterns-template.md), [volumetrics-template.md](./docs/volumetrics-template.md)):
-        - [Business context](./docs/02-scenario/1-business-context.md) — bike-shop e-commerce backend, AdventureWorksLT-style, the "why" the agent needs.
+        - [Business context](./docs/02-scenario/1-business-context.md) — bike-shop e-commerce backend on a classic RDBMS schema, the "why" the agent needs.
         - [Access patterns](./docs/02-scenario/2-access-patterns.md) — P1–P4 (the four core patterns) plus R-EXT-1/2/3 (the post-launch extensions used in iteration 3).
         - [Volumetrics](./docs/02-scenario/3-volumetrics.md) — document counts, sizes, and TPS estimates that drive the partition-key and indexing recommendations.
      3. **Walkthrough — run these in order:**
@@ -118,7 +118,7 @@ Use these as a starting point — or write your own!
 3. **Re-evaluate the design for cross-partition access and Black Friday scale** — the stretch beyond iteration 3:
 
    ```
-   I have an Azure Cosmos DB for NoSQL container `CustomerOrders` partitioned by /customerId. It handles single-customer reads and place-order writes well, but I now also need cross-partition access patterns: (a) "all orders placed in the last 15 minutes across all customers" for a live operations dashboard, (b) "top-selling products in the last hour" for merchandising. Using the Microsoft Learn MCP Server, walk me through a what-if for Black Friday: 50x normal traffic, ~20,000 orders/minute globally, heavy concurrent reads on the same hot products. For each cross-partition query, recommend whether to solve it with indexing, a secondary container materialized from the change feed, a separate analytical path, or a different partition key — and explain the RU and latency tradeoffs of each option at that scale.
+   I have an Azure Cosmos DB for NoSQL container `CustomerOrders` partitioned by /customerId. It handles single-customer reads and place-order writes well, but I now also need cross-partition access patterns: (a) "all orders placed in the last 15 minutes across all customers" for a live operations dashboard, (b) "top-selling products in the last hour" for merchandising. Using the Microsoft Learn MCP Server, walk me through a what-if for Black Friday: 50x normal traffic, ~1.5M orders/minute globally, heavy concurrent reads on the same hot products. For each cross-partition query, recommend whether to solve it with indexing, a secondary container materialized from the change feed, a separate analytical path, or a different partition key — and explain the RU and latency tradeoffs of each option at that scale.
    ```
 
 ### 💻 Technologies Used
