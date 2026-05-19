@@ -71,13 +71,20 @@ If you'd like to follow along with this demo at your own pace:
 
 5. **Walk through the three schema-evolution iterations covered in the demo**
    - Install Python deps: `pip install -r src/requirements.txt`
-   - Start at [`docs/index.md`](./docs/index.md) for the at-home walkthrough.
-   - Or jump straight to the runnable code:
-     - [`src/iteration-01-naive/`](./src/iteration-01-naive/) — two naive starting points: a 1:1 relational port (`naive-a/`) and the single-document unbounded-array anti-pattern with a growth simulator (`naive-b/`)
-     - [`src/iteration-02-optimized/`](./src/iteration-02-optimized/) — the agent-guided redesign
-     - [`src/iteration-03-composite-indexes/`](./src/iteration-03-composite-indexes/) — optional stretch: composite indexes for new access patterns
-     - [`src/iteration-04-hybrid-vector-search/`](./src/iteration-04-hybrid-vector-search/) — optional, **cloud-only**: hybrid + vector search (requires an Azure Cosmos DB account and Azure AI Foundry / Azure OpenAI; not supported by the local emulator)
-   - The scenario, access patterns, and volumetrics that drive the agent's recommendations live in [`docs/02-scenario/`](./docs/02-scenario/).
+   - **Drive the demo from the walkthrough scenario.** Start at [`docs/index.md`](./docs/index.md) and follow the four-section flow — *Setup → Scenario → Walkthrough → Takeaways*. Each iteration page is a prompt-first script: feed the listed Copilot prompts to the Cosmos DB Agent Toolkit in order, let the agent propose the design, generate the seed/queries, and capture the RU numbers.
+     1. [Setup](./docs/01-setup/) — prerequisites, emulator, VS Code + agent, Python env.
+     2. [Scenario](./docs/02-scenario/) — [business context](./docs/02-scenario/1-business-context.md), [access patterns](./docs/02-scenario/2-access-patterns.md), [volumetrics](./docs/02-scenario/3-volumetrics.md). These three docs are what you paste into the agent in Step 1 of every iteration.
+     3. **Walkthrough — run these in order:**
+        - [Iteration 1 — Naive port](./docs/03-walkthrough/1-iteration-01-naive.md) (baseline RU)
+        - [Iteration 2 — Agent-guided redesign](./docs/03-walkthrough/2-iteration-02-optimized.md) (the punchline)
+        - [Iteration 3 — Composite indexes (optional)](./docs/03-walkthrough/3-iteration-03-composite-indexes.md)
+        - [Iteration 4 — Hybrid + vector search (optional, cloud-only)](./docs/03-walkthrough/4-iteration-04-hybrid-vector-search.md)
+     4. [Takeaways](./docs/04-takeaways.md) — what to remember after you close the laptop.
+   - **Reference code (for validation / fallback only).** The matching `src/iteration-XX-*/complete/` folders are *not* the primary driver — they're the reference solution to validate against, or to copy from if you run out of time. The matching `demo/` folders are the same files with TODOs for hands-on practice.
+     - [`src/iteration-01-naive/`](./src/iteration-01-naive/) — `naive-a/` (1:1 relational port) and `naive-b/` (unbounded-array anti-pattern with growth simulator)
+     - [`src/iteration-02-optimized/`](./src/iteration-02-optimized/) — agent-guided redesign (CustomerOrders + Products)
+     - [`src/iteration-03-composite-indexes/`](./src/iteration-03-composite-indexes/) — composite indexes for new access patterns
+     - [`src/iteration-04-hybrid-vector-search/`](./src/iteration-04-hybrid-vector-search/) — **cloud-only**: requires an Azure Cosmos DB account and Azure AI Foundry / Azure OpenAI (not supported by the local emulator)
 
 ### 🧠 Learning Outcomes
 
