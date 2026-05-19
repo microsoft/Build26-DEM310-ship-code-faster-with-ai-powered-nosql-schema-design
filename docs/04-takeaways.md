@@ -1,20 +1,19 @@
 # Takeaways
 
-The demo collapses a lot of decisions into 23 minutes. Here is the longer
-form of each, plus the few things we deliberately deferred.
+The demo collapses a lot of decisions into focused outcomes.
 
 ## 1. Start from access patterns, not from tables
 
 The single biggest mistake when moving from a relational store to Cosmos
-DB is to translate tables to containers and primary keys to partition
-keys. Inventory **how the data is read and written** before you model
-documents — every other decision falls out of that.
+DB or apply Relational Data Modeling prcincipals to NoSQL is to translate tables as 1:1 into containers and primary keys to partition
+keys without optimization by access patterns. Inventory **how the data is read and written** before you model documents — every other decision falls out of that.
 
-## 2. Co-locate what you read together
+## 2. Co-locate what you read (and write - but not UPDATE) together
 
 If a single screen needs a customer plus their orders, those documents
 should share a partition key. Embed `items[]` inside the order document
 when N is bounded and the items aren't reused.
+**Avoid frequent updates on large documents and unbounded arrays anti-patterns.**
 
 ## 3. Use a `type` discriminator to combine related shapes
 

@@ -19,10 +19,7 @@ Source code: [`/src/iteration-02-optimized`](../../src/iteration-02-optimized/)
 > and `x-ms-documentdb-query-metrics` — the same triplet you'll see
 > printed by `repository.py`. That's how you spot a database request or query regression directly in the code.
 
-Start with iteration 1's RU output, the access patterns, and the
-volumetrics open. Drive the demo with the prompt sequence below and let
-the Agent Kit derive the new schema as you go. The
-[Expected outcomes](#expected-outcomes--reference-key) section at the
+Start with original business context, the access patterns and observe demo flow using the prompt sequence below and let the Agent Kit derive the new schema and generate or update code as you go. The [Expected outcomes](#expected-outcomes--reference-key) section at the
 bottom of this page is the reference key; skip it on the first run if
 you want to see what the kit proposes without anchoring on the answer.
 
@@ -39,29 +36,27 @@ Paste iteration 1's RU output and the scenario links into the agent:
 ```text
 @cosmos Here is what we have today:
 
+- The team is porting from SQL Server to Azure Cosmos DB. It works, but team suspect the design won't hold up under production load and not sure it is optimal.
 - Five containers ported 1:1 from a SQL schema (see iteration-01-naive).
 - Access patterns P1–P4 in docs/02-scenario/2-access-patterns.md.
 - Volumetrics in docs/02-scenario/3-volumetrics.md.
 - Captured RU per pattern from naive-a/patterns.py.
 
-Propose a container layout that:
-  1. Keeps P1 and P2 single-partition or point reads.
-  2. Makes P3 (place order) atomic in one transactional batch.
-  3. Keeps P4 in-partition.
-Explain each partition-key choice in one sentence and show the JSON
-shape for a customer document and an order document.
+Propose optimal Cosmos DB NoSQL container and indexing data model design based on Cosmos DB best practices and account for production volumes and TPS (include tables-container mappings and rationale).
+Explain each container partition-key choice and show the target JSON
+shape for each container Entity document type (highlight if there is colocation of Entities and explain why).
 ```
 
 ### Step 2 — Validate the deployed container structures
-
-After creating the new containers, ask the agent to verify they match the
+Create proposed containers and ask the agent to verify they match the
 proposed design:
 
 ```text
-@cosmos Inspect the local emulator account and confirm:
+@cosmos Create containers based on proposed design.
+Inspect the local emulator account and confirm:
   - A container named `CustomerOrders` exists, partitioned by /customerId.
   - A container named `Products` exists, partitioned by /categoryId.
-  - Both have the default indexing policy (we'll tune in iteration 3).
+  - Validate indexing policy (we'll tune in iteration 3 for additional requirements).
 Report any drift between what I proposed and what is actually deployed.
 ```
 

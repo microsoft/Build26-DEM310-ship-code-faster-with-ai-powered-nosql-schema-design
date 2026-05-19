@@ -8,17 +8,14 @@ are the only thing competing for your attention.
 A **bike-shop e-commerce backend** based on the AdventureWorksLT schema:
 
 - Customers shop the catalog (**products** and **categories**).
-- They build a cart and place orders.
-- Orders move through statuses (`InCart` → `Placed` → `Shipped` →
-  `Delivered`, with `Cancelled` as a side branch).
+- Customer place orders which go through different status and stored as Order and LineItems.
+- Customer also has a Custromer profile.
 
 ## The starting point
 
 The team is porting from SQL Server to Azure Cosmos DB. Their first commit
 copies the relational schema 1:1 — one container per table, each
-partitioned by the primary-key column. It works, but RU charges look high
-even at demo volume, and they suspect the design won't hold up under
-production load.
+partitioned by the primary-key column. It works, but code looks too complex, RU charges look high even at demo volume for many multi-hop queries, and they suspect the design won't hold up under production load.
 
 ## The goal
 
