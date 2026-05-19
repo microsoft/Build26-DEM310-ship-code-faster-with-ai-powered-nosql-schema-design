@@ -78,8 +78,8 @@ If you'd like to follow along with this demo at your own pace:
         - [Access patterns](./docs/02-scenario/2-access-patterns.md) — P1–P4 (the four core patterns) plus R-EXT-1/2/3 (the post-launch extensions used in iteration 3).
         - [Volumetrics](./docs/02-scenario/3-volumetrics.md) — document counts, sizes, and TPS estimates that drive the partition-key and indexing recommendations.
      3. **Walkthrough — run these in order:**
-        - [Iteration 1 — Naive port](./docs/03-walkthrough/1-iteration-01-naive.md) (baseline RU)
-        - [Iteration 2 — Agent-guided redesign](./docs/03-walkthrough/2-iteration-02-optimized.md) (the punchline)
+        - [Iteration 1 — Naive port](./docs/03-walkthrough/1-iteration-01-naive.md) (baseline)
+        - [Iteration 2 — Agent-guided redesign](./docs/03-walkthrough/2-iteration-02-optimized.md) (AI copilot optimized)
         - [Iteration 3 — Composite indexes (optional)](./docs/03-walkthrough/3-iteration-03-composite-indexes.md)
         - [Iteration 4 — Hybrid + vector search (optional, cloud-only)](./docs/03-walkthrough/4-iteration-04-hybrid-vector-search.md)
      4. [Takeaways](./docs/04-takeaways.md) — what to remember after you close the laptop.
