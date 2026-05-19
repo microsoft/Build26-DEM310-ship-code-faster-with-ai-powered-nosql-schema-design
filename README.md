@@ -123,6 +123,7 @@ Use these as a starting point — or write your own!
 
 | Resource | Description |
 |:---------|:------------|
+| [Welcome to Azure Cosmos DB for NoSQL](https://learn.microsoft.com/azure/cosmos-db/nosql/) | **Start here.** Why Azure Cosmos DB for NoSQL: a globally distributed, schema-flexible database with single-digit-millisecond latency, elastic scale, and SLA-backed throughput — the foundation everything in this demo builds on |
 | [Azure Cosmos DB extension for Visual Studio Code](https://learn.microsoft.com/azure/cosmos-db/visual-studio-code-extension) | Bundles the Azure Cosmos DB Agent Toolkit (AI-assisted schema design with GitHub Copilot) and the Azure Cosmos DB Shell — the central tool used throughout the demo |
 | [Azure Cosmos DB for NoSQL best practices in GitHub Copilot for Visual Studio Code](https://learn.microsoft.com/azure/cosmos-db/github-copilot-visual-studio-code-best-practices) | Step-by-step guidance for using the Agent Toolkit with GitHub Copilot — installation, prompts, and recommended workflow |
 | [Azure Cosmos DB Shell](https://learn.microsoft.com/azure/cosmos-db/shell/overview) | Cross-platform interactive shell for exploring and managing Azure Cosmos DB databases |

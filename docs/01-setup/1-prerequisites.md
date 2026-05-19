@@ -5,6 +5,7 @@
 | **Python 3.10+**                          | Runs the seed and pattern scripts            |
 | **VS Code**                               | Hosts the Cosmos DB extension and Copilot    |
 | **Cosmos DB extension for VS Code**       | Provides the **Cosmos DB Agent** and the **Cosmos DB Shell** |
+| **Azure Cosmos DB Agent Kit** ([docs](https://learn.microsoft.com/azure/cosmos-db/gen-ai/agent-kit)) | Standalone AI coding assistant integration for Azure Cosmos DB — usable on its own with any MCP-capable client if you'd rather not install the VS Code extension |
 | **GitHub Copilot Chat**                   | Lets the agent generate code in the editor   |
 | **Cosmos DB emulator** (local)            | Zero-cost target for the demo containers     |
 | **git**                                   | To clone this repo                           |
