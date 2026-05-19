@@ -76,6 +76,7 @@ If you'd like to follow along with this demo at your own pace:
      - [`src/iteration-01-naive/`](./src/iteration-01-naive/) — two naive starting points: a 1:1 relational port (`naive-a/`) and the single-document unbounded-array anti-pattern with a growth simulator (`naive-b/`)
      - [`src/iteration-02-optimized/`](./src/iteration-02-optimized/) — the agent-guided redesign
      - [`src/iteration-03-composite-indexes/`](./src/iteration-03-composite-indexes/) — optional stretch: composite indexes for new access patterns
+     - [`src/iteration-04-hybrid-vector-search/`](./src/iteration-04-hybrid-vector-search/) — optional, **cloud-only**: hybrid + vector search (requires an Azure Cosmos DB account and Azure AI Foundry / Azure OpenAI; not supported by the local emulator)
    - The scenario, access patterns, and volumetrics that drive the agent's recommendations live in [`docs/02-scenario/`](./docs/02-scenario/).
 
 ### 🧠 Learning Outcomes
@@ -122,6 +123,8 @@ Use these as a starting point — or write your own!
 
 | Resource | Description |
 |:---------|:------------|
+| [Azure Cosmos DB extension for Visual Studio Code](https://learn.microsoft.com/azure/cosmos-db/visual-studio-code-extension) | Bundles the Azure Cosmos DB Agent Toolkit (AI-assisted schema design with GitHub Copilot) and the Azure Cosmos DB Shell — the central tool used throughout the demo |
+| [Azure Cosmos DB for NoSQL best practices in GitHub Copilot for Visual Studio Code](https://learn.microsoft.com/azure/cosmos-db/github-copilot-visual-studio-code-best-practices) | Step-by-step guidance for using the Agent Toolkit with GitHub Copilot — installation, prompts, and recommended workflow |
 | [Azure Cosmos DB Shell](https://learn.microsoft.com/azure/cosmos-db/shell/overview) | Cross-platform interactive shell for exploring and managing Azure Cosmos DB databases |
 | [Data modeling in Azure Cosmos DB for NoSQL](https://learn.microsoft.com/azure/cosmos-db/modeling-data) | The reference page behind iteration 2 — embed vs reference, denormalization patterns, partition-key choice |
 | [Transactional batch operations in Azure Cosmos DB](https://learn.microsoft.com/azure/cosmos-db/transactional-batch) | The batch API the optimized place-order in iteration 2 uses |
