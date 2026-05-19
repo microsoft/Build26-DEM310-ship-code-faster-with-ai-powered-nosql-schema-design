@@ -45,19 +45,32 @@ Paste iteration 1's RU output and the scenario links into the agent:
 Propose optimal Cosmos DB NoSQL container and indexing data model design based on Cosmos DB best practices and account for production volumes and TPS (include tables-container mappings and rationale).
 Explain each container partition-key choice and show the target JSON
 shape for each container Entity document type (highlight if there is colocation of Entities and explain why).
+
+Write the full recommendation to `iteration-02-output.md` at the repo
+root — include the container/partition-key mapping, target JSON shapes,
+indexing notes, and the rationale for each choice. This file is a
+checkpoint: I will review it before moving on to Step 2.
 ```
 
-### Step 2 — Validate the deployed container structures
-Create proposed containers and ask the agent to verify they match the
-proposed design:
+> **Checkpoint.** Before continuing, open `iteration-02-output.md` and
+> confirm the proposed design matches your intent. Edit the file (or
+> re-prompt the agent) until you're satisfied — every later step is
+> built on top of this design.
+
+### Step 2 — Create and validate the deployed container structures
+
+Drive creation and validation from the checkpoint file so the deployed
+shape is whatever you approved in Step 1 — no hardcoded names or keys
+in this prompt:
 
 ```text
-@cosmos Create containers based on proposed design.
-Inspect the local emulator account and confirm:
-  - A container named `CustomerOrders` exists, partitioned by /customerId.
-  - A container named `Products` exists, partitioned by /categoryId.
-  - Validate indexing policy (we'll tune in iteration 3 for additional requirements).
-Report any drift between what I proposed and what is actually deployed.
+@cosmos Read `iteration-02-output.md` and use it as the source of truth.
+For every container described there, create it in the local emulator
+with the partition key and indexing policy specified in the file.
+Then inspect the emulator account and confirm each container exists
+exactly as described — name, partition key path, and indexing policy.
+Report any drift between `iteration-02-output.md` and what is actually
+deployed.
 ```
 
 ### Step 3 — Seed and validate data shapes

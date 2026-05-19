@@ -53,23 +53,42 @@ recommend a target document shape that carries both an embedding and
 text fields, and tell me which Cosmos DB for NoSQL features I need
 (vector index type, full-text policy, hybrid RANK RRF) and the
 tradeoffs of each choice.
+
+Write the full recommendation to `iteration-04-output.md` at the repo
+root — include the target `ProductsRich` document shape, vector
+embedding policy (path, dimensions, distance, index type), full-text
+policy, required account capabilities, and the Foundry model choices
+with tradeoffs. This file is a checkpoint: I will review it before
+moving on to Step 2 (infrastructure generation).
 ```
 
-### Step 2 — Generate the infrastructure
+> **Checkpoint.** Before continuing, open `iteration-04-output.md` and
+> confirm the proposed document shape, index types, and capabilities
+> match your intent. Edit the file (or re-prompt the agent) until
+> you're satisfied — the Bicep generated in Step 2 will encode these
+> choices.
+
+### Step 2 — Generate and validate the infrastructure
+
+Drive infra generation and validation from the checkpoint file so the
+deployed surface is whatever you approved in Step 1 — no hardcoded
+container names, capabilities, models, or index settings in this prompt:
 
 ```text
-@cosmos Produce a Bicep deployment that creates:
-  - An Azure Cosmos DB for NoSQL account (serverless) with the
-    EnableNoSQLVectorSearch and EnableNoSQLFullTextSearch capabilities.
-  - A `ProductsRich` container partitioned by /categoryId with the
-    vector embedding policy and full-text policy you recommended.
-  - An Azure AI Foundry account with gpt-4o-mini and
-    text-embedding-3-small deployments.
-  - All access keyless (Entra ID + RBAC); no account keys, no connection
-    strings. Output a .env block I can paste into src/.env.
+@cosmos Read `iteration-04-output.md` and use it as the source of truth.
+Produce a Bicep deployment that provisions exactly the surface it
+describes — Cosmos DB account capabilities, container(s) with their
+partition key, vector embedding policy, and full-text policy, plus any
+Azure AI Foundry account and model deployments called out in the file.
+Keep all access keyless (Entra ID + RBAC) as specified, and output a
+.env block I can paste into `src/.env`. After deployment, inspect the
+resulting resources and confirm they match `iteration-04-output.md`;
+flag any drift.
 ```
 
-Reference output: [`infra/`](../../src/iteration-04-hybrid-vector-search/infra/).
+Reference output: [`infra/`](../../src/iteration-04-hybrid-vector-search/infra/)
+— your generated Bicep will reflect whatever `iteration-04-output.md`
+specifies.
 
 ### Step 3 — Validate the deployed structures
 

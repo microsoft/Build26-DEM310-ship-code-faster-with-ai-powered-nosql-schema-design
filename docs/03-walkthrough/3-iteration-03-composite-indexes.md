@@ -56,19 +56,44 @@ patterns we didn't model for:
 For each one, tell me whether the iteration-2 schema can serve it
 efficiently as-is, and what (if anything) needs to change. Don't change
 the partition keys.
+
+Write the full analysis and proposed index/design changes to
+`iteration-03-output.md` at the repo root — include per-pattern
+verdict, recommended composite indexes (with ASC/DESC ordering and
+rationale), and any query-shape adjustments. This file is a checkpoint:
+I will review it before moving on to Step 2.
 ```
 
-### Step 2 — Propose the index changes
+> **Checkpoint.** Before continuing, open `iteration-03-output.md` and
+> confirm the proposed indexing changes match your intent. Edit the
+> file (or re-prompt the agent) until you're satisfied — Steps 2–6
+> apply this plan.
+
+### Step 2 — Apply and validate the index changes
+
+Drive apply + validation from the checkpoint file so the deployed
+policy is whatever you approved in Step 1 — no hardcoded container or
+index specifics in this prompt:
 
 ```text
-@cosmos For each pattern that needs help, propose the minimum indexing
-policy change — prefer composite indexes over re-partitioning or new
-containers. Show me the merged indexing-policy.json for each container
-and explain the ASC/DESC ordering for every composite path.
+@cosmos Read `iteration-03-output.md` and use it as the source of truth.
+For each affected container, start from the iteration-2 indexing policy
+currently deployed on the emulator (fetch it live; do not assume) and
+generate a merged `indexing-policy.json` that preserves every existing
+included/excluded path and composite index from iteration 2 and adds
+the new composite indexes (and any other index changes) described in
+`iteration-03-output.md`. Do not drop or rewrite iteration-2 entries.
+Apply the merged policy to the emulator. After apply, inspect each
+container and confirm the resulting indexing policy is the union of the
+iteration-2 baseline and the iteration-03-output.md additions — paths,
+ASC/DESC ordering, and composite groupings. Flag any drift or any
+iteration-2 entry that went missing.
 ```
 
-The agent should produce something equivalent to
-[`indexing-policy.json`](../../src/iteration-03-composite-indexes/complete/indexing-policy.json).
+The generated policy should be equivalent to
+[`indexing-policy.json`](../../src/iteration-03-composite-indexes/complete/indexing-policy.json)
+for the reference design — your file will reflect whatever
+`iteration-03-output.md` specifies.
 
 ### Step 3 — Validate the deployed policy
 
