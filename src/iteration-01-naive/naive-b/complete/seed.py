@@ -5,6 +5,8 @@ the array on a chosen customer's document, iteration by iteration.
 
 from __future__ import annotations
 
+import sys
+
 from azure.cosmos import PartitionKey, exceptions
 
 from shared import (
@@ -15,6 +17,11 @@ from shared import (
     get_client,
     load_master,
 )
+
+try:
+    sys.stdout.reconfigure(encoding="utf-8")
+except (AttributeError, OSError):
+    pass
 
 
 def ensure_database_and_container():

@@ -15,9 +15,17 @@ master orders so iteration-2 reads are truly single-doc.
 from __future__ import annotations
 
 import json
+import sys
 from pathlib import Path
 
 from azure.cosmos import PartitionKey
+
+# Ensure em-dashes and ellipses in console output render correctly on
+# Windows PowerShell (default code page is not UTF-8).
+try:
+    sys.stdout.reconfigure(encoding="utf-8")
+except (AttributeError, OSError):
+    pass
 
 from app.repository import (
     CUSTOMER_ORDERS,

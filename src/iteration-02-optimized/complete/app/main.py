@@ -20,6 +20,11 @@ import sys
 
 from .service import CustomerOrderService
 
+try:
+    sys.stdout.reconfigure(encoding="utf-8")
+except (AttributeError, OSError):
+    pass
+
 
 def _dump(obj) -> None:
     print(json.dumps(obj, indent=2, default=str))

@@ -18,6 +18,11 @@ from azure.cosmos import CosmosClient
 from azure.cosmos.exceptions import CosmosHttpResponseError
 from dotenv import load_dotenv
 
+try:
+    sys.stdout.reconfigure(encoding="utf-8")
+except (AttributeError, OSError):
+    pass
+
 # Load /src/.env (copy /src/.env.example -> /src/.env on first run).
 SRC_DIR = Path(__file__).resolve().parents[2]
 load_dotenv(SRC_DIR / ".env")
@@ -270,7 +275,12 @@ def main(argv: list[str]) -> int:
         "R-EXT-3": r_ext_3(db),
     }
     _print_requirements_summary(results)
-    return 0 if all(results.values()) else 2
+    # Always exit 0 — the summary above already surfaces any missing
+    # composite-index requirements. This keeps the documented
+    # before / apply / after command sequence runnable under
+    # `$ErrorActionPreference='Stop'` or `&&` chaining without masking
+    # the diagnostic output.
+    return 0
 
 
 if __name__ == "__main__":

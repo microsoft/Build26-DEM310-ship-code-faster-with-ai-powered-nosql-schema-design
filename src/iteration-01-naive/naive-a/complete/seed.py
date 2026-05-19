@@ -13,6 +13,8 @@ Reshapes the master JSON into the naive container layout:
 
 from __future__ import annotations
 
+import sys
+
 from azure.cosmos import PartitionKey
 from azure.cosmos.exceptions import CosmosResourceExistsError
 
@@ -22,6 +24,11 @@ from shared import (
     get_client,
     load_master,
 )
+
+try:
+    sys.stdout.reconfigure(encoding="utf-8")
+except (AttributeError, OSError):
+    pass
 
 
 def ensure_database_and_containers(client):

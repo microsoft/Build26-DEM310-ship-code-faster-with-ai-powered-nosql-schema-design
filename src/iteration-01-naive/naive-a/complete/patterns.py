@@ -15,9 +15,15 @@ that's the point of the demo.
 
 from __future__ import annotations
 
+import sys
 from datetime import datetime, timezone
 
 from shared import DATABASE_NAME, get_client, print_query, print_ru
+
+try:
+    sys.stdout.reconfigure(encoding="utf-8")
+except (AttributeError, OSError):
+    pass
 
 
 def _query(container, query, params=None, partition_key=None):

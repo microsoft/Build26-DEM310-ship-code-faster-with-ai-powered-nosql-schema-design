@@ -25,6 +25,13 @@ import argparse
 import sys
 from datetime import datetime, timedelta, timezone
 
+# Force UTF-8 stdout so non-ASCII characters render correctly under
+# Windows PowerShell.
+try:
+    sys.stdout.reconfigure(encoding="utf-8")
+except (AttributeError, OSError):
+    pass
+
 from azure.cosmos import exceptions
 
 from shared import (
@@ -126,9 +133,23 @@ def main() -> int:
     first, last = rows[0], rows[-1]
     delta_kb = last[1] - first[1]
     delta_ru = last[3] - first[3]
+    # Format deltas with an explicit sign so negative growth prints as
+    # '-5.67' instead of the legacy '+-5.67'.
+    def _signed(v: float) -> str:
+        return f"{v:+.2f}"
+
     print(f"Growth across {args.iterations} iterations:")
-    print(f"  doc size : {first[1]:.2f} KB  ->  {last[1]:.2f} KB   (+{delta_kb:.2f} KB)")
-    print(f"  upsert RU: {first[3]:.2f}     ->  {last[3]:.2f}      (+{delta_ru:.2f} RU)")
+    print(f"  doc size : {first[1]:.2f} KB  ->  {last[1]:.2f} KB   ({_signed(delta_kb)} KB)")
+    print(f"  upsert RU: {first[3]:.2f}     ->  {last[3]:.2f}      ({_signed(delta_ru)} RU)")
+
+    if args.iterations < 30 or args.items_per_order < 30:
+        print(
+            "\nNote: short / small-payload runs can show flat or even\n"
+            "decreasing upsert RU because the doc stays under the\n"
+            "emulator's first RU billing step (~128 KB). Re-run with\n"
+            "defaults (--iterations 50 --items-per-order 50) to see the\n"
+            "unbounded-array growth trend clearly."
+        )
 
     per_iter_kb = delta_kb / max(args.iterations - 1, 1)
     if per_iter_kb > 0:
