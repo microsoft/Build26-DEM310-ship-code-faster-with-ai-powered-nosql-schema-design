@@ -9,7 +9,7 @@ A **bike-shop e-commerce backend** based on the AdventureWorksLT schema:
 
 - Customers shop the catalog (**products** and **categories**).
 - Customer place orders which go through different status and stored as Order and LineItems.
-- Customer also has a Custromer profile.
+- Customer also has a Customer profile.
 
 ## The starting point
 
