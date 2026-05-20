@@ -5,7 +5,7 @@ The demo collapses a lot of decisions into focused outcomes.
 ## 1. Start from access patterns, not from tables
 
 The single biggest mistake when moving from a relational store to Cosmos
-DB or apply Relational Data Modeling prcincipals to NoSQL is to translate tables as 1:1 into containers and primary keys to partition
+DB or apply Relational Data Modeling principles to NoSQL is to translate tables as 1:1 into containers and primary keys to partition
 keys without optimization by access patterns. Inventory **how the data is read and written** before you model documents — every other decision falls out of that.
 
 ## 2. Co-locate what you read (and write - but not UPDATE) together
@@ -40,8 +40,8 @@ add a composite — it removes the in-memory sort. See iteration 3.
   the flat `/customerId` partition is fine for the next ~3 years.
 - **Change feed and materialized views.** Useful for product search
   facets, analytics rollups, and event sourcing — out of scope here.
-- **Multi-region writes.** Worth turning on once write RPS exceeds
-  ~1 000 sustained or if customers span >2 regions.
+- **Multi-region writes.** Consider Multi-Region writes if your
+  e-commerce application requires a 99.999% write availability SLA.
 
 ## Where to go next
 

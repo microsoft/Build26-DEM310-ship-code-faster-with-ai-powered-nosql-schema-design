@@ -22,6 +22,10 @@ Thumbs.db
 .env.local
 .env.*.local
 
+# Python build artifacts
+__pycache__/
+*.pyc
+
 # Local-only validation / change-tracking log (not for publication)
 change-recommendation.md
 
