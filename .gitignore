@@ -39,6 +39,7 @@ findings-*.md
 
 # Walkthrough Step 5 run logs (Tee-Object output, local only)
 iteration-*-step5-*.log
+iteration-01-naive-*.log
 
 # Dependencies (if applicable)
 node_modules/
