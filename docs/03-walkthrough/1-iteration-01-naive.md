@@ -31,28 +31,37 @@ access patterns would type first.
 
 ### Run it
 
-Tee each command's stdout to a per-step log so you can compare RU
-charges against iteration 2 later. `Tee-Object` still streams to the
-screen, so the audience sees the RU output live.
+The runtime lives at the repo root in `scripts/` (see
+[`src/iteration-01-naive/naive-a/README.md`](../../src/iteration-01-naive/naive-a/README.md)).
+Each script writes its own log via `--log` so the filename always
+matches the pattern that produced it — same convention used by
+iteration 2, which makes the per-pattern logs directly comparable.
 
 ```powershell
-cd src/iteration-01-naive/naive-a
-python -u complete/seed.py     2>&1 | Tee-Object -FilePath iteration-01-naive-a-seed.log
-python -u complete/patterns.py 2>&1 | Tee-Object -FilePath iteration-01-naive-a-patterns.log
-cd ..\..\..
+# from repo root
+python -u -m scripts.seed_iteration_01_naive_a --log logs/iter-01/seed.log
+
+# Run all 4 patterns + P2b; each writes its own logs/iter-01/step5-P<N>.log
+python -u -m scripts.patterns_iteration_01_naive_a --pattern all
 ```
 
-`patterns.py` prints the RU charge after each step. Capture the totals —
-you'll compare them against iteration 2.
+Need a single pattern (e.g. while iterating)? Pass `--pattern P2b --log
+logs/iter-01/step5-P2b.log`. Each per-pattern log is kept small on
+purpose: one banner, one `[RU]` line per Cosmos call, a 4-field
+`metrics:` summary, and one curated `Result:` block — no full payload
+dumps and no SDK request/response header noise. Capture the RU
+totals; you'll compare them against `logs/iter-02/step5-P<N>.log` from
+iteration 2.
 
 ### What you should see
 
-| Pattern                                 | Behavior on this layout                                       |
-|-----------------------------------------|---------------------------------------------------------------|
-| P1: customer + 5 recent orders          | Two cross-partition queries                                   |
-| P2: order + items                       | One point read + one in-partition query in `OrderItems`       |
-| P3: place an order                      | 1 + N writes spread across two containers — **not atomic**    |
-| P4: products in a category sorted by price | Cross-partition query (Products is partitioned by `/productId`) |
+| Pattern                                       | Behavior on this layout                                       |
+|-----------------------------------------------|---------------------------------------------------------------|
+| P1: customer + 5 recent orders                | Two cross-partition queries                                   |
+| P2: order + items                             | One point read + one in-partition query in `OrderItems`       |
+| P2b: same order, query vs. point read         | Quantifies the query→point-read RU gap on this layout         |
+| P3: place an order                            | 1 + N writes spread across two containers — **not atomic**    |
+| P4: products in a category sorted by price    | Cross-partition query (`Products` is partitioned by `/productId`) |
 
 ## naive-b — single document, unbounded array
 
@@ -64,12 +73,19 @@ order ever placed embedded in a growing `orders[]` array.
 
 ### Run it
 
+Naive-b doesn't have a `scripts/` wrapper — it's a smaller, throwaway
+demo whose only job is to make the unbounded-array failure mode
+visible. The simulator is run directly, but logs still land under
+`logs/iter-01/` to match the rest of the walkthrough.
+
 ```powershell
+# from repo root
+New-Item -ItemType Directory -Force logs/iter-01 | Out-Null
 cd src/iteration-01-naive/naive-b
-python -u complete/seed.py                                            2>&1 | Tee-Object -FilePath iteration-01-naive-b-seed.log
-python -u complete/simulate.py                                        2>&1 | Tee-Object -FilePath iteration-01-naive-b-simulate-default.log    # defaults: 50 iterations, 50 items/order
-python -u complete/simulate.py --iterations 10 --items-per-order 100  2>&1 | Tee-Object -FilePath iteration-01-naive-b-simulate-large-items.log
-cd ..\..\..
+python -u complete/seed.py                                            2>&1 | Tee-Object -FilePath ../../../logs/iter-01/naive-b-seed.log
+python -u complete/simulate.py                                        2>&1 | Tee-Object -FilePath ../../../logs/iter-01/naive-b-simulate-default.log     # defaults: 50 iterations, 50 items/order
+python -u complete/simulate.py --iterations 10 --items-per-order 100  2>&1 | Tee-Object -FilePath ../../../logs/iter-01/naive-b-simulate-large-items.log
+cd ../../..
 ```
 
 ### What you should see
