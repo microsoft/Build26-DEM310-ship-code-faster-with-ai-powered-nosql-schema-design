@@ -43,13 +43,14 @@ and what motivates iteration 2.
    query call out the printed `RU:` value — that's the talking point.
 
 > **Prefer the Python CLI?** The same patterns run via
-> `python complete/patterns.py` from the parent folder, and the same
-> seeding via `python complete/seed.py`. Use whichever surface you
-> find more familiar.
+> `python -u -m scripts.patterns_iteration_01_naive_a` from the repo
+> root, and the same seeding via
+> `python -u -m scripts.seed_iteration_01_naive_a`. Use whichever
+> surface you find more familiar.
 
 ## Cross-reference
 
-* [src/iteration-01-naive/naive-a/complete/seed.py](../complete/seed.py) — the Python equivalent of `01-setup.cosmos.js`.
-* [src/iteration-01-naive/naive-a/complete/patterns.py](../complete/patterns.py) — the Python equivalent of `02-access-patterns.cosmos.js`.
+* [scripts/seed_iteration_01_naive_a.py](../../../../scripts/seed_iteration_01_naive_a.py) — the Python equivalent of `01-setup.cosmos.js`.
+* [scripts/patterns_iteration_01_naive_a.py](../../../../scripts/patterns_iteration_01_naive_a.py) — the Python equivalent of `02-access-patterns.cosmos.js`.
 * [src/iteration-01-naive/naive-a/README.md](../README.md) — the full
   walkthrough and "why this is not recommended" analysis.

@@ -106,38 +106,45 @@ Flag any drift between what I asked for and what is actually deployed.
 ### Step 4 — Seed embeddings and scaffold the search code
 
 ```text
-@cosmos Generate seed.py and search.py for ProductsRich:
-  - seed.py: read products, call text-embedding-3-small via Entra ID,
-    upsert each product with its embedding and full-text fields.
-  - search.py: three functions, one per R-VEC-1 / R-FTS-1 / R-HYB-1,
-    each logging requestCharge, item count, query metrics, and the
-    embedding token usage from Azure AI Foundry.
+@cosmos Generate `scripts/seed_iteration_04.py` and add hybrid search
+functions to `demo/app/queries.py` for ProductsRich:
+  - `scripts/seed_iteration_04.py`: read products from
+    `src/sample-data/master/products.json`, call text-embedding-3-small
+    via Entra ID (DefaultAzureCredential), upsert each product with its
+    embedding and full-text fields. Log progress to
+    `logs/iter-04/seed.log`.
+  - `demo/app/queries.py`: add three functions — one per R-VEC-1 /
+    R-FTS-1 / R-HYB-1 — each logging requestCharge, item count, query
+    metrics, and the embedding token usage from Azure AI Foundry.
+    Extend the existing CLI:
+    `python -m demo.app.queries {vec|fts|hyb} "<query text>" [--log PATH]`.
 ```
 
 ### Step 5 — Execute the three queries
 
-Tee each query's output to a per-pattern log so Step 6 can read the
-results directly. `Tee-Object` still streams to the screen, so the
-audience sees scores, RU charges, and the RRF fusion output live.
+Each script writes its own log file via `--log` (see
+[CONVENTIONS.md](./CONVENTIONS.md)) so filenames bind to content.
 
 ```powershell
-cd src/iteration-04-hybrid-vector-search
-python -u complete/seed.py 2>&1 | Tee-Object -FilePath iteration-04-step5-seed.log
-python -u complete/search.py vec  "lightweight aluminum mountain bike for trails" 2>&1 | Tee-Object -FilePath iteration-04-step5-vec.log
-python -u complete/search.py fts  "helmet visor adjustable"                       2>&1 | Tee-Object -FilePath iteration-04-step5-fts.log
-python -u complete/search.py hyb  "comfortable long-distance road bike saddle"    2>&1 | Tee-Object -FilePath iteration-04-step5-hyb.log
+# from repo root
+python -u -m scripts.seed_iteration_04                                                         --log logs/iter-04/seed.log
+python -u -m demo.app.queries vec "lightweight aluminum mountain bike for trails"             --log logs/iter-04/step5-vec.log
+python -u -m demo.app.queries fts "helmet visor adjustable"                                   --log logs/iter-04/step5-fts.log
+python -u -m demo.app.queries hyb "comfortable long-distance road bike saddle"                --log logs/iter-04/step5-hyb.log
 ```
 
 ### Step 6 — Ask the agent to interpret the results
 
 ```text
-@cosmos Read iteration-04-step5-vec.log, iteration-04-step5-fts.log,
-and iteration-04-step5-hyb.log in this directory — they contain the
-request charges, top-k results, and (for R-HYB-1) the RRF rank fusion
-output for each query. For each one, explain which feature dominated
-the result ordering, where the vector index earned its cost, and
-whether the full-text policy is catching the right fields. Recommend
-one tweak per query if you'd change anything.
+@cosmos Read the per-query logs under `logs/iter-04/`
+(step5-vec.log, step5-fts.log, step5-hyb.log) — they contain the
+request charges, top-k results, and (for R-HYB-1) the RRF rank
+fusion output for each query. For each one, explain which feature
+dominated the result ordering, where the vector index earned its
+cost, and whether the full-text policy is catching the right fields.
+Recommend one tweak per query if you'd change anything. Produce a
+markdown table with columns: `Query | Top-1 product | RU |
+Embedding tokens | Dominant signal`.
 ```
 
 ## Why it's optional

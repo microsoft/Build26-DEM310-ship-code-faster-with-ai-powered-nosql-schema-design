@@ -87,16 +87,24 @@ iteration-04-hybrid-vector-search/
 
 ## Run
 
-```powershell
-cd src/iteration-04-hybrid-vector-search
+The runtime lives at the repo root (`scripts/seed_iteration_04.py` plus
+the vec/fts/hyb commands on `demo/app/queries.py`) per
+[CONVENTIONS.md](../../docs/03-walkthrough/CONVENTIONS.md).
 
+```powershell
+# from repo root
 # Creates ProductsRich container, generates embeddings, upserts ~150 docs
-python complete/seed.py
+python -u -m scripts.seed_iteration_04                                                       --log logs/iter-04/seed.log
 
 # Runs the three search patterns and prints RU + x-ms-item-count
 # + x-ms-documentdb-query-metrics for each.
-python complete/search.py
+python -u -m demo.app.queries vec "lightweight aluminum mountain bike for trails"           --log logs/iter-04/step5-vec.log
+python -u -m demo.app.queries fts "helmet visor adjustable"                                 --log logs/iter-04/step5-fts.log
+python -u -m demo.app.queries hyb "comfortable long-distance road bike saddle"              --log logs/iter-04/step5-hyb.log
 ```
+
+The `src/iteration-04-hybrid-vector-search/{complete,demo}/` folders
+are reference content only.
 
 ## Tear-down
 

@@ -42,6 +42,9 @@ iteration-*-step5-*.log
 iteration-01-naive-*.log
 *.log
 
+# Generated artefacts (per-iteration logs, bench JSON dumps) — see docs/03-walkthrough/CONVENTIONS.md
+logs/
+
 # Dependencies (if applicable)
 node_modules/
 __pycache__/

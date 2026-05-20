@@ -68,7 +68,7 @@ customer in the **same logical partition**.
 |---------|------------------------------|
 | P1: Get customer + recent orders | **One query, one partition** — `SELECT * FROM c WHERE c.customerId = @cid` returns the customer doc *and* their orders. |
 | P2: Get order + line items       | **One point read** — items are embedded in the order document. |
-| P2b: Point read vs in-partition query for the same doc | **~3× cheaper** — `read_item(id, pk)` lands at ~1.00 RU; the equivalent `SELECT * FROM c WHERE c.customerId=@cid AND c.id=@oid` pays ~2.9 RU for query parsing/planning even though both return the exact same single document. Lesson: **if you know id + partition key, never use a query.** Run `python -m complete.app.main compare-reads C00005 O0000001` to see it. |
+| P2b: Point read vs in-partition query for the same doc | **~3× cheaper** — `read_item(id, pk)` lands at ~1.00 RU; the equivalent `SELECT * FROM c WHERE c.customerId=@cid AND c.id=@oid` pays ~2.9 RU for query parsing/planning even though both return the exact same single document. Lesson: **if you know id + partition key, never use a query.** Run `python -m demo.app.main compare-reads C00005 O0000001` to see it. |
 | P3: Place a new order            | **One transactional batch** — update the customer's `orderSummary` and create the order atomically (same partition key). |
 | P4: List products in a category  | **In-partition query** — `Products` is partitioned by `/categoryId`. |
 
@@ -98,15 +98,24 @@ iteration-02-optimized/
 
 ## Run the complete solution
 
+The runtime lives at the repo root in `demo/app/` per
+[CONVENTIONS.md](../../docs/03-walkthrough/CONVENTIONS.md). The runbook
+with the expected RU envelope is in
+[`docs/03-walkthrough/2-iteration-02-optimized-complete.md`](../../docs/03-walkthrough/2-iteration-02-optimized-complete.md).
+
 ```powershell
-cd src/iteration-02-optimized
-python complete/seed.py                       # creates CustomerOrders + Products
-python -m complete.app.main get-customer C00005
-python -m complete.app.main get-order C00005 O0000001
-python -m complete.app.main compare-reads C00005 O0000001   # point read vs query for the same doc
-python -m complete.app.main place-order C00005
-python -m complete.app.main list-products CAT006
+# from repo root
+python -u -m scripts.apply_iteration_02                                   # create containers + iter-2 policy
+python -u -m demo.app.main seed             --log logs/iter-02/seed.log   # load src/sample-data/master/*.json
+python -u -m demo.app.main get-customer   C00005           --log logs/iter-02/step5-P1.log
+python -u -m demo.app.main get-order      C00005 O0000001  --log logs/iter-02/step5-P2.log
+python -u -m demo.app.main compare-reads  C00005 O0000001  --log logs/iter-02/step5-P2b.log
+python -u -m demo.app.main place-order    C00005           --log logs/iter-02/step5-P3.log
+python -u -m demo.app.main list-products  CAT006           --log logs/iter-02/step5-P4.log
 ```
+
+The `src/iteration-02-optimized/{complete,demo}/` folders are reference
+content only — don't execute scripts from there.
 
 ## FastAPI later
 

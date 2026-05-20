@@ -1,6 +1,15 @@
 # Iteration 3 — Composite indexes (optional)
 
-Source code: [`/src/iteration-03-composite-indexes`](../../src/iteration-03-composite-indexes/)
+Runtime code lives in [`demo/app/queries.py`](../../demo/app/queries.py)
+and the apply/bench tooling in [`scripts/`](../../scripts/) per
+[CONVENTIONS.md](./CONVENTIONS.md). The folder
+[`src/iteration-03-composite-indexes/`](../../src/iteration-03-composite-indexes/)
+is reference content only.
+
+> Already have the iteration-3 solution checked in? Skip the prompts
+> below and use the runbook in
+> [`3-iteration-03-composite-indexes-complete.md`](./3-iteration-03-composite-indexes-complete.md)
+> to run the combined before/after harness directly.
 
 > **Cosmos DB Agent Kit — why it matters here.** Iteration 3 leans on
 > two skill categories: **Indexing Strategies** (when a composite index
@@ -106,36 +115,66 @@ proposed. Flag any drift.
 ### Step 4 — Update the queries
 
 ```text
-@cosmos Add three query functions to queries.py — one per R-EXT-* pattern.
-Use parameterized queries, keep them single-partition where possible
-(R-EXT-1 and R-EXT-3 are; R-EXT-2 is intentionally cross-customer), and
-log requestCharge, indexHitDocumentCount, outputDocumentCount, and a
-short query-metrics summary on every call.
+@cosmos Add three query functions to `demo/app/queries.py` — one per
+R-EXT-* pattern. Use parameterized queries, keep them single-partition
+where possible (R-EXT-1 and R-EXT-3 are; R-EXT-2 is intentionally
+cross-customer), and log requestCharge, indexHitDocumentCount (if
+emitted), outputDocumentCount, retrievedDocumentCount, and a short
+query-metrics summary on every call. Expose a CLI:
+`python -m demo.app.queries {r1|r2|r3|all} [--limit N] [--log PATH]`.
 ```
 
-### Step 5 — Execute before and after
+### Step 5 — Single combined before/after harness
 
-Tee each run to a log so Step 6 can read the numbers directly.
-`Tee-Object` still streams to the screen — the audience sees the RU
-output live while the file captures the same bytes.
+Replace the manual revert/run/apply/run dance with one orchestrated
+script so the log captures a clean, reproducible comparison.
+
+```text
+@cosmos Generate `scripts/bench_iteration_03.py` that runs the full
+before/after cycle in one invocation:
+
+  1. Apply the iteration-2 baseline indexing policy
+     (no R-EXT composites). Wait for indexing to settle.
+  2. Run every R-EXT-* query and capture per-call requestCharge plus
+     the raw `x-ms-documentdb-query-metrics` headers. Tag the rows
+     `label="before"`. Persist the raw capture to
+     `logs/iter-03/bench-before.json`.
+  3. Apply the iteration-3 policy (= iter-2 + the new composites from
+     `iteration-03-output.md`). Wait for indexing to settle.
+  4. Re-run the same queries; tag rows `label="after"`; persist to
+     `logs/iter-03/bench-after.json`.
+  5. Emit a markdown comparison table to stdout AND to
+     `logs/iter-03/bench.log` with columns:
+       Pattern | Before RU | After RU | Δ RU | Δ % |
+       retrieved/output before | retrieved/output after | Verdict
+     where Verdict is one of ✓ healthy / ⚠ partial / ✗ regression.
+  6. Exit non-zero if any R-EXT pattern regressed.
+
+Do not change partition keys. Honour the apply scripts in `scripts/`
+(`apply_iteration_02.py`, `apply_iteration_03.py`) rather than
+re-implementing the policy merge. Handle the case where R-EXT-3
+returns 400 BadRequest in the `before` pass (no composite supports
+the 3-key ORDER BY) and record it as a graceful `before` failure
+rather than aborting.
+```
+
+Run it:
 
 ```powershell
-cd src/iteration-03-composite-indexes
-python -u complete/queries.py                2>&1 | Tee-Object -FilePath iteration-03-step5-before.log   # before — ORDER BY scans
-python -u complete/queries.py --apply-policy 2>&1 | Tee-Object -FilePath iteration-03-step5-apply.log    # apply composite indexes
-python -u complete/queries.py                2>&1 | Tee-Object -FilePath iteration-03-step5-after.log    # after  — index-served
+python -u -m scripts.bench_iteration_03
 ```
 
 ### Step 6 — Ask the agent to interpret the metrics
 
 ```text
-@cosmos Read iteration-03-step5-before.log and iteration-03-step5-after.log
-in this directory — they contain the per-query requestCharge,
-indexHitDocumentCount, outputDocumentCount, and query-metrics summary
-for each R-EXT pattern, before and after the composite indexes were
-applied. Compare them and explain which composite index removed the
-in-memory sort, where the indexHit/output ratio improved, and whether
-any pattern is still doing more work than it should.
+@cosmos Read `logs/iter-03/bench.log` plus the raw captures
+`logs/iter-03/bench-before.json` and `logs/iter-03/bench-after.json`.
+For each R-EXT pattern, explain which composite index removed the
+in-memory sort, where the retrieved/output ratio tightened, and
+whether any pattern is still doing more work than it should. If
+R-EXT-3 failed in the `before` pass with 400 BadRequest, explain
+why (3-path composite + multi-key ORDER BY) and confirm the
+workaround in `queries.py` is the correct one.
 ```
 
 ## Expected outcomes — reference key

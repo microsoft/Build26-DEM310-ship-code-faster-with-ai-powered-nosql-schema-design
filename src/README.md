@@ -66,31 +66,37 @@ src/
 
 ## Quick start
 
+The runnable surface is the **Model A working tree** at the repo root
+(`demo/app/` runtime + `scripts/` one-shots). The per-iteration
+`src/iteration-NN-*/complete/` and `demo/` trees are **reference
+content** for session attendees — see
+[`docs/03-walkthrough/CONVENTIONS.md`](../docs/03-walkthrough/CONVENTIONS.md)
+for the canonical layout. Each iteration also has a
+`docs/03-walkthrough/N-iteration-NN-*-complete.md` runbook with the
+same commands and an expected-RU envelope.
+
 ```powershell
+# from repo root
 pip install -r src/requirements.txt
 
 # 1) iteration 1 — feel the pain
-cd src/iteration-01-naive
-python complete/seed.py
-python complete/patterns.py
+python -u -m scripts.seed_iteration_01_naive_a
+python -u -m scripts.patterns_iteration_01_naive_a
 
 # 2) iteration 2 — the agent-guided redesign
-cd ../iteration-02-optimized
-python complete/seed.py
-python -m complete.app.main get-customer C00005
-python -m complete.app.main place-order C00005
+python -u -m scripts.apply_iteration_02
+python -u -m demo.app.main seed
+python -u -m demo.app.main get-customer C00005
+python -u -m demo.app.main place-order   C00005
 
-# 3) iteration 3 (optional) — composite indexes
-cd ../iteration-03-composite-indexes
-python complete/queries.py --apply-policy
-python complete/queries.py
+# 3) iteration 3 (optional) — composite indexes (single before/after harness)
+python -u -m scripts.bench_iteration_03
 
 # 4) iteration 4 (optional, cloud-only) — vector + full-text + hybrid search
-#    See iteration-04-hybrid-vector-search/README.md — provisions a small
-#    Azure footprint via Bicep, then:
-cd ../iteration-04-hybrid-vector-search
-python complete/seed.py
-python complete/search.py
+#    Provisions a small Azure footprint via Bicep — see
+#    src/iteration-04-hybrid-vector-search/README.md.
+python -u -m scripts.seed_iteration_04
+python -u -m demo.app.queries vec "lightweight aluminum mountain bike for trails"
 ```
 
 Compare the `[RU]` lines from iteration 1 vs iteration 2 — that's the
@@ -121,10 +127,10 @@ python build_demo_shell.py
 
 ## FastAPI later
 
-`iteration-02-optimized/complete/app/` is laid out so adding an `api.py`
-that calls `service.CustomerOrderService` is the only change required to
-expose the same logic over HTTP. There is no FastAPI dependency today
-because the demo runs from the command line.
+`demo/app/service.py` is HTTP-framework-agnostic and laid out so adding
+an `demo/app/api.py` that calls `service.CustomerOrderService` is the
+only change required to expose the same logic over HTTP. There is no
+FastAPI dependency today because the demo runs from the command line.
 
 ## Sample data
 

@@ -5,7 +5,10 @@ walkthrough:
 
 1. [Setup](./01-setup/) — emulator, VS Code, Cosmos DB Agent, Python env
 2. [Scenario](./02-scenario/) — business context, access patterns, volumetrics
-3. [Walkthrough](./03-walkthrough/) — the three iterations, end to end
+3. [Walkthrough](./03-walkthrough/) — the four iterations, end to end
+   (prompt scripts + [`CONVENTIONS.md`](./03-walkthrough/CONVENTIONS.md)
+   for repo layout, and `*-complete.md` runbooks for executing the
+   finished solution without re-prompting)
 4. [Takeaways](./04-takeaways.md)
 
 ## Reference templates

@@ -1,6 +1,16 @@
 # Iteration 2 — Agent-guided redesign
 
-Source code: [`/src/iteration-02-optimized`](../../src/iteration-02-optimized/)
+Runtime code lives in [`demo/app/`](../../demo/app/) and one-shot scripts
+in [`scripts/`](../../scripts/) per the layout in
+[CONVENTIONS.md](./CONVENTIONS.md). The folder
+[`src/iteration-02-optimized/`](../../src/iteration-02-optimized/) is
+reference content only — point attendees there for snippets, not for
+execution.
+
+> Already have the iteration-2 solution checked in? Skip the prompts
+> below and use the runbook in
+> [`2-iteration-02-optimized-complete.md`](./2-iteration-02-optimized-complete.md)
+> to execute the finished code directly.
 
 > **Cosmos DB Agent Kit — why it matters here.** Iteration 2 is the
 > turning point where modeling decisions stop being intuition and become
@@ -36,13 +46,13 @@ Paste iteration 1's RU output and the scenario links into the agent:
 ```text
 @cosmos Here is what we have today:
 
-- The team is porting from SQL Server to Azure Cosmos DB. It works, but team suspect the design won't hold up under production load and not sure it is optimal.
-- Five containers ported 1:1 from a SQL schema (see iteration-01-naive).
+- The team is porting application from Relational Database to Azure Cosmos DB. It works, but team suspect the design won't hold up under production load and not sure it is optimal.
+- Five containers ported 1:1 from a RDBMS schema (see iteration-01-naive).
 - Access patterns P1–P4 in docs/02-scenario/2-access-patterns.md.
 - Volumetrics in docs/02-scenario/3-volumetrics.md.
 - Captured RU per pattern from naive-a/patterns.py.
 
-Propose optimal Cosmos DB NoSQL container and indexing data model design based on Cosmos DB best practices and account for production volumes and TPS (include tables-container mappings and rationale).
+Propose optimal Cosmos DB NoSQL containers and indexing data model design based on Cosmos DB best practices and account for production volumes and TPS (include tables-container mappings and rationale).
 Explain each container partition-key choice and show the target JSON
 shape for each container Entity document type (highlight if there is colocation of Entities and explain why).
 
@@ -76,23 +86,28 @@ deployed.
 ### Step 3 — Seed and validate data shapes
 
 ```text
-@cosmos Generate a seed script that loads 10 customers, 5 categories,
-50 products, and ~20 orders per customer from the sample CSVs in
-src/sample-data/source/ into the two new containers.
-Use the `type` discriminator on CustomerOrders. After seeding, query the
-emulator and show me one customer document and one order document so I
-can verify the embedded shapes are right.
+@cosmos Generate a seed script at `scripts/seed_iteration_02.py` that
+converts and loads the canonical sample data from `src/sample-data/master/*.json`
+(customers.json, categories.json, products.json, orders.json) into the
+two new containers based on final Document JSON models per container/Entity combinations defined in `iteration-02-output.md`. 
+Write the seed run log to `logs/iter-02/seed.log`. After seeding, query
+the emulator and show me one customer document and one order document
+so I can verify the embedded shapes are right.
 ```
 
-Use `complete/seed.py` as the reference output — the agent should
-produce something equivalent.
+> **Data source-of-truth.** Always load from
+> `src/sample-data/master/*.json` — never directly from
+> `src/sample-data/source/*.csv`. The JSON files are the deterministic
+> output of `src/sample-data/generate.py` and carry the derived fields
+> (`lastOrderAt`, embedded `items[]`, denormalized `categoryName`) that
+> iteration 2's document shapes assume.
 
 ### Step 4 — Scaffold the application code
 
 ```text
-@cosmos Generate a small Python package with this layout:
+@cosmos Generate a small Python package at `demo/app/` with this layout:
 
-  complete/app/
+  demo/app/
   ├── models.py       # Pydantic shapes for customer + order + item
   ├── repository.py   # Cosmos calls that capture and log requestCharge
   ├── service.py      # business logic; P3 must use a transactional batch
@@ -105,18 +120,19 @@ x-ms-item-count + a compact query-metrics summary on every call.
 
 ### Step 5 — Execute and capture RU
 
-Tee each command's stdout to a per-pattern log so Step 6 can read the
-numbers directly instead of relying on copy/paste. `Tee-Object` still
-streams to the screen, so the audience sees the RU output live.
+The runtime CLI lives at `demo/app/main.py` and writes each call's
+RU + query-metrics line via the `demo.repo` logger. Pass `--log` so
+the script owns its filename (no `Tee-Object` mismatch between
+command and file name).
 
 ```powershell
-cd src/iteration-02-optimized
-python -u complete/seed.py | Tee-Object -FilePath iteration-02-step5-seed.log
-python -u -m complete.app.main get-customer C00005   2>&1 | Tee-Object -FilePath iteration-02-step5-P1.log    # P1
-python -u -m complete.app.main get-order   C00005 O0000003 2>&1 | Tee-Object -FilePath iteration-02-step5-P2.log    # P2
-python -u -m complete.app.main compare-reads C00005 O0000003 2>&1 | Tee-Object -FilePath iteration-02-step5-P2b.log   # P2b: point read vs query
-python -u -m complete.app.main place-order C00005          2>&1 | Tee-Object -FilePath iteration-02-step5-P3.log    # P3
-python -u -m complete.app.main list-products CAT006        2>&1 | Tee-Object -FilePath iteration-02-step5-P4.log    # P4
+# from repo root
+python -u -m demo.app.main seed                                --log logs/iter-02/seed.log
+python -u -m demo.app.main get-customer   C00005               --log logs/iter-02/step5-P1.log    # P1
+python -u -m demo.app.main get-order      C00005 O0000003      --log logs/iter-02/step5-P2.log    # P2
+python -u -m demo.app.main compare-reads  C00005 O0000003      --log logs/iter-02/step5-P2b.log   # P2b
+python -u -m demo.app.main place-order    C00005               --log logs/iter-02/step5-P3.log    # P3
+python -u -m demo.app.main list-products  CAT006               --log logs/iter-02/step5-P4.log    # P4
 ```
 
 > **P2b — why the point read wins.** `compare-reads` fetches the same
@@ -133,21 +149,25 @@ python -u -m complete.app.main list-products CAT006        2>&1 | Tee-Object -Fi
 ### Step 6 — Ask the agent to interpret the results
 
 ```text
-@cosmos Read the iteration-02-step5-*.log files in this directory
-(P1, P2, P2b, P3, P4) and, if available, the equivalent iteration-1
-logs from ../iteration-01-naive/ — these contain the per-pattern
-request charges and query-metrics summaries. For each pattern,
-compare iteration 1 vs iteration 2 and explain which design choice
-(partition key, embedding, transactional batch, repartitioning) drove
-the delta. Flag any pattern where the gain is smaller than expected.
+@cosmos Read the per-pattern logs under `logs/iter-02/`
+(step5-P1.log, step5-P2.log, step5-P2b.log, step5-P3.log,
+step5-P4.log) and, if available, the equivalent iteration-1 logs
+under `logs/iter-01/`. These contain the per-pattern request charges
+and query-metrics summaries. For each pattern, compare iteration 1
+vs iteration 2 and explain which design choice (partition key,
+embedding, transactional batch, repartitioning) drove the delta.
+Flag any pattern where the gain is smaller than expected. Produce a
+markdown table with columns: `Pattern | Iter 1 RU | Iter 2 RU | Δ |
+Driver | Verdict`.
 ```
 
 ## Code layout — FastAPI-ready (reference)
 
-The package scaffolded in Step 4 lands at this shape:
+The package scaffolded in Step 4 lands at this shape (see
+[CONVENTIONS.md](./CONVENTIONS.md) for the full repo layout):
 
 ```text
-complete/app/
+demo/app/
 ├── models.py       # Pydantic shapes
 ├── repository.py   # Cosmos calls + RU capture
 ├── service.py      # business logic (transactional batch lives here)

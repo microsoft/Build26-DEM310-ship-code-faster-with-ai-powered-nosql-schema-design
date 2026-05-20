@@ -36,18 +36,23 @@ iteration-01-naive/
 
 ## Run the complete solution
 
-From the repo root:
+The runtime lives at the repo root in `scripts/` per
+[CONVENTIONS.md](../../../docs/03-walkthrough/CONVENTIONS.md).
 
 ```powershell
-pip install -r src/requirements.txt        # azure-cosmos
-cd src/iteration-01-naive
-python complete/seed.py                    # creates containers + bulk inserts
-python complete/patterns.py                # runs P1..P4 and prints RU charges
+# from repo root
+pip install -r src/requirements.txt                          # azure-cosmos
+python -u -m scripts.seed_iteration_01_naive_a               # creates 5 containers + bulk inserts
+python -u -m scripts.patterns_iteration_01_naive_a    --log logs/iter-01/naive-a-patterns.log
 ```
 
-`patterns.py` prints, for each access pattern, the documents returned and
-the **RU charge** reported by the emulator. Capture those numbers — you'll
-compare them against iteration 2.
+`scripts/patterns_iteration_01_naive_a.py` prints, for each access
+pattern, the documents returned and the **RU charge** reported by the
+emulator. Capture those numbers — you'll compare them against
+iteration 2.
+
+The `src/iteration-01-naive/naive-a/{complete,demo}/` folders are
+reference content only.
 
 ## What to look for during the demo
 
@@ -63,11 +68,11 @@ fixes.
 
 ## What you should see
 
-A successful run of `complete/patterns.py` prints one block per access
-pattern with the RU charge of every operation and a `TOTAL` line. The
-shape of the output looks like this (RU values are placeholders until the
-run is captured against the classic Windows emulator — see the note
-below):
+A successful run of `scripts/patterns_iteration_01_naive_a.py` prints
+one block per access pattern with the RU charge of every operation and
+a `TOTAL` line. The shape of the output looks like this (RU values are
+placeholders until the run is captured against the classic Windows
+emulator — see the note below):
 
 ```text
 ======================================================================

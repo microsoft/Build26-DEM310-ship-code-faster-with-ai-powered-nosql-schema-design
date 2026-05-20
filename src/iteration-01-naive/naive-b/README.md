@@ -44,17 +44,20 @@ iterations the doc has before it crosses the 2 MB ceiling.
 
 ## Run it
 
+The runtime lives at the repo root in `scripts/` per
+[CONVENTIONS.md](../../../docs/03-walkthrough/CONVENTIONS.md).
+
 ```powershell
-cd src/iteration-01-naive/naive-b
-python complete/seed.py        # creates the container and seeds 10 customers with empty orders
-python complete/simulate.py    # runs the 50-iteration growth simulation
+# from repo root
+python -u -m scripts.seed_iteration_01_naive_b                        # creates the container, seeds 10 customers with empty orders
+python -u -m scripts.simulate_iteration_01_naive_b   --log logs/iter-01/naive-b-simulate.log    # runs the 50-iteration growth simulation
 ```
 
 To make the growth even more dramatic (and slower — expect ~3 minutes),
 bump the per-order item count or iteration count:
 
 ```powershell
-python complete/simulate.py --iterations 100 --items-per-order 100
+python -u -m scripts.simulate_iteration_01_naive_b --iterations 100 --items-per-order 100
 ```
 
 Expected shape of the output with default parameters (RU values from

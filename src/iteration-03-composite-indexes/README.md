@@ -34,11 +34,22 @@ iteration-03-composite-indexes/
 
 ## Run the complete solution
 
-```powershell
-cd src/iteration-03-composite-indexes
-# 1. Apply the upgraded indexing policy to the iteration-2 containers:
-python complete/queries.py --apply-policy
+The runtime lives at the repo root in `demo/app/queries.py` plus the
+bench harness at `scripts/bench_iteration_03.py` per
+[CONVENTIONS.md](../../docs/03-walkthrough/CONVENTIONS.md). The runbook
+with the expected before/after envelope is in
+[`docs/03-walkthrough/3-iteration-03-composite-indexes-complete.md`](../../docs/03-walkthrough/3-iteration-03-composite-indexes-complete.md).
 
-# 2. Run R-EXT-1, R-EXT-2, R-EXT-3 and watch the RU drop:
-python complete/queries.py
+```powershell
+# from repo root
+# One-shot: revert to iter-2 baseline -> bench -> apply iter-3 policy -> bench -> diff table
+python -u -m scripts.bench_iteration_03
+
+# Drill-down: run a single R-EXT pattern after the policy is applied
+python -u -m demo.app.queries r1 --log logs/iter-03/r1.log
+python -u -m demo.app.queries r2 --log logs/iter-03/r2.log
+python -u -m demo.app.queries r3 --log logs/iter-03/r3.log
 ```
+
+The `src/iteration-03-composite-indexes/{complete,demo}/` folders are
+reference content only — don't execute scripts from there.

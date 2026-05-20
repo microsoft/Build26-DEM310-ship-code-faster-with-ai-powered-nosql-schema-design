@@ -56,7 +56,7 @@ read with the order doc but never indexed, so writes stay cheap.
 
 ## Cross-reference
 
-* [src/iteration-02-optimized/complete/seed.py](../complete/seed.py) — Python equivalent of `01-setup.cosmos.js`.
-* [src/iteration-02-optimized/complete/app/repository.py](../complete/app/repository.py) — Python equivalent of the data-plane calls in `02-access-patterns.cosmos.js`.
+* [scripts/apply_iteration_02.py](../../../scripts/apply_iteration_02.py) — Python equivalent of `01-setup.cosmos.js` (container + indexing-policy apply, with drift detection).
+* [demo/app/repository.py](../../../demo/app/repository.py) — Python equivalent of the data-plane calls in `02-access-patterns.cosmos.js`.
 * [src/iteration-02-optimized/complete/indexing-policy.json](../complete/indexing-policy.json) — canonical indexing policy file.
 * [src/iteration-02-optimized/README.md](../README.md) — full walkthrough.

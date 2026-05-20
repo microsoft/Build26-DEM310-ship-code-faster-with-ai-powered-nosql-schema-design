@@ -31,7 +31,7 @@ setup or just keep both `demo-shell/seed-data/` folders intact.
 
 ## Cross-reference
 
-* [src/iteration-01-naive/naive-b/complete/seed.py](../complete/seed.py) — Python equivalent of `01-setup.cosmos.js`.
-* [src/iteration-01-naive/naive-b/complete/simulate.py](../complete/simulate.py) — Python equivalent of `02-simulate-unbounded-growth.cosmos.js`.
+* [scripts/seed_iteration_01_naive_b.py](../../../../scripts/seed_iteration_01_naive_b.py) — Python equivalent of `01-setup.cosmos.js`.
+* [scripts/simulate_iteration_01_naive_b.py](../../../../scripts/simulate_iteration_01_naive_b.py) — Python equivalent of `02-simulate-unbounded-growth.cosmos.js`.
 * [src/iteration-01-naive/naive-b/README.md](../README.md) — full
   walkthrough.

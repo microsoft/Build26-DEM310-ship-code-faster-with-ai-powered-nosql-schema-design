@@ -14,8 +14,9 @@ is upgraded.
 | `seed-data/README.md`                  | Pointer — uses iteration-2's seed data unchanged. |
 
 There is **no separate seed data** for iteration 3. Run iteration-2's
-`01-setup.cosmos.js` (or `complete/seed.py`) first so the containers
-exist and are populated.
+`01-setup.cosmos.js` (or `python -u -m scripts.apply_iteration_02`
+plus `python -u -m demo.app.main seed` from the repo root) first so
+the containers exist and are populated.
 
 ## Composite indexes added
 
@@ -72,7 +73,8 @@ Cosmos returns an `indexMetrics` string on each response that lists:
 
 ## Cross-reference
 
-* [src/iteration-03-composite-indexes/complete/queries.py](../complete/queries.py) — Python equivalent (and the `--apply-policy` switch).
+* [scripts/bench_iteration_03.py](../../../scripts/bench_iteration_03.py) — Python equivalent of `03-scenario-before-after.cosmos.js` (single combined harness: revert → bench → apply → bench → diff).
+* [demo/app/queries.py](../../../demo/app/queries.py) — Python implementations of R-EXT-1/2/3 (single-pattern drill-down).
 * [src/iteration-03-composite-indexes/complete/indexing-policy.json](../complete/indexing-policy.json) — canonical multi-container policy file.
 * [src/iteration-03-composite-indexes/complete/extended-access-patterns.md](../complete/extended-access-patterns.md) — full rationale for each composite.
 * [src/iteration-03-composite-indexes/README.md](../README.md) — full walkthrough.
