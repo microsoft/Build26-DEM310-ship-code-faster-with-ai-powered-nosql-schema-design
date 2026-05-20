@@ -31,10 +31,14 @@ access patterns would type first.
 
 ### Run it
 
+Tee each command's stdout to a per-step log so you can compare RU
+charges against iteration 2 later. `Tee-Object` still streams to the
+screen, so the audience sees the RU output live.
+
 ```powershell
 cd src/iteration-01-naive/naive-a
-python complete/seed.py
-python complete/patterns.py
+python -u complete/seed.py     2>&1 | Tee-Object -FilePath iteration-01-naive-a-seed.log
+python -u complete/patterns.py 2>&1 | Tee-Object -FilePath iteration-01-naive-a-patterns.log
 cd ..\..\..
 ```
 
@@ -62,9 +66,9 @@ order ever placed embedded in a growing `orders[]` array.
 
 ```powershell
 cd src/iteration-01-naive/naive-b
-python complete/seed.py
-python complete/simulate.py                              # defaults: 50 iterations, 50 items/order
-python complete/simulate.py --iterations 10 --items-per-order 100
+python -u complete/seed.py                                            2>&1 | Tee-Object -FilePath iteration-01-naive-b-seed.log
+python -u complete/simulate.py                                        2>&1 | Tee-Object -FilePath iteration-01-naive-b-simulate-default.log    # defaults: 50 iterations, 50 items/order
+python -u complete/simulate.py --iterations 10 --items-per-order 100  2>&1 | Tee-Object -FilePath iteration-01-naive-b-simulate-large-items.log
 cd ..\..\..
 ```
 
