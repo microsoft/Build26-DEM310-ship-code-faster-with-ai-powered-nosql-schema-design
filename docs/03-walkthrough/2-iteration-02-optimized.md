@@ -14,8 +14,8 @@ execution.
 
 > **Cosmos DB Agent Kit — why it matters here.** Iteration 2 is the
 > turning point where modeling decisions stop being intuition and become
-> rule-driven. The [Agent Kit](https://learn.microsoft.com/azure/cosmos-db/gen-ai/agent-kit)
-> activates four skill categories on this content: **Data Modeling**
+> rule-driven. The [Azure Cosmos DB Agent Kit](https://learn.microsoft.com/azure/cosmos-db/gen-ai/agent-kit)
+> activates several skill categories on this content: **Data Modeling**
 > (embed vs reference), **Partition Key Design** (cardinality + access
 > pattern fit), **Query Optimization** (RU reduction), and **SDK Best
 > Practices** (singleton client, transactional batch, retry). If you're
@@ -41,16 +41,16 @@ previous one: problem statement → design → validate the deployed shapes
 
 ### Step 1 — From problem statement to target design
 
-Paste iteration 1's RU output and the scenario links into the agent:
+Initial starter Prompt for Copilot:
 
 ```text
-@cosmos Here is what we have today:
+@cosmos Here is current state of the project and goals:
 
-- The team is porting application from Relational Database to Azure Cosmos DB. It works, but team suspect the design won't hold up under production load and not sure it is optimal.
+The team is porting application from Relational Database to Azure Cosmos DB. It works, but team suspect the design won't hold up under production load and not sure it is optimal.
 - Five containers ported 1:1 from a RDBMS schema (see iteration-01-naive).
 - Access patterns P1–P4 in docs/02-scenario/2-access-patterns.md.
 - Volumetrics in docs/02-scenario/3-volumetrics.md.
-- Captured RU per pattern from naive-a/patterns.py.
+- Captured RU per pattern from naive-a/patterns.py for comparison.
 
 Propose optimal Cosmos DB NoSQL containers and indexing data model design based on Cosmos DB best practices and account for production volumes and TPS (include tables-container mappings and rationale).
 Explain each container partition-key choice and show the target JSON
@@ -86,21 +86,12 @@ deployed.
 ### Step 3 — Seed and validate data shapes
 
 ```text
-@cosmos Generate a seed script at `scripts/seed_iteration_02.py` that
-converts and loads the canonical sample data from `src/sample-data/master/*.json`
-(customers.json, categories.json, products.json, orders.json) into the
-two new containers based on final Document JSON models per container/Entity combinations defined in `iteration-02-output.md`. 
+@cosmos Generate and run a seed script at `scripts/seed_iteration_02.py` that converts the canonical sample data (--customers 10 --orders-per-customer 20  --categories 5 --products-per-category 10 --max-lines-per-order 10) from `src/sample-data/source/*.csv` into JSON docs based on final Document JSON models per Container/Entity combinations defined in `iteration-02-output.md`, persist generated JSON files in `src/sample-data/tmp` and load generated JSON docs to the new created containers based on mapping. Persist generated 
 Write the seed run log to `logs/iter-02/seed.log`. After seeding, query
 the emulator and show me one customer document and one order document
 so I can verify the embedded shapes are right.
 ```
 
-> **Data source-of-truth.** Always load from
-> `src/sample-data/master/*.json` — never directly from
-> `src/sample-data/source/*.csv`. The JSON files are the deterministic
-> output of `src/sample-data/generate.py` and carry the derived fields
-> (`lastOrderAt`, embedded `items[]`, denormalized `categoryName`) that
-> iteration 2's document shapes assume.
 
 ### Step 4 — Scaffold the application code
 

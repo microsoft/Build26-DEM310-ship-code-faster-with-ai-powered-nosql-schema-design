@@ -116,9 +116,8 @@ proposed. Flag any drift.
 
 ```text
 @cosmos Add three query functions to `demo/app/queries.py` — one per
-R-EXT-* pattern. Use parameterized queries, keep them single-partition
-where possible (R-EXT-1 and R-EXT-3 are; R-EXT-2 is intentionally
-cross-customer), and log requestCharge, indexHitDocumentCount (if
+R-EXT-* pattern. Use parameterized queries (R-EXT-1 and R-EXT-3 are; R-EXT-2 is intentionally
+cross-customer),  log requestCharge, indexHitDocumentCount (if
 emitted), outputDocumentCount, retrievedDocumentCount, and a short
 query-metrics summary on every call. Expose a CLI:
 `python -m demo.app.queries {r1|r2|r3|all} [--limit N] [--log PATH]`.
@@ -148,7 +147,7 @@ before/after cycle in one invocation:
        Pattern | Before RU | After RU | Δ RU | Δ % |
        retrieved/output before | retrieved/output after | Verdict
      where Verdict is one of ✓ healthy / ⚠ partial / ✗ regression.
-  6. Exit non-zero if any R-EXT pattern regressed.
+  
 
 Do not change partition keys. Honour the apply scripts in `scripts/`
 (`apply_iteration_02.py`, `apply_iteration_03.py`) rather than
