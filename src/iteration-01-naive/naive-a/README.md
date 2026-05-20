@@ -23,15 +23,30 @@ in Cosmos DB without first considering access patterns or partitioning.
 ## Folders
 
 ```text
-iteration-01-naive/
-├── complete/      # ready-to-run reference solution
+src/iteration-01-naive/naive-a/
+├── complete/         # ready-to-run reference solution (Python)
 │   ├── shared.py
 │   ├── seed.py
 │   └── patterns.py
-└── demo/          # the same files with the interesting bits removed
-    ├── shared.py  # (identical helper)
-    ├── seed.py    # TODOs for partition key + bulk insert
-    └── patterns.py# TODOs for each access-pattern query
+├── demo/             # the same files with the interesting bits removed (TODOs)
+│   ├── shared.py     # (identical helper)
+│   ├── seed.py       # TODOs for partition key + bulk insert
+│   └── patterns.py   # TODOs for each access-pattern query
+└── demo-shell/       # Cosmos DB Shell version of the same demo
+    ├── 01-setup.cosmos.js
+    ├── 02-access-patterns.cosmos.js
+    └── seed-data/    # JSON regenerated from src/sample-data/master/
+```
+
+The actual **runtime** is at the repo root in `scripts/` — these
+per-iteration folders are reference content for session attendees.
+`scripts/` imports the modules under `complete/` so the demo code and
+the runnable wrappers stay in lock-step:
+
+```text
+scripts/
+├── seed_iteration_01_naive_a.py        # imports complete/seed.py
+└── patterns_iteration_01_naive_a.py    # imports complete/patterns.py + adds P2b
 ```
 
 ## Run the complete solution

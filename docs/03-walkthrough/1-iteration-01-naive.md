@@ -73,19 +73,18 @@ order ever placed embedded in a growing `orders[]` array.
 
 ### Run it
 
-Naive-b doesn't have a `scripts/` wrapper — it's a smaller, throwaway
-demo whose only job is to make the unbounded-array failure mode
-visible. The simulator is run directly, but logs still land under
-`logs/iter-01/` to match the rest of the walkthrough.
+The runtime lives at the repo root in `scripts/` (see
+[`src/iteration-01-naive/naive-b/README.md`](../../src/iteration-01-naive/naive-b/README.md)),
+matching the convention used by naive-a and iteration 2 — every step is
+a `python -m scripts.<name>` invocation and each script writes its own
+log via `--log`, so the filename always matches the pattern that
+produced it.
 
 ```powershell
 # from repo root
-New-Item -ItemType Directory -Force logs/iter-01 | Out-Null
-cd src/iteration-01-naive/naive-b
-python -u complete/seed.py                                            2>&1 | Tee-Object -FilePath ../../../logs/iter-01/naive-b-seed.log
-python -u complete/simulate.py                                        2>&1 | Tee-Object -FilePath ../../../logs/iter-01/naive-b-simulate-default.log     # defaults: 50 iterations, 50 items/order
-python -u complete/simulate.py --iterations 10 --items-per-order 100  2>&1 | Tee-Object -FilePath ../../../logs/iter-01/naive-b-simulate-large-items.log
-cd ../../..
+python -u -m scripts.seed_iteration_01_naive_b     --log logs/iter-01/naive-b-seed.log
+python -u -m scripts.simulate_iteration_01_naive_b --log logs/iter-01/naive-b-simulate-default.log      # defaults: 50 iterations, 50 items/order
+python -u -m scripts.simulate_iteration_01_naive_b --iterations 10 --items-per-order 100 --log logs/iter-01/naive-b-simulate-large-items.log
 ```
 
 ### What you should see

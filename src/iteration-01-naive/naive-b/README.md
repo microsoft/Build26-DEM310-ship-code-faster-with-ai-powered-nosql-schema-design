@@ -42,22 +42,57 @@ iterations the doc has before it crosses the 2 MB ceiling.
 > ~315 KB and crosses three billing boundaries, so the step-function
 > growth is visible from the first run.
 
+## Folders
+
+```text
+src/iteration-01-naive/naive-b/
+├── complete/         # ready-to-run reference solution (Python)
+│   ├── shared.py
+│   ├── seed.py
+│   └── simulate.py
+├── demo/             # the same files with the interesting bits removed (TODOs)
+│   ├── shared.py
+│   ├── seed.py
+│   └── simulate.py
+└── demo-shell/       # Cosmos DB Shell version of the same demo
+    ├── 01-setup.cosmos.js
+    ├── 02-simulate-unbounded-growth.cosmos.js
+    └── seed-data/    # JSON regenerated from src/sample-data/master/
+```
+
+The actual **runtime** is at the repo root in `scripts/` — these
+per-iteration folders are reference content for session attendees.
+`scripts/` imports the modules under `complete/` so the demo code and
+the runnable wrappers stay in lock-step:
+
+```text
+scripts/
+├── seed_iteration_01_naive_b.py        # imports complete/seed.py
+└── simulate_iteration_01_naive_b.py    # imports complete/simulate.py
+```
+
 ## Run it
 
 The runtime lives at the repo root in `scripts/` per
-[CONVENTIONS.md](../../../docs/03-walkthrough/CONVENTIONS.md).
+[CONVENTIONS.md](../../../docs/03-walkthrough/CONVENTIONS.md). Every
+step is a `python -m scripts.<name>` invocation and each script writes
+its own log via `--log` — same convention used by naive-a and
+iteration 2.
 
 ```powershell
 # from repo root
-python -u -m scripts.seed_iteration_01_naive_b                        # creates the container, seeds 10 customers with empty orders
-python -u -m scripts.simulate_iteration_01_naive_b   --log logs/iter-01/naive-b-simulate.log    # runs the 50-iteration growth simulation
+# 1. Seed the container with 10 customers and empty orders[]
+python -u -m scripts.seed_iteration_01_naive_b     --log logs/iter-01/naive-b-seed.log
+
+# 2. Run the 50-iteration growth simulation (default: 50 items/order)
+python -u -m scripts.simulate_iteration_01_naive_b --log logs/iter-01/naive-b-simulate-default.log
 ```
 
 To make the growth even more dramatic (and slower — expect ~3 minutes),
 bump the per-order item count or iteration count:
 
 ```powershell
-python -u -m scripts.simulate_iteration_01_naive_b --iterations 100 --items-per-order 100
+python -u -m scripts.simulate_iteration_01_naive_b --iterations 100 --items-per-order 100 --log logs/iter-01/naive-b-simulate-large-items.log
 ```
 
 Expected shape of the output with default parameters (RU values from
