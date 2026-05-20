@@ -41,18 +41,32 @@ The runtime lives at the repo root in `scripts/` per
 
 ```powershell
 # from repo root
-pip install -r src/requirements.txt                          # azure-cosmos
-python -u -m scripts.seed_iteration_01_naive_a               # creates 5 containers + bulk inserts
-python -u -m scripts.patterns_iteration_01_naive_a    --log logs/iter-01/naive-a-patterns.log
+pip install -r src/requirements.txt                                            # azure-cosmos
+
+# 1. Seed the 5 naive containers (writes its own log via --log)
+python -u -m scripts.seed_iteration_01_naive_a --log logs/iter-01/seed.log
+
+# 2. Run all 4 access patterns; each pattern writes its own per-pattern log
+#    under logs/iter-01/ (step5-P1.log .. step5-P4.log) — same naming as iter-2.
+python -u -m scripts.patterns_iteration_01_naive_a --pattern all
+
+# Or run a single pattern and pick the log path explicitly:
+python -u -m scripts.patterns_iteration_01_naive_a --pattern P1  --log logs/iter-01/step5-P1.log
+python -u -m scripts.patterns_iteration_01_naive_a --pattern P2  --log logs/iter-01/step5-P2.log
+python -u -m scripts.patterns_iteration_01_naive_a --pattern P2b --log logs/iter-01/step5-P2b.log
+python -u -m scripts.patterns_iteration_01_naive_a --pattern P3  --log logs/iter-01/step5-P3.log
+python -u -m scripts.patterns_iteration_01_naive_a --pattern P4  --log logs/iter-01/step5-P4.log
 ```
 
 `scripts/patterns_iteration_01_naive_a.py` prints, for each access
 pattern, the documents returned and the **RU charge** reported by the
-emulator. Capture those numbers — you'll compare them against
-iteration 2.
+emulator, and writes one log file per pattern. Capture those numbers
+— you'll compare them against the matching `logs/iter-02/step5-P<N>.log`
+files from iteration 2.
 
 The `src/iteration-01-naive/naive-a/{complete,demo}/` folders are
-reference content only.
+reference content only — `scripts/` imports them so the demo code and
+the benchmark stay in lock-step.
 
 ## What to look for during the demo
 
@@ -60,6 +74,7 @@ reference content only.
 |---------|-------------------|
 | P1: Get customer + recent orders | Two cross-partition queries (one in `Customers`, one in `Orders`) |
 | P2: Get order + line items       | One point read + one cross-partition query in `OrderItems` |
+| P2b: Compare query vs. point read for one order | Quantifies the query-point-reads gap on this layout |
 | P3: Place a new order            | Header write in `Orders` and N writes in `OrderItems` — no atomic transaction |
 | P4: List products in a category  | Cross-partition query in `Products` (it's partitioned by `/productId`) |
 

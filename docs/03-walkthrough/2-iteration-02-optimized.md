@@ -99,14 +99,17 @@ so I can verify the embedded shapes are right.
 @cosmos Generate a small Python package at `demo/app/` with this layout:
 
   demo/app/
-  ├── models.py       # Pydantic shapes for customer + order + item
+  ├── models.py       # Pydantic shapes 
   ├── repository.py   # Cosmos calls that capture and log requestCharge
   ├── service.py      # business logic; P3 must use a transactional batch
   └── main.py         # argv -> service -> stdout
 
 Follow the Agent Kit's SDK Best Practices rules: singleton CosmosClient,
 async where appropriate, retry on 429, and log requestCharge +
-x-ms-item-count + a compact query-metrics summary on every call.
+x-ms-item-count + a compact query-metrics summary on every call as curated output.
+
+Patterns to be covered: P1, P2, P2b (compare-reads), P3, P4, use  IDs (C00005, O0000003, CAT006) to match log comparisons with other iterations. Iteration should have a benchmark script `scripts/patterns_iteration_NN_<variant>.py` with --pattern {P1|P2|P2b|P3|P4|all} and --log <path>; logs go to logs/iter-NN/step5-P<N>.log . Output is curated only: banner + [RU] lines + 4-field metrics: line + a final Result: key/value block. Silence azure/azure.cosmos/urllib3/aiohttp loggers to WARNING. Demo modules expose _query(...) (returns (rows, ru, n, metrics)) and pX(...) (returns a dict). 
+
 ```
 
 ### Step 5 — Execute and capture RU
@@ -118,7 +121,6 @@ command and file name).
 
 ```powershell
 # from repo root
-python -u -m demo.app.main seed                                --log logs/iter-02/seed.log
 python -u -m demo.app.main get-customer   C00005               --log logs/iter-02/step5-P1.log    # P1
 python -u -m demo.app.main get-order      C00005 O0000003      --log logs/iter-02/step5-P2.log    # P2
 python -u -m demo.app.main compare-reads  C00005 O0000003      --log logs/iter-02/step5-P2b.log   # P2b
