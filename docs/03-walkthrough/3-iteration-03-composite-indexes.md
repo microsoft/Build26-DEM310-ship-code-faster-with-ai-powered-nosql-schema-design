@@ -115,21 +115,27 @@ short query-metrics summary on every call.
 
 ### Step 5 — Execute before and after
 
+Tee each run to a log so Step 6 can read the numbers directly.
+`Tee-Object` still streams to the screen — the audience sees the RU
+output live while the file captures the same bytes.
+
 ```powershell
 cd src/iteration-03-composite-indexes
-python complete/queries.py                   # before — ORDER BY scans
-python complete/queries.py --apply-policy    # apply composite indexes
-python complete/queries.py                   # after  — index-served
+python -u complete/queries.py                2>&1 | Tee-Object -FilePath iteration-03-step5-before.log   # before — ORDER BY scans
+python -u complete/queries.py --apply-policy 2>&1 | Tee-Object -FilePath iteration-03-step5-apply.log    # apply composite indexes
+python -u complete/queries.py                2>&1 | Tee-Object -FilePath iteration-03-step5-after.log    # after  — index-served
 ```
 
 ### Step 6 — Ask the agent to interpret the metrics
 
 ```text
-@cosmos Here are the before/after numbers for each R-EXT pattern
-(paste requestCharge, indexHitDocumentCount, outputDocumentCount).
-Explain which composite index removed the in-memory sort, where the
-indexHit/output ratio improved, and whether any pattern is still doing
-more work than it should.
+@cosmos Read iteration-03-step5-before.log and iteration-03-step5-after.log
+in this directory — they contain the per-query requestCharge,
+indexHitDocumentCount, outputDocumentCount, and query-metrics summary
+for each R-EXT pattern, before and after the composite indexes were
+applied. Compare them and explain which composite index removed the
+in-memory sort, where the indexHit/output ratio improved, and whether
+any pattern is still doing more work than it should.
 ```
 
 ## Expected outcomes — reference key

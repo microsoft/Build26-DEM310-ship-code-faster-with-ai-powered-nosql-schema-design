@@ -37,6 +37,9 @@ iteration-04-output.md
 # Local validation findings reports (timestamped, not for publication)
 findings-*.md
 
+# Walkthrough Step 5 run logs (Tee-Object output, local only)
+iteration-*-step5-*.log
+
 # Dependencies (if applicable)
 node_modules/
 __pycache__/

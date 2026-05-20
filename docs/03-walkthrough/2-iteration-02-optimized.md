@@ -105,14 +105,18 @@ x-ms-item-count + a compact query-metrics summary on every call.
 
 ### Step 5 — Execute and capture RU
 
+Tee each command's stdout to a per-pattern log so Step 6 can read the
+numbers directly instead of relying on copy/paste. `Tee-Object` still
+streams to the screen, so the audience sees the RU output live.
+
 ```powershell
 cd src/iteration-02-optimized
-python complete/seed.py
-python -m complete.app.main get-customer C00005   # P1
-python -m complete.app.main get-order   C00005 O0000003   # P2
-python -m complete.app.main compare-reads C00005 O0000003 # P2b: point read vs query
-python -m complete.app.main place-order C00005             # P3
-python -m complete.app.main list-products CAT006           # P4
+python -u complete/seed.py | Tee-Object -FilePath iteration-02-step5-seed.log
+python -u -m complete.app.main get-customer C00005   2>&1 | Tee-Object -FilePath iteration-02-step5-P1.log    # P1
+python -u -m complete.app.main get-order   C00005 O0000003 2>&1 | Tee-Object -FilePath iteration-02-step5-P2.log    # P2
+python -u -m complete.app.main compare-reads C00005 O0000003 2>&1 | Tee-Object -FilePath iteration-02-step5-P2b.log   # P2b: point read vs query
+python -u -m complete.app.main place-order C00005          2>&1 | Tee-Object -FilePath iteration-02-step5-P3.log    # P3
+python -u -m complete.app.main list-products CAT006        2>&1 | Tee-Object -FilePath iteration-02-step5-P4.log    # P4
 ```
 
 > **P2b — why the point read wins.** `compare-reads` fetches the same
@@ -129,10 +133,13 @@ python -m complete.app.main list-products CAT006           # P4
 ### Step 6 — Ask the agent to interpret the results
 
 ```text
-@cosmos Here are the RU charges per pattern from iteration 1 and
-iteration 2 (paste both). For each pattern, explain which design choice
+@cosmos Read the iteration-02-step5-*.log files in this directory
+(P1, P2, P2b, P3, P4) and, if available, the equivalent iteration-1
+logs from ../iteration-01-naive/ — these contain the per-pattern
+request charges and query-metrics summaries. For each pattern,
+compare iteration 1 vs iteration 2 and explain which design choice
 (partition key, embedding, transactional batch, repartitioning) drove
-the delta, and flag any pattern where the gain is smaller than expected.
+the delta. Flag any pattern where the gain is smaller than expected.
 ```
 
 ## Code layout — FastAPI-ready (reference)

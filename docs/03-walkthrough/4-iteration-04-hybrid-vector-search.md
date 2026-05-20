@@ -116,22 +116,28 @@ Flag any drift between what I asked for and what is actually deployed.
 
 ### Step 5 — Execute the three queries
 
+Tee each query's output to a per-pattern log so Step 6 can read the
+results directly. `Tee-Object` still streams to the screen, so the
+audience sees scores, RU charges, and the RRF fusion output live.
+
 ```powershell
 cd src/iteration-04-hybrid-vector-search
-python complete/seed.py
-python complete/search.py vec  "lightweight aluminum mountain bike for trails"
-python complete/search.py fts  "helmet visor adjustable"
-python complete/search.py hyb  "comfortable long-distance road bike saddle"
+python -u complete/seed.py 2>&1 | Tee-Object -FilePath iteration-04-step5-seed.log
+python -u complete/search.py vec  "lightweight aluminum mountain bike for trails" 2>&1 | Tee-Object -FilePath iteration-04-step5-vec.log
+python -u complete/search.py fts  "helmet visor adjustable"                       2>&1 | Tee-Object -FilePath iteration-04-step5-fts.log
+python -u complete/search.py hyb  "comfortable long-distance road bike saddle"    2>&1 | Tee-Object -FilePath iteration-04-step5-hyb.log
 ```
 
 ### Step 6 — Ask the agent to interpret the results
 
 ```text
-@cosmos Here are the request charges, top-k results, and (for R-HYB-1)
-the RRF rank fusion output for each query (paste them). For each one,
-explain which feature dominated the result ordering, where the vector
-index earned its cost, and whether the full-text policy is catching the
-right fields. Recommend one tweak per query if you'd change anything.
+@cosmos Read iteration-04-step5-vec.log, iteration-04-step5-fts.log,
+and iteration-04-step5-hyb.log in this directory — they contain the
+request charges, top-k results, and (for R-HYB-1) the RRF rank fusion
+output for each query. For each one, explain which feature dominated
+the result ordering, where the vector index earned its cost, and
+whether the full-text policy is catching the right fields. Recommend
+one tweak per query if you'd change anything.
 ```
 
 ## Why it's optional
