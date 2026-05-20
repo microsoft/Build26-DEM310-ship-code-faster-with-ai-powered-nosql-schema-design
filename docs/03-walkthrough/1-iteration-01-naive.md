@@ -35,6 +35,7 @@ access patterns would type first.
 cd src/iteration-01-naive/naive-a
 python complete/seed.py
 python complete/patterns.py
+cd ..\..\..
 ```
 
 `patterns.py` prints the RU charge after each step. Capture the totals —
@@ -63,7 +64,8 @@ order ever placed embedded in a growing `orders[]` array.
 cd src/iteration-01-naive/naive-b
 python complete/seed.py
 python complete/simulate.py                              # defaults: 50 iterations, 50 items/order
-python complete/simulate.py --iterations 20 --items-per-order 10
+python complete/simulate.py --iterations 10 --items-per-order 100
+cd ..\..\..
 ```
 
 ### What you should see
