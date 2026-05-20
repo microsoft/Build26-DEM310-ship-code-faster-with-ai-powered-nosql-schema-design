@@ -1,6 +1,5 @@
-"""Iteration 1 seed: create 5 containers and bulk-insert from master JSON.
-
-    python complete/seed.py
+"""Iteration 1 / naive-a seed: create 5 containers and bulk-insert from
+master JSON.
 
 Reshapes the master JSON into the naive container layout:
 
@@ -16,9 +15,8 @@ from __future__ import annotations
 import sys
 
 from azure.cosmos import PartitionKey
-from azure.cosmos.exceptions import CosmosResourceExistsError
 
-from shared import (
+from scripts._naive_a_shared import (
     CONTAINERS,
     DATABASE_NAME,
     get_client,

@@ -1,5 +1,8 @@
-"""Same helpers as complete/shared.py — feel free to leave this file alone
-during the demo. The interesting changes happen in seed.py and patterns.py.
+"""Shared helpers for iteration 1 / naive-a (the 5-container design).
+
+Loads the master JSON, builds a Cosmos client pointed at the local emulator,
+and centralises container/partition-key names so the seed and patterns
+modules stay short.
 """
 
 from __future__ import annotations
@@ -9,11 +12,12 @@ import os
 import urllib3
 from pathlib import Path
 
-from azure.cosmos import CosmosClient, PartitionKey
+from azure.cosmos import CosmosClient
 from dotenv import load_dotenv
 
-# Load /src/.env (copy /src/.env.example -> /src/.env on first run).
-SRC_DIR = Path(__file__).resolve().parents[3]
+# Repo root is scripts/.. — /src/.env lives one level below it.
+REPO_ROOT = Path(__file__).resolve().parent.parent
+SRC_DIR = REPO_ROOT / "src"
 load_dotenv(SRC_DIR / ".env")
 
 EMULATOR_ENDPOINT = os.environ.get("COSMOS_ENDPOINT")
@@ -23,18 +27,25 @@ DATABASE_NAME = os.environ.get("COSMOS_DB", "Build26DEM310DB-i1a")
 if not EMULATOR_ENDPOINT or not EMULATOR_KEY:
     raise RuntimeError(
         "COSMOS_ENDPOINT / COSMOS_KEY not set. "
-        "Copy src/.env.example to src/.env, then re-run."
+        "Copy src/.env.example to src/.env (and edit if you are not using "
+        "the default local emulator), then re-run."
     )
 
+# The emulator uses a self-signed certificate. Silence the warning when
+# running with verify=False.
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
-MASTER_DIR = Path(__file__).resolve().parents[3] / "sample-data" / "master"
+MASTER_DIR = SRC_DIR / "sample-data" / "master"
 
-# TODO (demo): fill in the five containers and partition keys you want to
-# create for the naive 1:1 port of the relational schema.
+
+# Container layout for iteration 1: one container per relational table,
+# each partitioned by the obvious "id" column.
 CONTAINERS: list[tuple[str, str]] = [
-    # ("Customers", "/customerId"),
-    # ...
+    ("Customers", "/customerId"),
+    ("Orders", "/orderId"),
+    ("OrderItems", "/orderId"),
+    ("Products", "/productId"),
+    ("ProductCategories", "/categoryId"),
 ]
 
 
@@ -56,7 +67,8 @@ def print_ru(label: str, ru: float, doc_count: int | None = None) -> None:
     print(f"  [RU] {label:<45} {ru:>8.2f}{suffix}")
 
 
-# See complete/shared.py for the full version with query-metrics parsing.
+# A handful of `x-ms-documentdb-query-metrics` fields worth surfacing during
+# the demo. The full header is a verbose `key=value;key=value;...` blob.
 _METRIC_KEYS = (
     "retrievedDocumentCount",
     "outputDocumentCount",

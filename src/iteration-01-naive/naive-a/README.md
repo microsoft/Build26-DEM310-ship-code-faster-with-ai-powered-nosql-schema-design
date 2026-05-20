@@ -24,29 +24,24 @@ in Cosmos DB without first considering access patterns or partitioning.
 
 ```text
 src/iteration-01-naive/naive-a/
-├── complete/         # ready-to-run reference solution (Python)
-│   ├── shared.py
-│   ├── seed.py
-│   └── patterns.py
-├── demo/             # the same files with the interesting bits removed (TODOs)
-│   ├── shared.py     # (identical helper)
-│   ├── seed.py       # TODOs for partition key + bulk insert
-│   └── patterns.py   # TODOs for each access-pattern query
+├── README.md         # this page
 └── demo-shell/       # Cosmos DB Shell version of the same demo
     ├── 01-setup.cosmos.js
     ├── 02-access-patterns.cosmos.js
     └── seed-data/    # JSON regenerated from src/sample-data/master/
 ```
 
-The actual **runtime** is at the repo root in `scripts/` — these
-per-iteration folders are reference content for session attendees.
-`scripts/` imports the modules under `complete/` so the demo code and
-the runnable wrappers stay in lock-step:
+The Python runtime lives at the repo root in `scripts/` — there is no
+per-iteration `complete/` or `demo/` folder for naive-a. The wrapper
+scripts and their helper modules are co-located:
 
 ```text
 scripts/
-├── seed_iteration_01_naive_a.py        # imports complete/seed.py
-└── patterns_iteration_01_naive_a.py    # imports complete/patterns.py + adds P2b
+├── seed_iteration_01_naive_a.py        # entrypoint: seed the 5 containers
+├── patterns_iteration_01_naive_a.py    # entrypoint: run P1..P4 + P2b
+├── _naive_a_shared.py                  # client/config helpers
+├── _naive_a_seed.py                    # seed logic
+└── _naive_a_patterns.py                # P1..P4 implementations
 ```
 
 ## Run the complete solution
@@ -78,10 +73,6 @@ pattern, the documents returned and the **RU charge** reported by the
 emulator, and writes one log file per pattern. Capture those numbers
 — you'll compare them against the matching `logs/iter-02/step5-P<N>.log`
 files from iteration 2.
-
-The `src/iteration-01-naive/naive-a/{complete,demo}/` folders are
-reference content only — `scripts/` imports them so the demo code and
-the benchmark stay in lock-step.
 
 ## What to look for during the demo
 

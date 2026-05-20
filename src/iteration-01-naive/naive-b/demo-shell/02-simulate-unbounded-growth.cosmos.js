@@ -1,7 +1,7 @@
 // =============================================================================
 // Iteration 1 (naive-b) — 02-simulate-unbounded-growth.cosmos.js
 //
-// Mirrors src/iteration-01-naive/naive-b/complete/simulate.py inside the
+// Mirrors scripts/_naive_b_simulate.py inside the
 // Cosmos DB Shell. For N iterations:
 //   1. Read the customer doc (capture read RU + JSON size).
 //   2. Append a synthetic order with K items to doc.orders[].

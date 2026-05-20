@@ -1,6 +1,7 @@
-"""Demo skeleton — fill in the gaps with the Cosmos DB Agent.
+"""Shared helpers for iteration 1 / naive-b (the unbounded-array
+anti-pattern).
 
-The complete reference lives in ../complete/shared.py.
+One container, one document per customer, all orders embedded.
 """
 
 from __future__ import annotations
@@ -10,11 +11,12 @@ import os
 import urllib3
 from pathlib import Path
 
-from azure.cosmos import CosmosClient, PartitionKey
+from azure.cosmos import CosmosClient
 from dotenv import load_dotenv
 
-# Load /src/.env (copy /src/.env.example -> /src/.env on first run).
-SRC_DIR = Path(__file__).resolve().parents[3]
+# Repo root is scripts/.. — /src/.env lives one level below it.
+REPO_ROOT = Path(__file__).resolve().parent.parent
+SRC_DIR = REPO_ROOT / "src"
 load_dotenv(SRC_DIR / ".env")
 
 EMULATOR_ENDPOINT = os.environ.get("COSMOS_ENDPOINT")
@@ -29,17 +31,18 @@ if not EMULATOR_ENDPOINT or not EMULATOR_KEY:
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
-MASTER_DIR = Path(__file__).resolve().parents[3] / "sample-data" / "master"
+MASTER_DIR = SRC_DIR / "sample-data" / "master"
 
-# TODO (demo): pick the single container name and partition key for the
-# "one document per customer" anti-pattern.
 CONTAINER_NAME = "CustomersWithEmbeddedOrders"
 PARTITION_KEY = "/customerId"
 
 
 def get_client() -> CosmosClient:
-    return CosmosClient(EMULATOR_ENDPOINT, credential=EMULATOR_KEY,
-                        connection_verify=False)
+    return CosmosClient(
+        EMULATOR_ENDPOINT,
+        credential=EMULATOR_KEY,
+        connection_verify=False,
+    )
 
 
 def load_master(name: str) -> list[dict]:
@@ -48,11 +51,11 @@ def load_master(name: str) -> list[dict]:
 
 
 def doc_size_bytes(doc: dict) -> int:
-    # TODO (demo): return the JSON-encoded byte length of the doc.
-    ...
+    """Approximate the on-the-wire JSON size of the document."""
+    return len(json.dumps(doc, separators=(",", ":")).encode("utf-8"))
 
 
 def last_ru(container) -> float:
-    # TODO (demo): pull "x-ms-request-charge" off the container's last
-    # response headers.
-    ...
+    return float(container.client_connection.last_response_headers.get(
+        "x-ms-request-charge", 0.0
+    ))

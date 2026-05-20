@@ -46,9 +46,9 @@ for (const c of containers) {
 // Seed the containers from seed-data/*.json.
 //
 // The Cosmos DB Shell exposes Node-style `require` for files in the workspace.
-// If your shell flavour does not support it, run `python complete/seed.py`
-// (from the parent folder) instead — it reads the same JSON and upserts via
-// the azure-cosmos SDK.
+// If your shell flavour does not support it, run
+// `python -u -m scripts.seed_iteration_01_naive_a` from the repo root
+// instead — it reads the same JSON and upserts via the azure-cosmos SDK.
 // -----------------------------------------------------------------------------
 const seed = {
   Customers:         require("./seed-data/Customers.json"),

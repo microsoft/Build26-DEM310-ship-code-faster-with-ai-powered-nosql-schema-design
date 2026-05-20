@@ -46,29 +46,24 @@ iterations the doc has before it crosses the 2 MB ceiling.
 
 ```text
 src/iteration-01-naive/naive-b/
-├── complete/         # ready-to-run reference solution (Python)
-│   ├── shared.py
-│   ├── seed.py
-│   └── simulate.py
-├── demo/             # the same files with the interesting bits removed (TODOs)
-│   ├── shared.py
-│   ├── seed.py
-│   └── simulate.py
+├── README.md         # this page
 └── demo-shell/       # Cosmos DB Shell version of the same demo
     ├── 01-setup.cosmos.js
     ├── 02-simulate-unbounded-growth.cosmos.js
     └── seed-data/    # JSON regenerated from src/sample-data/master/
 ```
 
-The actual **runtime** is at the repo root in `scripts/` — these
-per-iteration folders are reference content for session attendees.
-`scripts/` imports the modules under `complete/` so the demo code and
-the runnable wrappers stay in lock-step:
+The Python runtime lives at the repo root in `scripts/` — there is no
+per-iteration `complete/` or `demo/` folder for naive-b. The wrapper
+scripts and their helper modules are co-located:
 
 ```text
 scripts/
-├── seed_iteration_01_naive_b.py        # imports complete/seed.py
-└── simulate_iteration_01_naive_b.py    # imports complete/simulate.py
+├── seed_iteration_01_naive_b.py        # entrypoint: seed the embedded-array container
+├── simulate_iteration_01_naive_b.py    # entrypoint: grow the orders[] array
+├── _naive_b_shared.py                  # client/config helpers
+├── _naive_b_seed.py                    # seed logic
+└── _naive_b_simulate.py                # growth-simulation logic
 ```
 
 ## Run it

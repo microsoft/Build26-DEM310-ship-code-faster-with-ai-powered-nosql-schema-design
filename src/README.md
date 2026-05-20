@@ -114,9 +114,9 @@ Every iteration also ships a `demo-shell/` folder with:
   — one runnable block per access pattern with `requestCharge` printed.
 
 Use these when you want to call out individual operations interactively
-without driving the Python CLI. See each iteration's
-[`demo-shell/README.md`](./iteration-01-naive/naive-a/demo-shell/README.md)
-for setup and walkthrough.
+without driving the Python CLI. See each iteration's `demo-shell/README.md`
+for setup and walkthrough — for example
+[`iteration-01-naive/naive-a/demo-shell/README.md`](./iteration-01-naive/naive-a/demo-shell/README.md).
 
 To regenerate the per-container JSON after editing `sample-data/master/`:
 

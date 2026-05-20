@@ -1,6 +1,8 @@
-"""Create the single anti-pattern container and seed one document per
-customer, each with an EMPTY orders[] array. simulate.py will then grow
-the array on a chosen customer's document, iteration by iteration.
+"""Iteration 1 / naive-b seed: create the single anti-pattern container
+and seed one document per customer, each with an EMPTY orders[] array.
+
+simulate then grows the array on a chosen customer's document, iteration
+by iteration.
 """
 
 from __future__ import annotations
@@ -9,7 +11,7 @@ import sys
 
 from azure.cosmos import PartitionKey, exceptions
 
-from shared import (
+from scripts._naive_b_shared import (
     CONTAINER_NAME,
     DATABASE_NAME,
     PARTITION_KEY,

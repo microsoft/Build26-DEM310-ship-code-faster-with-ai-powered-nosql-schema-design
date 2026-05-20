@@ -1,4 +1,4 @@
-"""Wrapper: run iteration-1 naive-a access patterns (P1..P4 + P2b).
+"""Run iteration-1 naive-a access patterns (P1..P4 + P2b).
 
 Runtime entrypoint per `docs/03-walkthrough/CONVENTIONS.md`:
 
@@ -17,8 +17,7 @@ Modes
                            ``logs/iter-01/step5-P<N>.log`` unless
                            ``--log`` overrides it.
 
-P2b is implemented here (not in
-``src/iteration-01-naive/naive-a/complete/patterns.py``) — it
+P2b is implemented here (not in ``scripts/_naive_a_patterns.py``) — it
 intentionally re-issues P2's order lookup as both a SQL query and a
 point read so attendees can read the RU gap straight off the screen.
 """
@@ -26,20 +25,12 @@ point read so attendees can read the RU gap straight off the screen.
 from __future__ import annotations
 
 import argparse
-import sys
-from pathlib import Path
 
-REPO_ROOT = Path(__file__).resolve().parent.parent
-COMPLETE_DIR = REPO_ROOT / "src" / "iteration-01-naive" / "naive-a" / "complete"
-sys.path.insert(0, str(COMPLETE_DIR))
+from scripts import _naive_a_patterns as naive_a_patterns
+from scripts._logsetup import attach_log
+from scripts._naive_a_shared import DATABASE_NAME, get_client, print_query, print_ru
 
-from scripts._logsetup import attach_log  # noqa: E402
-
-import patterns as naive_a_patterns  # noqa: E402
-from shared import DATABASE_NAME, get_client, print_query, print_ru  # noqa: E402
-
-# Demo IDs — must match those used in
-# src/iteration-01-naive/naive-a/complete/patterns.py:main().
+# Demo IDs — must match those used in scripts/_naive_a_patterns.py:main().
 SAMPLE_CUSTOMER = "C00005"
 SAMPLE_ORDER = "O0000001"
 SAMPLE_CATEGORY = "CAT006"

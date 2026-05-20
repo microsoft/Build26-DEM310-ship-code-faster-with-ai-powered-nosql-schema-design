@@ -19,9 +19,28 @@ small and orders are bounded).
 
 ## Recommended demo order
 
+Both flavors run from the repo-root `scripts/` folder — there is no
+per-iteration `complete/` or `demo/` for iteration 1.
+
 1. Run `naive-a` first — show the RU on the four access patterns from
-   [`docs/02-scenario/2-access-patterns.md`](../../docs/02-scenario/2-access-patterns.md).
-2. Run `naive-b/simulate.py` — show RU and doc-size growth across 20
-   write iterations and project when the 2 MB ceiling hits.
+   [`docs/02-scenario/2-access-patterns.md`](../../docs/02-scenario/2-access-patterns.md):
+
+   ```powershell
+   python -u -m scripts.seed_iteration_01_naive_a     --log logs/iter-01/seed.log
+   python -u -m scripts.patterns_iteration_01_naive_a --pattern all
+   ```
+
+2. Run the `naive-b` growth simulator — show RU and doc-size growth
+   across 50 write iterations and project when the 2 MB ceiling hits:
+
+   ```powershell
+   python -u -m scripts.seed_iteration_01_naive_b     --log logs/iter-01/naive-b-seed.log
+   python -u -m scripts.simulate_iteration_01_naive_b --log logs/iter-01/naive-b-simulate-default.log
+   ```
+
 3. Open the Cosmos DB Agent, paste both result sets, and ask for a
    redesign — you should land on iteration 2.
+
+See [`naive-a/README.md`](./naive-a/README.md) and
+[`naive-b/README.md`](./naive-b/README.md) for the per-flavor
+walkthroughs and what to look for in the output.

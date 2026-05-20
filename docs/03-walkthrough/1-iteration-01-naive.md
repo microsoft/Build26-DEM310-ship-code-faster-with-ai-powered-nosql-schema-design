@@ -126,10 +126,13 @@ of later because every consumer is reading "the customer document".
 
 ## Hands-on tip
 
-Both `naive-a/demo/` and `naive-b/demo/` are skeletons with TODOs —
-filled in **by hand**, deliberately without the Cosmos DB Agent Kit, so
-you see what these designs look like when they emerge from
-intuition alone. The matching `complete/` folders are there as a
-fallback if you run out of time. Running `naive-b/complete/simulate.py`
-is the most visceral way to land the point: watch the RU column climb
-in real time and project the day this design breaks.
+Iteration 1 is the only iteration that runs **without** the Cosmos DB
+Agent Kit — the whole point is to show the design a developer would
+land on from intuition alone. The wrapper scripts and helper modules
+all live under `scripts/` (`seed_iteration_01_naive_{a,b}.py`,
+`patterns_iteration_01_naive_a.py`, `simulate_iteration_01_naive_b.py`,
+plus the `_naive_{a,b}_*.py` helpers); there is no per-iteration
+`complete/` or `demo/` folder to confuse the story. Running
+`scripts.simulate_iteration_01_naive_b` is the most visceral way to
+land the point: watch the RU column climb in real time and project the
+day this design breaks.

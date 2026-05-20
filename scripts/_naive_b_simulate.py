@@ -1,4 +1,5 @@
-"""Simulate the unbounded-array growth on a single customer document.
+"""Iteration 1 / naive-b: simulate the unbounded-array growth on a
+single customer document.
 
 For each of N iterations:
   1. Read the customer doc (capture read RU + doc size).
@@ -7,10 +8,6 @@ For each of N iterations:
 
 At the end, print a per-iteration table and a projection of how many more
 iterations until the doc crosses the 2 MB Cosmos item limit.
-
-Usage:
-  python simulate.py                            # 50 iter, 50 items/order, customer C00005
-  python simulate.py --iterations 30 --items-per-order 10 --customer C00003
 
 Defaults push the document to ~315 KB across 50 iterations — large enough
 that the classic Windows emulator's step-function RU billing becomes
@@ -34,7 +31,7 @@ except (AttributeError, OSError):
 
 from azure.cosmos import exceptions
 
-from shared import (
+from scripts._naive_b_shared import (
     CONTAINER_NAME,
     DATABASE_NAME,
     doc_size_bytes,
@@ -100,7 +97,8 @@ def main() -> int:
         container.read_item(item=args.customer, partition_key=args.customer)
     except exceptions.CosmosResourceNotFoundError:
         print(f"Customer '{args.customer}' not found in container "
-              f"'{CONTAINER_NAME}'. Did you run `python seed.py` first?",
+              f"'{CONTAINER_NAME}'. Did you run "
+              f"`python -m scripts.seed_iteration_01_naive_b` first?",
               file=sys.stderr)
         return 1
 

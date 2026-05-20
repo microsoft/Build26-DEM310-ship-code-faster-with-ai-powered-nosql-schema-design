@@ -1,4 +1,4 @@
-"""Wrapper: simulate the iteration-1 naive-b unbounded-array growth.
+"""Simulate the iteration-1 naive-b unbounded-array growth.
 
 Runtime entrypoint per `docs/03-walkthrough/CONVENTIONS.md`:
 
@@ -6,23 +6,16 @@ Runtime entrypoint per `docs/03-walkthrough/CONVENTIONS.md`:
     python -u -m scripts.simulate_iteration_01_naive_b --iterations 100 --items-per-order 100 --log logs/iter-01/naive-b-simulate-large-items.log
 
 Forwards CLI args (--customer / --iterations / --items-per-order) to
-`src/iteration-01-naive/naive-b/complete/simulate.py:main()` so the
-demo and reference content stay in lock-step.
+``scripts/_naive_b_simulate.py:main()``.
 """
 
 from __future__ import annotations
 
 import argparse
 import sys
-from pathlib import Path
 
-REPO_ROOT = Path(__file__).resolve().parent.parent
-COMPLETE_DIR = REPO_ROOT / "src" / "iteration-01-naive" / "naive-b" / "complete"
-sys.path.insert(0, str(COMPLETE_DIR))
-
-from scripts._logsetup import attach_log  # noqa: E402
-
-import simulate as naive_b_simulate  # noqa: E402
+from scripts import _naive_b_simulate
+from scripts._logsetup import attach_log
 
 
 def parse_args() -> argparse.Namespace:
@@ -48,7 +41,7 @@ def main() -> int:
     print("Iteration 1 / naive-b — simulate unbounded-array growth")
     print("=" * 70)
 
-    # Hand the underlying simulate.py exactly the argv it expects.
+    # Hand the underlying simulate module exactly the argv it expects.
     # Its parse_args() ignores anything else on sys.argv.
     sys.argv = [
         "simulate.py",
@@ -56,7 +49,7 @@ def main() -> int:
         "--iterations", str(args.iterations),
         "--items-per-order", str(args.items_per_order),
     ]
-    rc = naive_b_simulate.main()
+    rc = _naive_b_simulate.main()
     print(f"\nLog written to {args.log}")
     return rc
 

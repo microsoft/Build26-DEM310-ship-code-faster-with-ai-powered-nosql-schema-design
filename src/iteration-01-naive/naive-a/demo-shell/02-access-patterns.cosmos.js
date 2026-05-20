@@ -5,9 +5,8 @@
 // Cosmos DB Shell. After every query the shell prints `x-ms-request-charge`
 // in the response headers — that's the RU number to call out on stage.
 //
-// The patterns mirror src/iteration-01-naive/naive-a/complete/patterns.py
-// so the audience can compare what the shell sees vs. what the Python
-// service does.
+// The patterns mirror scripts/_naive_a_patterns.py so the audience can
+// compare what the shell sees vs. what the Python service does.
 // =============================================================================
 
 const db = cosmos.database("Build26DEM310DB-i1a");

@@ -1,7 +1,5 @@
-"""Iteration 1 access patterns: run P1..P4 against the naive design and
-print the RU charge for each step.
-
-    python complete/patterns.py
+"""Iteration 1 / naive-a access patterns: run P1..P4 against the naive
+design and print the RU charge for each step.
 
 P1 — Get customer profile + their 5 most recent orders
 P2 — Get one order with its line items
@@ -18,7 +16,7 @@ from __future__ import annotations
 import sys
 from datetime import datetime, timezone
 
-from shared import DATABASE_NAME, get_client, print_query, print_ru
+from scripts._naive_a_shared import DATABASE_NAME, get_client, print_query, print_ru
 
 try:
     sys.stdout.reconfigure(encoding="utf-8")
@@ -180,11 +178,6 @@ def main() -> None:
     #   - CAT006 is one of the 5 seeded categories. Note the seeded
     #     category IDs are non-sequential (CAT006/007/011/012/033) —
     #     they map back to the original AdventureWorksLT category keys.
-    #
-    # If you re-run sample-data/generate.py these IDs stay stable as long
-    # as the generator's --seed argument doesn't change. If you change the
-    # seed or the input CSVs, re-pick values that exist in the new
-    # master/*.json files.
     sample_customer = "C00005"
     sample_order = "O0000001"
     sample_category = "CAT006"
