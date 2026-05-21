@@ -2,11 +2,11 @@
 
 The demo collapses a lot of decisions into focused outcomes.
 
-## 1. Start from access patterns, not from tables
+## 1. In NoSQL - Access Patterns, not tables drive Optimal Design
 
 The single biggest mistake when moving from a relational store to Cosmos
 DB or apply Relational Data Modeling principles to NoSQL is to translate tables as 1:1 into containers and primary keys to partition
-keys without optimization by access patterns. Inventory **how the data is read and written** before you model documents — every other decision falls out of that.
+keys without optimization by access patterns. Inventory **how the data is read and written** before you finalize NoSQL document models — every other decision falls out of that.
 
 ## 2. Co-locate what you read (and write - but not UPDATE) together
 
@@ -15,19 +15,19 @@ should share a partition key. Embed `items[]` inside the order document
 when N is bounded and the items aren't reused.
 **Avoid frequent updates on large documents and unbounded arrays anti-patterns.**
 
-## 3. Use a `type` discriminator to combine related shapes
-
+## 3. Use a `type` discriminator to combine related shapes where possible
+Azure Cosmos DB NoSQL provide schema flexibility - use it!
 A single container can hold multiple document shapes if they share a
 partition key. The `type` field is the discriminator that lets you filter
-and pivot in queries. Pydantic's `Literal[...]` makes this safe in code.
+and pivot in queries. 
 
-## 4. Transactional batches need a shared partition key
+## 4. Transactional batches enabled by shared partition key
 
 Place-order is atomic in iteration 2 because the customer doc and the
 order doc both live in `customerId`'s partition. That's the architectural
 unlock for the entire "single roundtrip, two writes" pattern.
 
-## 5. Composite indexes pay off when `ORDER BY` has more than one column
+## 5. Composite indexes pay off when `ORDER BY` has more than one column or complex repdicate filters
 
 `includedPaths` covers single-column sorts and equality filters. The
 moment your query says `ORDER BY x, y` (or even `WHERE a = ? ORDER BY b`),

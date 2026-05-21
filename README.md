@@ -81,7 +81,7 @@ If you'd like to follow along with this demo at your own pace:
         - [Iteration 1 — Naive port](./docs/03-walkthrough/1-iteration-01-naive.md) (baseline)
         - [Iteration 2 — Agent-guided redesign](./docs/03-walkthrough/2-iteration-02-optimized.md) (AI copilot optimized)
         - [Iteration 3 — Composite indexes (optional)](./docs/03-walkthrough/3-iteration-03-composite-indexes.md)
-        - [Iteration 4 — Hybrid + vector search (optional, cloud-only)](./docs/03-walkthrough/4-iteration-04-hybrid-vector-search.md)
+        - [Iteration 4 — Hybrid + vector search (take home, cloud-only)](./docs/03-walkthrough/4-iteration-04-hybrid-vector-search.md)
      4. [Takeaways](./docs/04-takeaways.md) — what to remember after you close the laptop.
    - **Reference code (for validation / fallback only).** The matching `src/iteration-XX-*/complete/` folders are *not* the primary driver — they're the reference solution to validate against, or to copy from if you run out of time. The matching `demo/` folders are the same files with TODOs for hands-on practice.
      - [`src/iteration-01-naive/`](./src/iteration-01-naive/) — `naive-a/` (1:1 relational port) and `naive-b/` (unbounded-array anti-pattern with growth simulator)
