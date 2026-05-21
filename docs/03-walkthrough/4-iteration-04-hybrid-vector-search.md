@@ -1,4 +1,4 @@
-# Iteration 4 — Hybrid + vector search (optional, cloud-only)
+# Iteration 4 — Hybrid + vector search (bonus-take home, cloud-only)
 
 > This iteration **requires Azure**. The local Cosmos DB emulator does not
 > support vector or full-text search today, so we provision a small cloud
