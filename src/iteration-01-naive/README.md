@@ -20,26 +20,32 @@ small and orders are bounded).
 ## Recommended demo order
 
 Both flavors run from the repo-root `scripts/` folder — there is no
-per-iteration `complete/` or `demo/` for iteration 1.
+per-iteration `complete/` or `demo/` for iteration 1. The block below
+is copy-paste-friendly: every line is a single, runnable command, and
+each command writes its own log file.
 
-1. Run `naive-a` first — show the RU on the four access patterns from
-   [`docs/02-scenario/2-access-patterns.md`](../../docs/02-scenario/2-access-patterns.md):
+```powershell
+# from repo root
+pip install -r src/requirements.txt
 
-   ```powershell
-   python -u -m scripts.seed_iteration_01_naive_a     --log logs/iter-01/seed.log
-   python -u -m scripts.patterns_iteration_01_naive_a --pattern all
-   ```
+# --- naive-a: 5-container relational port -----------------------------
+python -u -m scripts.seed_iteration_01_naive_a                          --log logs/iter-01/seed.log
+python -u -m scripts.patterns_iteration_01_naive_a --pattern P1         --log logs/iter-01/step5-P1.log
+python -u -m scripts.patterns_iteration_01_naive_a --pattern P2         --log logs/iter-01/step5-P2.log
+python -u -m scripts.patterns_iteration_01_naive_a --pattern P2b        --log logs/iter-01/step5-P2b.log
+python -u -m scripts.patterns_iteration_01_naive_a --pattern P3         --log logs/iter-01/step5-P3.log
+python -u -m scripts.patterns_iteration_01_naive_a --pattern P4         --log logs/iter-01/step5-P4.log
 
-2. Run the `naive-b` growth simulator — show RU and doc-size growth
-   across 50 write iterations and project when the 2 MB ceiling hits:
+# --- naive-b: unbounded embedded-array growth -------------------------
+python -u -m scripts.seed_iteration_01_naive_b                          --log logs/iter-01/naive-b-seed.log
+python -u -m scripts.simulate_iteration_01_naive_b                      --log logs/iter-01/naive-b-simulate-default.log
+```
 
-   ```powershell
-   python -u -m scripts.seed_iteration_01_naive_b     --log logs/iter-01/naive-b-seed.log
-   python -u -m scripts.simulate_iteration_01_naive_b --log logs/iter-01/naive-b-simulate-default.log
-   ```
+Shortcut: `python -u -m scripts.patterns_iteration_01_naive_a --pattern all`
+runs P1…P4 (plus P2b) in one process and writes the same five log files.
 
-3. Open the Cosmos DB Agent, paste both result sets, and ask for a
-   redesign — you should land on iteration 2.
+Then open the Cosmos DB Agent, paste both result sets, and ask for a
+redesign — you should land on iteration 2.
 
 See [`naive-a/README.md`](./naive-a/README.md) and
 [`naive-b/README.md`](./naive-b/README.md) for the per-flavor

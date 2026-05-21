@@ -35,23 +35,30 @@ The runtime lives at the repo root in `scripts/` (see
 [`src/iteration-01-naive/naive-a/README.md`](../../src/iteration-01-naive/naive-a/README.md)).
 Each script writes its own log via `--log` so the filename always
 matches the pattern that produced it — same convention used by
-iteration 2, which makes the per-pattern logs directly comparable.
+iteration 2, which makes the per-pattern logs directly comparable. The
+block below is copy-paste-friendly: every line is a single, runnable
+command.
 
 ```powershell
 # from repo root
-python -u -m scripts.seed_iteration_01_naive_a --log logs/iter-01/seed.log
+# 1. Seed the 5 naive containers
+python -u -m scripts.seed_iteration_01_naive_a                          --log logs/iter-01/seed.log
 
-# Run all 4 patterns + P2b; each writes its own logs/iter-01/step5-P<N>.log
-python -u -m scripts.patterns_iteration_01_naive_a --pattern all
+# 2. Run each access pattern individually (one log per pattern)
+python -u -m scripts.patterns_iteration_01_naive_a --pattern P1         --log logs/iter-01/step5-P1.log
+python -u -m scripts.patterns_iteration_01_naive_a --pattern P2         --log logs/iter-01/step5-P2.log
+python -u -m scripts.patterns_iteration_01_naive_a --pattern P2b        --log logs/iter-01/step5-P2b.log
+python -u -m scripts.patterns_iteration_01_naive_a --pattern P3         --log logs/iter-01/step5-P3.log
+python -u -m scripts.patterns_iteration_01_naive_a --pattern P4         --log logs/iter-01/step5-P4.log
 ```
 
-Need a single pattern (e.g. while iterating)? Pass `--pattern P2b --log
-logs/iter-01/step5-P2b.log`. Each per-pattern log is kept small on
-purpose: one banner, one `[RU]` line per Cosmos call, a 4-field
-`metrics:` summary, and one curated `Result:` block — no full payload
-dumps and no SDK request/response header noise. Capture the RU
-totals; you'll compare them against `logs/iter-02/step5-P<N>.log` from
-iteration 2.
+Shortcut: `python -u -m scripts.patterns_iteration_01_naive_a --pattern all`
+runs P1…P4 (plus P2b) in one process and writes the same five log
+files. Each per-pattern log is kept small on purpose: one banner, one
+`[RU]` line per Cosmos call, a 4-field `metrics:` summary, and one
+curated `Result:` block — no full payload dumps and no SDK
+request/response header noise. Capture the RU totals; you'll compare
+them against `logs/iter-02/step5-P<N>.log` from iteration 2.
 
 ### What you should see
 
@@ -78,13 +85,19 @@ The runtime lives at the repo root in `scripts/` (see
 matching the convention used by naive-a and iteration 2 — every step is
 a `python -m scripts.<name>` invocation and each script writes its own
 log via `--log`, so the filename always matches the pattern that
-produced it.
+produced it. The block below is copy-paste-friendly: every line is a
+single, runnable command.
 
 ```powershell
 # from repo root
-python -u -m scripts.seed_iteration_01_naive_b     --log logs/iter-01/naive-b-seed.log
-python -u -m scripts.simulate_iteration_01_naive_b --log logs/iter-01/naive-b-simulate-default.log      # defaults: 50 iterations, 50 items/order
-python -u -m scripts.simulate_iteration_01_naive_b --iterations 10 --items-per-order 100 --log logs/iter-01/naive-b-simulate-large-items.log
+# 1. Seed the container with 10 customers and empty orders[]
+python -u -m scripts.seed_iteration_01_naive_b                                                          --log logs/iter-01/naive-b-seed.log
+
+# 2. Run the default 50-iteration growth simulation (50 items per order)
+python -u -m scripts.simulate_iteration_01_naive_b                                                      --log logs/iter-01/naive-b-simulate-default.log
+
+# 3. Optional: bump the per-order item count for a more dramatic curve
+python -u -m scripts.simulate_iteration_01_naive_b --iterations 10 --items-per-order 100                --log logs/iter-01/naive-b-simulate-large-items.log
 ```
 
 ### What you should see

@@ -47,26 +47,28 @@ scripts/
 ## Run the complete solution
 
 The runtime lives at the repo root in `scripts/` per
-[CONVENTIONS.md](../../../docs/03-walkthrough/CONVENTIONS.md).
+[CONVENTIONS.md](../../../docs/03-walkthrough/CONVENTIONS.md). The
+block below is copy-paste-friendly — every line is a single, runnable
+command, and each command writes its own log file:
 
 ```powershell
 # from repo root
 pip install -r src/requirements.txt                                            # azure-cosmos
 
-# 1. Seed the 5 naive containers (writes its own log via --log)
-python -u -m scripts.seed_iteration_01_naive_a --log logs/iter-01/seed.log
+# 1. Seed the 5 naive containers
+python -u -m scripts.seed_iteration_01_naive_a       --log logs/iter-01/seed.log
 
-# 2. Run all 4 access patterns; each pattern writes its own per-pattern log
-#    under logs/iter-01/ (step5-P1.log .. step5-P4.log) — same naming as iter-2.
-python -u -m scripts.patterns_iteration_01_naive_a --pattern all
-
-# Or run a single pattern and pick the log path explicitly:
+# 2. Run each access pattern individually (one log per pattern)
 python -u -m scripts.patterns_iteration_01_naive_a --pattern P1  --log logs/iter-01/step5-P1.log
 python -u -m scripts.patterns_iteration_01_naive_a --pattern P2  --log logs/iter-01/step5-P2.log
 python -u -m scripts.patterns_iteration_01_naive_a --pattern P2b --log logs/iter-01/step5-P2b.log
 python -u -m scripts.patterns_iteration_01_naive_a --pattern P3  --log logs/iter-01/step5-P3.log
 python -u -m scripts.patterns_iteration_01_naive_a --pattern P4  --log logs/iter-01/step5-P4.log
 ```
+
+Shortcut: `python -u -m scripts.patterns_iteration_01_naive_a --pattern all`
+runs P1…P4 (plus P2b) in one process and writes the same five
+`logs/iter-01/step5-P<N>.log` files.
 
 `scripts/patterns_iteration_01_naive_a.py` prints, for each access
 pattern, the documents returned and the **RU charge** reported by the
