@@ -42,134 +42,236 @@ bottom is the reference key for what the kit *should* propose. Skip it
 on a first pass if you'd rather see the kit derive the answer without
 anchoring on it.
 
-Full reference for the new patterns:
-[`extended-access-patterns.md`](../../src/iteration-03-composite-indexes/complete/extended-access-patterns.md).
+## The three new patterns
+
+These are the queries production telemetry surfaced after iteration 2
+shipped. Container layout and partition keys are unchanged from
+iteration 2 — only the query shapes are new. **No index changes are
+suggested here on purpose**; the agent will derive them from measured
+baseline metrics in Step 3.
+
+### R-EXT-1 — Customer order history by date range
+
+> "Show me everything customer C00005 ordered in Q1 2026, most recent first."
+
+```sql
+SELECT * FROM c
+WHERE  c.type = 'order'
+  AND  c.customerId = @cid
+  AND  c.orderDate >= @from
+  AND  c.orderDate <  @to
+ORDER  BY c.orderDate DESC
+```
+
+- Container: `CustomerOrders` (partition key `/customerId`)
+- In-partition (filter on `customerId`).
+
+### R-EXT-2 — Open-orders dashboard
+
+> "List every order in `Placed` status across the platform, most recent first."
+
+```sql
+SELECT c.orderId, c.customerId, c.orderDate, c.totalAmount
+FROM   c
+WHERE  c.type = 'order'
+  AND  c.status = @status
+ORDER  BY c.orderDate DESC
+```
+
+- Container: `CustomerOrders` (partition key `/customerId`)
+- Intentionally **cross-partition** — no `customerId` filter, by
+  design, because it's an admin/ops dashboard view.
+
+### R-EXT-3 — Product browsing by rating + price
+
+> "Show me the highest-rated products in CAT006; for ties show the cheapest first."
+
+```sql
+SELECT c.productId, c.name, c.rating, c.price
+FROM   c
+WHERE  c.categoryId = @cid
+ORDER  BY c.rating DESC, c.price ASC
+```
+
+- Container: `Products` (partition key `/categoryId`)
+- In-partition. Two-column `ORDER BY` mixing DESC + ASC.
 
 ## Demo flow — recommended Copilot prompts
 
-Same six-step cadence as iteration 2, applied to the new requirements:
-analyze → propose → validate the deployed policy → update code/queries →
-execute → interpret.
+Three steps, evidence-driven: write queries (with index metrics on)
+→ **baseline + analyze + propose** in one prompt → **apply +
+validate + re-run + interpret** in one prompt.
 
-### Step 1 — Analyze the new requirements
+The key shift from iteration 2: composite indexes are *justified by
+observed RU, `retrieved/output` ratios, and Cosmos DB's own index
+utilization metrics*, not guessed from the requirements text. R-EXT-3
+will fail with **400 BadRequest** against the iter-2 baseline — that's
+the point, and it's the most powerful teaching moment in this
+iteration.
 
-```text
-@cosmos Iteration 2 has shipped. Telemetry now shows three additional
-patterns we didn't model for:
+> **Why so few steps?** Earlier versions of this flow had separate
+> "run the baseline" / "apply policy" / "re-run" PowerShell steps
+> between each analysis prompt. The agent can invoke those commands
+> itself as tool calls, and the drift check at the end of the apply
+> phase is a hard gate — if the deployed policy doesn't match
+> `iteration-03-output.md`, the agent stops and reports instead of
+> re-running. One human checkpoint remains: review
+> `iteration-03-output.md` after Step 2 before kicking off Step 3.
 
-  R-EXT-1: customer order history filtered by date range, recent first.
-  R-EXT-2: open-orders dashboard — all orders in status 'Placed',
-           most recent first, across customers.
-  R-EXT-3: products in a category, sorted by rating DESC then price ASC.
-
-For each one, tell me whether the iteration-2 schema can serve it
-efficiently as-is, and what (if anything) needs to change. Don't change
-the partition keys.
-
-Write the full analysis and proposed index/design changes to
-`iteration-03-output.md` at the repo root — include per-pattern
-verdict, recommended composite indexes (with ASC/DESC ordering and
-rationale), and any query-shape adjustments. This file is a checkpoint:
-I will review it before moving on to Step 2.
-```
-
-> **Checkpoint.** Before continuing, open `iteration-03-output.md` and
-> confirm the proposed indexing changes match your intent. Edit the
-> file (or re-prompt the agent) until you're satisfied — Steps 2–6
-> apply this plan.
-
-### Step 2 — Apply and validate the index changes
-
-Drive apply + validation from the checkpoint file so the deployed
-policy is whatever you approved in Step 1 — no hardcoded container or
-index specifics in this prompt:
+### Step 1 — Add the three query functions (with index metrics enabled)
 
 ```text
-@cosmos Read `iteration-03-output.md` and use it as the source of truth.
-For each affected container, start from recommended iteration-2 indexing policy
-and
-generate a merged `indexing-policy.json` adding additional new recommended composite indexes  
-described in
-`iteration-03-output.md`. Apply the merged policy to the emulator. After apply, inspect each
-container and confirm the resulting indexing policy is the union of the
-iteration-2 baseline and the iteration-03-output.md additions — paths,
-ASC/DESC ordering, and composite groupings. Flag any drift or any
-iteration-2 entry that went missing.
-```
+@cosmos Read the "The three new patterns" section of
+`docs/03-walkthrough/3-iteration-03-composite-indexes.md`. It defines
+three patterns — R-EXT-1, R-EXT-2, R-EXT-3 — with the exact SQL,
+target container, partition key, and parameter shape for each.
 
-The generated policy should be equivalent to
-[`indexing-policy.json`](../../src/iteration-03-composite-indexes/complete/indexing-policy.json)
-for the reference design — your file will reflect whatever
-`iteration-03-output.md` specifies.
+Add one query function per pattern to `demo/app/queries.py`, using the
+SQL exactly as written in that section. Use parameterized queries
+(R-EXT-1 and R-EXT-3 take parameters; R-EXT-2 is intentionally
+cross-partition by design).
 
-### Step 3 — Validate the deployed policy
+Every call must enable Cosmos DB indexing metrics per
+https://learn.microsoft.com/azure/cosmos-db/index-metrics?tabs=python:
 
-```text
-@cosmos Apply the new recommended indexing policy, inspect both containers
-and confirm the composite indexes are present and in the order I
-proposed. Flag any drift.
-```
+  - Pass `populate_index_metrics=True` to `container.query_items(...)`.
+  - After draining results, read
+    `container.client_connection.last_response_headers
+        ['x-ms-cosmos-index-utilization']`
+    and log the decoded text. It contains four sections — Utilized
+    Single Indexes, Potential Single Indexes, Utilized Composite
+    Indexes, Potential Composite Indexes — each with an Index Impact
+    Score (High / Low). The `Potential Composite Indexes` block is
+    exactly the signal we'll use in Step 2 to propose composites.
 
-### Step 4 — Update the queries
-
-```text
-@cosmos Add three query functions to `demo/app/queries.py` — one per
-R-EXT-* pattern. Use parameterized queries (R-EXT-1 and R-EXT-3 are; R-EXT-2 is intentionally
-cross-customer),  log requestCharge, indexHitDocumentCount (if
+For every call also log requestCharge, indexHitDocumentCount (if
 emitted), outputDocumentCount, retrievedDocumentCount, and a short
-query-metrics summary on every call. Expose a CLI:
+query-metrics summary. Expose a CLI:
 `python -m demo.app.queries {r1|r2|r3|all} [--limit N] [--log PATH]`.
+
+Do NOT change indexing policy in this step. The queries must run
+against whatever policy is currently deployed (iteration-2 baseline).
+On 400 BadRequest, log the error (including any
+`x-ms-cosmos-index-utilization` header the server returned) and
+continue with the remaining patterns — do not abort the run.
 ```
 
-### Step 5 — Single combined before/after harness
+> **SDK version note.** `populate_index_metrics` requires `azure-cosmos`
+> **>= 4.6.0** (Python). The header is only returned when the query
+> yields at least one item; record `index_utilization=None` for
+> empty/erroring responses.
 
-Replace the manual revert/run/apply/run dance with one orchestrated
-script so the log captures a clean, reproducible comparison.
+### Step 2 — Capture the baseline, analyze it, and propose composites
 
 ```text
-@cosmos Generate `scripts/bench_iteration_03.py` that runs the full
-before/after cycle in one invocation:
+@cosmos Run the baseline yourself, then analyze and propose:
 
-  1. Apply the iteration-2 baseline indexing policy
-     (no R-EXT composites). Wait for indexing to settle.
-  2. Run every R-EXT-* query and capture per-call requestCharge plus
-     the raw `x-ms-documentdb-query-metrics` headers. Tag the rows
-     `label="before"`. Persist the raw capture to
-     `logs/iter-03/bench-before.json`.
-  3. Apply the iteration-3 policy (= iter-2 + the new composites from
-     `iteration-03-output.md`). Wait for indexing to settle.
-  4. Re-run the same queries; tag rows `label="after"`; persist to
-     `logs/iter-03/bench-after.json`.
-  5. Emit a markdown comparison table to stdout AND to
-     `logs/iter-03/bench.log` with columns:
-       Pattern | Before RU | After RU | Δ RU | Δ % |
-       retrieved/output before | retrieved/output after | Verdict
-     where Verdict is one of ✓ healthy / ⚠ partial / ✗ regression.
-  
-Handle the case where R-EXT-3
-returns 400 BadRequest in the `before` pass (no composite supports
-the 3-key ORDER BY) and record it as a graceful `before` failure
-rather than aborting.
+  1. Execute `python -u -m demo.app.queries all
+     --log logs/iter-03/baseline.log` against the deployed iteration-2
+     policy. Expect R-EXT-1 and R-EXT-2 to succeed with high RU and
+     `retrievedDocumentCount` ≫ `outputDocumentCount`; expect R-EXT-3
+     to return 400 BadRequest because no composite supports its
+     multi-key ORDER BY. None of those are failures of the run.
+
+  2. Read `logs/iter-03/baseline.log` along with the
+     "The three new patterns" section of
+     `docs/03-walkthrough/3-iteration-03-composite-indexes.md` so you
+     know each pattern's container and query shape.
+
+  3. For each R-EXT pattern, combine three signals:
+       a. RU charge and the retrieved/output ratio (how much work was
+          wasted).
+       b. The decoded `x-ms-cosmos-index-utilization` payload —
+          specifically the "Potential Composite Indexes" section and
+          its Index Impact Score (focus on High first; treat Low as
+          advisory).
+       c. For R-EXT-3, the 400 BadRequest and what its ORDER BY shape
+          implies about the composite that *would* satisfy it.
+
+  4. Produce two artifacts at the repo root:
+       - `iteration-03-analysis.md`: per-pattern findings — observed
+         RU, retrieved/output, the verbatim "Potential Composite
+         Indexes" block, and a one-line diagnosis ("filter+sort done
+         in memory", "ORDER BY unsupported", etc.).
+       - `iteration-03-output.md`: proposed composite indexes per
+         container, with path ordering, ASC/DESC, and a one-line
+         rationale citing the specific metric or potential-index
+         entry it answers (e.g. "R-EXT-2: retrieved 500 / output 20 +
+         potential composite `/status ASC, /orderDate DESC` High →
+         adopt as-is").
+
+Don't change partition keys. `iteration-03-output.md` is a
+checkpoint: I will review it before applying.
 ```
 
-Run it:
+The generated proposal should converge on
+[`indexing-policy.json`](../../src/iteration-03-composite-indexes/complete/indexing-policy.json)
+for the reference design.
 
-```powershell
-python -u -m scripts.bench_iteration_03
-```
-
-### Step 6 — Ask the agent to interpret the metrics
+### Step 3 — Apply, validate, re-run, and interpret
 
 ```text
-@cosmos Read `logs/iter-03/bench.log` plus the raw captures
-`logs/iter-03/bench-before.json` and `logs/iter-03/bench-after.json`.
-For each R-EXT pattern, explain which composite index removed the
-in-memory sort, where the retrieved/output ratio tightened, and
-whether any pattern is still doing more work than it should. If
-R-EXT-3 failed in the `before` pass with 400 BadRequest, explain
-why (3-path composite + multi-key ORDER BY) and confirm the
-workaround in `queries.py` is the correct one.
+@cosmos Once I've approved `iteration-03-output.md`, run the full
+apply-through-interpret cycle in one pass:
+
+  1. **Merge.** Read `iteration-03-output.md` for the new composite
+     indexes. Load the iteration-2 baseline indexing policy — the
+     reference is at
+     `src/iteration-02-optimized/complete/indexing-policy.json` (or
+     read it live from the deployed containers on the emulator). For
+     each affected container (the patterns section in
+     `docs/03-walkthrough/3-iteration-03-composite-indexes.md` names
+     `CustomerOrders` and `Products`), generate a merged
+     `indexing-policy.json` that adds the new composites on top of
+     the iter-2 baseline.
+
+  2. **Apply.** Push the merged policy to the emulator and wait for
+     indexing to settle.
+
+  3. **Validate (hard gate).** Inspect each container and confirm
+     the deployed policy is the exact union of the iteration-2
+     baseline and the additions from `iteration-03-output.md` —
+     paths, ASC/DESC ordering, and composite groupings. If you
+     detect any drift, any missing iteration-2 entry, or any extra
+     composite that wasn't approved, **STOP HERE**, report the
+     drift, and do not proceed. Do not re-run the queries until I've
+     reviewed and re-approved.
+
+  4. **Re-run.** If validation passes, execute
+     `python -u -m demo.app.queries all --log logs/iter-03/after.log`.
+     R-EXT-3 should now succeed. R-EXT-1 and R-EXT-2 should show
+     lower RU, a tightened retrieved/output ratio, and the
+     previously-listed composites should now appear under "Utilized
+     Composite Indexes" in the `x-ms-cosmos-index-utilization`
+     payload instead of "Potential".
+
+  5. **Interpret.** Compare `logs/iter-03/baseline.log` (iteration-2
+     policy) and `logs/iter-03/after.log` (iteration-3 policy). For
+     each R-EXT pattern, explain:
+
+       - Which composite index removed the in-memory sort or
+         cross-partition scan, citing the specific RU delta, the
+         retrieved/output change, AND the migration of that index
+         from "Potential Composite Indexes" (before) to "Utilized
+         Composite Indexes" (after) in
+         `x-ms-cosmos-index-utilization`.
+       - Why R-EXT-3 went from 400 BadRequest → success (3-path
+         composite enabling the multi-key ORDER BY).
+       - Whether any pattern is still doing more work than it
+         should — in particular, any new High-impact entries still
+         showing under "Potential" in the `after` log are next-step
+         candidates.
+
+  6. Cross-check the interpretation against the findings in
+     `iteration-03-analysis.md` — flag any diagnosis that turned out
+     wrong.
 ```
+
+> **Optional — reproducible artifact.** Once the prompt flow is dialed
+> in, the runbook in
+> [`3-iteration-03-composite-indexes-complete.md`](./3-iteration-03-composite-indexes-complete.md)
+> wraps Steps 2 and 3 in a single `scripts/bench_iteration_03.py`
+> harness for a clean, one-shot before/after capture.
 
 ## Expected outcomes — reference key
 
