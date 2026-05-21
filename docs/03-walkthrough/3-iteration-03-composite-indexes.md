@@ -86,13 +86,11 @@ index specifics in this prompt:
 
 ```text
 @cosmos Read `iteration-03-output.md` and use it as the source of truth.
-For each affected container, start from the iteration-2 indexing policy
-currently deployed on the emulator (fetch it live; do not assume) and
-generate a merged `indexing-policy.json` that preserves every existing
-included/excluded path and composite index from iteration 2 and adds
-the new composite indexes (and any other index changes) described in
-`iteration-03-output.md`. Do not drop or rewrite iteration-2 entries.
-Apply the merged policy to the emulator. After apply, inspect each
+For each affected container, start from recommended iteration-2 indexing policy
+and
+generate a merged `indexing-policy.json` adding additional new recommended composite indexes  
+described in
+`iteration-03-output.md`. Apply the merged policy to the emulator. After apply, inspect each
 container and confirm the resulting indexing policy is the union of the
 iteration-2 baseline and the iteration-03-output.md additions — paths,
 ASC/DESC ordering, and composite groupings. Flag any drift or any
@@ -107,7 +105,7 @@ for the reference design — your file will reflect whatever
 ### Step 3 — Validate the deployed policy
 
 ```text
-@cosmos After I apply the new indexing policy, inspect both containers
+@cosmos Apply the new recommended indexing policy, inspect both containers
 and confirm the composite indexes are present and in the order I
 proposed. Flag any drift.
 ```
@@ -148,10 +146,7 @@ before/after cycle in one invocation:
        retrieved/output before | retrieved/output after | Verdict
      where Verdict is one of ✓ healthy / ⚠ partial / ✗ regression.
   
-
-Do not change partition keys. Honour the apply scripts in `scripts/`
-(`apply_iteration_02.py`, `apply_iteration_03.py`) rather than
-re-implementing the policy merge. Handle the case where R-EXT-3
+Handle the case where R-EXT-3
 returns 400 BadRequest in the `before` pass (no composite supports
 the 3-key ORDER BY) and record it as a graceful `before` failure
 rather than aborting.
