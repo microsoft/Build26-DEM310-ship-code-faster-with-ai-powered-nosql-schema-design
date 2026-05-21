@@ -71,7 +71,7 @@ If you'd like to follow along with this demo at your own pace:
 
 5. **Walk through the three schema-evolution iterations covered in the demo**
    - Install Python deps: `pip install -r src/requirements.txt`
-   - **Drive the demo from the walkthrough scenario.** Start at [`docs/index.md`](./docs/index.md) and follow the four-section flow — *Setup → Scenario → Walkthrough → Takeaways*. Each iteration page is a prompt-first script: feed the listed Copilot prompts to the Cosmos DB Agent Kit in order, let the agent propose the design, generate the seed/queries, and capture the RU numbers.
+   - **Drive the demo from the walkthrough scenario.** Follow the four-section flow below — *Setup → Scenario → Walkthrough → Takeaways*. Each iteration page is a prompt-first script: feed the listed Copilot prompts to the Cosmos DB Agent Kit in order, let the agent propose the design, generate the seed/queries, and capture the RU numbers.
      1. [Setup](./docs/01-setup/) — prerequisites, emulator, VS Code + agent, Python env.
      2. [Scenario](./docs/02-scenario/) — the inputs you paste into the agent in Step 1 of every iteration. Each one is a worked example you can lift for your own domain (reusable templates: [access-patterns-template.md](./docs/access-patterns-template.md), [volumetrics-template.md](./docs/volumetrics-template.md)):
         - [Business context](./docs/02-scenario/1-business-context.md) — bike-shop e-commerce backend on a classic RDBMS schema, the "why" the agent needs.
