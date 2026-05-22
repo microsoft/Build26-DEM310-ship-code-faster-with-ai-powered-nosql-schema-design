@@ -51,7 +51,16 @@ src/
 1. Python 3.10+
 2. The local Cosmos DB emulator running on `https://localhost:8081`
    (see [`/docs/01-setup`](../docs/01-setup/)).
-3. `pip install -r src/requirements.txt`
+3. A Python virtual environment with deps installed (see
+   [`docs/01-setup/4-python-env.md`](../docs/01-setup/4-python-env.md)):
+
+   ```powershell
+   # from repo root
+   python -m venv .venv
+   .venv\Scripts\Activate.ps1          # PowerShell
+   # source .venv/bin/activate         # bash / zsh
+   pip install -r src/requirements.txt
+   ```
 4. Copy [`.env.example`](./.env.example) to `src/.env` — every Python
    entry point loads it via `python-dotenv` to pick up
    `COSMOS_ENDPOINT` / `COSMOS_KEY` / `COSMOS_DB`. The defaults already
@@ -76,8 +85,9 @@ for the canonical layout. Each iteration also has a
 same commands and an expected-RU envelope.
 
 ```powershell
-# from repo root
-pip install -r src/requirements.txt
+# from repo root — activate the venv created in Prerequisites
+.venv\Scripts\Activate.ps1          # PowerShell
+# source .venv/bin/activate         # bash / zsh
 
 # 1) iteration 1 — feel the pain
 python -u -m scripts.seed_iteration_01_naive_a

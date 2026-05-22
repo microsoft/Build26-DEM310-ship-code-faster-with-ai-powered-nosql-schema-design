@@ -61,7 +61,7 @@ If you'd like to follow along with this demo at your own pace:
    - **Validate:** start the emulator container and confirm the Data Explorer loads at `https://localhost:8081/_explorer/index.html`.
 
 3. **Install the Azure Cosmos DB extension for Visual Studio Code (preferred path for the Agent Kit and Shell)**
-   - Install the extension following the steps in [Azure Cosmos DB for NoSQL best practices in GitHub Copilot for Visual Studio Code — Step 1: Install required extensions](https://learn.microsoft.com/azure/cosmos-db/github-copilot-visual-studio-code-best-practices#step-1-install-required-extensions). The same extension is documented in [Use Visual Studio Code to connect and query Azure Cosmos DB instances](https://learn.microsoft.com/azure/cosmos-db/visual-studio-code-extension).
+   - Install the extension following the steps in [Azure Cosmos DB Agent Kit](https://github.com/AzureCosmosDB/cosmosdb-agent-kit). The same extension is documented in [Use Visual Studio Code to connect and query Azure Cosmos DB instances](https://learn.microsoft.com/azure/cosmos-db/visual-studio-code-extension).
    - The extension bundles the **Azure Cosmos DB Agent Kit** (AI-assisted schema design with GitHub Copilot and Cosmos SDK coding best practices) and the **Azure Cosmos DB Shell** (interactive querying). If you use CLI or other tool. If you use Copilot CLI or other tools - install [Azure Cosmos DB Agent Kit](https://github.com/AzureCosmosDB/cosmosdb-agent-kit) manually or link it to your repo.
    - **Validate:** open the Azure Cosmos DB view in the Activity Bar and connect to the local emulator account from step 2.
 
@@ -70,7 +70,14 @@ If you'd like to follow along with this demo at your own pace:
    - **Validate:** connect to the emulator started in step 2, create a database, and list databases to confirm end-to-end connectivity.
 
 5. **Walk through the three schema-evolution iterations covered in the demo**
-   - Install Python deps: `pip install -r src/requirements.txt`
+   - Create and activate a Python virtual environment, then install deps (see [setup step 4](./docs/01-setup/4-python-env.md) for full details):
+     ```powershell
+     # from repo root
+     python -m venv .venv
+     .venv\Scripts\Activate.ps1          # PowerShell
+     # source .venv/bin/activate         # bash / zsh
+     pip install -r src/requirements.txt
+     ```
    - **Drive the demo from the walkthrough scenario.** Follow the four-section flow below — *Setup → Scenario → Walkthrough → Takeaways*. Each iteration page is a prompt-first script: feed the listed Copilot prompts to the Cosmos DB Agent Kit in order, let the agent propose the design, generate the seed/queries, and capture the RU numbers.
      1. [Setup](./docs/01-setup/) — prerequisites, emulator, VS Code + agent, Python env.
      2. [Scenario](./docs/02-scenario/) — the inputs you paste into the agent in Step 1 of every iteration. Each one is a worked example you can lift for your own domain (reusable templates: [access-patterns-template.md](./docs/access-patterns-template.md), [volumetrics-template.md](./docs/volumetrics-template.md)):
@@ -135,7 +142,7 @@ Use these as a starting point — or write your own!
 |:---------|:------------|
 | [Welcome to Azure Cosmos DB for NoSQL](https://learn.microsoft.com/azure/cosmos-db/nosql/) | **Start here.** Why Azure Cosmos DB for NoSQL: a globally distributed, schema-flexible database with single-digit-millisecond latency, elastic scale, and SLA-backed throughput — the foundation everything in this demo builds on |
 | [Azure Cosmos DB extension for Visual Studio Code](https://learn.microsoft.com/azure/cosmos-db/visual-studio-code-extension) | Bundles the Azure Cosmos DB Agent Kit (AI-assisted schema design with GitHub Copilot) and the Azure Cosmos DB Shell — the central tool used throughout the demo |
-| [Azure Cosmos DB for NoSQL best practices in GitHub Copilot for Visual Studio Code](https://learn.microsoft.com/azure/cosmos-db/github-copilot-visual-studio-code-best-practices) | Step-by-step guidance for using the Agent Kit with GitHub Copilot — installation, prompts, and recommended workflow |
+| [Azure Cosmos DB Agent Kit](https://github.com/AzureCosmosDB/cosmosdb-agent-kit) | Step-by-step guidance for using the Agent Kit with GitHub Copilot — installation, prompts, and recommended workflow |
 | [Azure Cosmos DB Shell](https://learn.microsoft.com/azure/cosmos-db/shell/overview) | Cross-platform interactive shell for exploring and managing Azure Cosmos DB databases |
 | [Data modeling in Azure Cosmos DB for NoSQL](https://learn.microsoft.com/azure/cosmos-db/modeling-data) | The reference page behind iteration 2 — embed vs reference, denormalization patterns, partition-key choice |
 | [Transactional batch operations in Azure Cosmos DB](https://learn.microsoft.com/azure/cosmos-db/transactional-batch) | The batch API the optimized place-order in iteration 2 uses |

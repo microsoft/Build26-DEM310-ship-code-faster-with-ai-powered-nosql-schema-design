@@ -1,6 +1,7 @@
 # Iteration 4 — additional dependencies beyond /src/requirements.txt
 #
-# Install:  pip install -r src/iteration-04-hybrid-vector-search/requirements.txt
+# Install (with the venv from docs/01-setup/4-python-env.md activated):
+#   pip install -r src/iteration-04-hybrid-vector-search/requirements.txt
 #
 # (You still need azure-cosmos / pydantic / python-dotenv from the root
 # requirements.txt — install both.)

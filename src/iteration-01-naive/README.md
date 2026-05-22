@@ -25,7 +25,9 @@ is copy-paste-friendly: every line is a single, runnable command, and
 each command writes its own log file.
 
 ```powershell
-# from repo root
+# from repo root — activate the venv created in docs/01-setup/4-python-env.md
+.venv\Scripts\Activate.ps1          # PowerShell
+# source .venv/bin/activate         # bash / zsh
 pip install -r src/requirements.txt
 
 # --- naive-a: 5-container relational port -----------------------------

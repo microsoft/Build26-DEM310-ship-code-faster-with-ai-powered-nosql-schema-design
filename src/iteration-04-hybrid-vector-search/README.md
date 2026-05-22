@@ -79,9 +79,12 @@ iteration-04-hybrid-vector-search/
    cloud Cosmos DB + Azure AI Foundry"*) — pasting the two endpoint
    values is all you need; auth flows through `DefaultAzureCredential`.
 
-4. **Install the extra Python dependencies**:
+4. **Install the extra Python dependencies** (into the same venv from
+   [setup step 4](../../docs/01-setup/4-python-env.md)):
 
    ```powershell
+   .venv\Scripts\Activate.ps1          # PowerShell
+   # source .venv/bin/activate         # bash / zsh
    pip install -r src/iteration-04-hybrid-vector-search/requirements.txt
    ```
 
