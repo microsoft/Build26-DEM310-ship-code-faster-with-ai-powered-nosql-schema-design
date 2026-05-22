@@ -95,9 +95,7 @@ fixes.
 
 A successful run of `scripts/patterns_iteration_01_naive_a.py` prints
 one block per access pattern with the RU charge of every operation and
-a `TOTAL` line. The shape of the output looks like this (RU values are
-placeholders until the run is captured against the classic Windows
-emulator — see the note below):
+a `TOTAL` line. :
 
 ```text
 ======================================================================
@@ -123,16 +121,6 @@ P3 — Place a new order for C00005
 P4 — Products in category CAT006 (price ASC)
   [RU] cross-partition query on Products                 <ru>  (N docs)
 ```
-
-> 📝 **About the RU numbers.** The captured RU values will be filled in
-> from a run against the **classic Azure Cosmos DB emulator on Windows**,
-> which reports differentiated, production-like RU charges. The vNext
-> Linux preview emulator (Docker image
-> `mcr.microsoft.com/cosmosdb/linux/azure-cosmos-emulator:vnext-preview`)
-> is convenient on macOS/Linux but currently reports a flat synthetic
-> charge (~1.00 RU per request), so it is **not** the right target for
-> reasoning about cost. Use it for connectivity and shape, the classic
-> emulator (or a real Azure Cosmos DB account) for RU comparisons.
 
 Independent of the exact numbers, three things should stand out as you
 read the output:
