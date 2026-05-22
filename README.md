@@ -29,7 +29,7 @@ If you'd like to follow along with this demo at your own pace:
 
 3. **Install the Azure Cosmos DB extension for Visual Studio Code (preferred path for the Agent Kit and Shell)**
    - Install the extension following the steps in [Azure Cosmos DB Agent Kit](https://github.com/AzureCosmosDB/cosmosdb-agent-kit). The same extension is documented in [Use Visual Studio Code to connect and query Azure Cosmos DB instances](https://learn.microsoft.com/azure/cosmos-db/visual-studio-code-extension).
-   - The extension bundles the **Azure Cosmos DB Agent Kit** (AI-assisted schema design with GitHub Copilot and Cosmos SDK coding best practices) and the **Azure Cosmos DB Shell** (interactive querying). If you use CLI or other tool. If you use Copilot CLI or other tools - install [Azure Cosmos DB Agent Kit](https://github.com/AzureCosmosDB/cosmosdb-agent-kit) manually or link it to your repo.
+   - The extension bundles the **Azure Cosmos DB Agent Kit** (AI-assisted schema design with GitHub Copilot and Cosmos SDK coding best practices) and the **Azure Cosmos DB Shell** (interactive querying). If you use Copilot CLI or other tools, install [Azure Cosmos DB Agent Kit](https://github.com/AzureCosmosDB/cosmosdb-agent-kit) manually or link it to your repo.
    - **Validate:** open the Azure Cosmos DB view in the Activity Bar and connect to the local emulator account from step 2.
 
 4. **Try the Azure Cosmos DB Shell against the emulator**
@@ -116,7 +116,7 @@ Use these as a starting point — or write your own!
 | [Indexing policies — composite indexes](https://learn.microsoft.com/azure/cosmos-db/index-policy#composite-indexes) | The feature iteration 3 turns on for multi-column `ORDER BY` queries |
 | [Azure Cosmos DB service quotas — per-item limits](https://learn.microsoft.com/azure/cosmos-db/concepts-limits#per-item-limits) | The 2 MB item ceiling that the unbounded-array simulator (`naive-b`) drives toward |
 | [Hierarchical partition keys (unlimited logical partition storage)](https://learn.microsoft.com/azure/cosmos-db/hierarchical-partition-keys-unlimited-scale) | The deferred next step called out in `04-takeaways.md` for customers whose history grows past 10 GB |
-| [https://aka.ms/build26-next-steps](https://aka.ms/build26-next-steps) | Explore lab and session repos to further your learning from Microsoft Build |
+| [Microsoft Build 2026 — Next Steps](https://aka.ms/build26-next-steps) | Explore lab and session repos to further your learning from Microsoft Build |
 
 
 ### 🌟 Microsoft Learn MCP Server
