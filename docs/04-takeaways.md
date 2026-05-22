@@ -46,6 +46,6 @@ add a composite — it removes the in-memory sort. See iteration 3.
 ## Where to go next
 
 - [Cosmos DB modeling guidance on Microsoft Learn](https://learn.microsoft.com/azure/cosmos-db/nosql/modeling-data)
-- [Cosmos DB Agent in VS Code](https://learn.microsoft.com/azure/cosmos-db/extensions/vscode-extension)
+- [Cosmos DB Agent in Visual Studio Code](https://learn.microsoft.com/azure/cosmos-db/extensions/vscode-extension)
 - [Indexing policies reference](https://learn.microsoft.com/azure/cosmos-db/index-policy)
 - aka.ms/build26-next-steps

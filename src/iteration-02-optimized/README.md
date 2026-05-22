@@ -1,6 +1,6 @@
 # Iteration 2 — Agent-guided redesign (`CustomerOrders` + `Products`)
 
-This is the iteration that the Cosmos DB Agent in VS Code guides you toward
+This is the iteration that the Cosmos DB Agent in Visual Studio Code guides you toward
 once it sees iteration 1's RU charges and the access patterns in
 [`/docs/02-scenario/2-access-patterns.md`](../../docs/02-scenario/2-access-patterns.md).
 The five containers collapse to two, and a `type` discriminator lets a

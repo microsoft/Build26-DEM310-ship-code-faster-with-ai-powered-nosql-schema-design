@@ -26,7 +26,7 @@ is reference content only.
 > before and after `--apply-policy` to see both numbers change together
 > with the RU drop.
 >
-> Outside VS Code? `npx skills add AzureCosmosDB/cosmosdb-agent-kit`
+> Outside Visual Studio Code? `npx skills add AzureCosmosDB/cosmosdb-agent-kit`
 > (see [setup step 3](../01-setup/3-vscode-agent.md)) brings the same
 > rules into Claude Code, Gemini CLI, or JetBrains.
 

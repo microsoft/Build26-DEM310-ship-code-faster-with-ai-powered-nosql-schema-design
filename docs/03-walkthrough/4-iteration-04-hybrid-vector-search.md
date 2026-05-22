@@ -18,7 +18,7 @@
 > the embedding token usage from Azure AI Foundry — so you can see both
 > the Cosmos-side and the model-side cost of every hybrid query.
 >
-> Outside VS Code? `npx skills add AzureCosmosDB/cosmosdb-agent-kit`
+> Outside Visual Studio Code? `npx skills add AzureCosmosDB/cosmosdb-agent-kit`
 > (see [setup step 3](../01-setup/3-vscode-agent.md)) brings the same
 > rules into Claude Code, Gemini CLI, or JetBrains.
 

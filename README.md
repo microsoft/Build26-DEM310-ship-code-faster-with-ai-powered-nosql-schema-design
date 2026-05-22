@@ -79,7 +79,7 @@ If you'd like to follow along with this demo at your own pace:
      pip install -r src/requirements.txt
      ```
    - **Drive the demo from the walkthrough scenario.** Follow the four-section flow below — *Setup → Scenario → Walkthrough → Takeaways*. Each iteration page is a prompt-first script: feed the listed Copilot prompts to the Cosmos DB Agent Kit in order, let the agent propose the design, generate the seed/queries, and capture the RU numbers.
-     1. [Setup](./docs/01-setup/) — prerequisites, emulator, VS Code + agent, Python env.
+     1. [Setup](./docs/01-setup/) — prerequisites, emulator, Visual Studio Code + agent, Python env.
      2. [Scenario](./docs/02-scenario/) — the inputs you paste into the agent in Step 1 of every iteration. Each one is a worked example you can lift for your own domain (reusable templates: [access-patterns-template.md](./docs/access-patterns-template.md), [volumetrics-template.md](./docs/volumetrics-template.md)):
         - [Business context](./docs/02-scenario/1-business-context.md) — bike-shop e-commerce backend on a classic RDBMS schema, the "why" the agent needs.
         - [Access patterns](./docs/02-scenario/2-access-patterns.md) — P1–P4 (the four core patterns) plus R-EXT-1/2/3 (the post-launch extensions used in iteration 3).
@@ -106,7 +106,7 @@ By the end of this demo, you will be able to:
 
 ### 💬 Keep Learning with Copilot
 
-Try these prompts with GitHub Copilot to explore the topics from this demo. Open Copilot Chat in VS Code (`Ctrl+Alt+I` on Windows/Linux, `Cmd+Shift+I` on Mac), paste a prompt, and see what you learn. Try connecting the [Microsoft Learn MCP Server](#-microsoft-learn-mcp-server) for the latest official documentation.
+Try these prompts with GitHub Copilot to explore the topics from this demo. Open Copilot Chat in Visual Studio Code (`Ctrl+Alt+I` on Windows/Linux, `Cmd+Shift+I` on Mac), paste a prompt, and see what you learn. Try connecting the [Microsoft Learn MCP Server](#-microsoft-learn-mcp-server) for the latest official documentation.
 
 Use these as a starting point — or write your own!
 
@@ -156,9 +156,9 @@ Use these as a starting point — or write your own!
 
 The Microsoft Learn MCP Server gives your AI agent direct access to Microsoft's official documentation — grounded, up-to-date answers about the products and services covered in this session.
 
-**VS Code** — One click installation: 
+**Visual Studio Code** — One click installation: 
 
-[![Install in VS Code](https://img.shields.io/badge/VS_Code-Install_Microsoft_Learn_MCP-0098FF?style=flat-square&logo=visualstudiocode&logoColor=white)](https://vscode.dev/redirect/mcp/install?name=microsoft-learn&config=%7B%22type%22%3A%22http%22%2C%22url%22%3A%22https%3A%2F%2Flearn.microsoft.com%2Fapi%2Fmcp%22%7D)
+[![Install in Visual Studio Code](https://img.shields.io/badge/Visual_Studio_Code-Install_Microsoft_Learn_MCP-0098FF?style=flat-square&logo=visualstudiocode&logoColor=white)](https://vscode.dev/redirect/mcp/install?name=microsoft-learn&config=%7B%22type%22%3A%22http%22%2C%22url%22%3A%22https%3A%2F%2Flearn.microsoft.com%2Fapi%2Fmcp%22%7D)
 
 
 **GitHub Copilot CLI** — Run this to install the Learn MCP Server as a plugin:

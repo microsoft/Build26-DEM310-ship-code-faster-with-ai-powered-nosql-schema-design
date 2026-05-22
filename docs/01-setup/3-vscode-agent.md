@@ -1,6 +1,6 @@
-# 3. VS Code + Cosmos DB Agent
+# 3. Visual Studio Code + Cosmos DB Agent
 
-The demo uses two VS Code extensions:
+The demo uses two Visual Studio Code extensions:
 
 1. **Azure Databases (Cosmos DB) extension** — adds the *Cosmos DB Shell*
    and registers the *Cosmos DB Agent* that GitHub Copilot Chat can invoke.
@@ -8,20 +8,20 @@ The demo uses two VS Code extensions:
 
 ## Install
 
-In VS Code: open the Extensions view (Ctrl+Shift+X) and install both.
+In Visual Studio Code: open the Extensions view (Ctrl+Shift+X) and install both.
 
 Confirm they're enabled:
 
 - The **Azure** activity bar icon shows a **Cosmos DB** node.
 - Opening Copilot Chat lets you `@` the **Cosmos DB Agent**.
 
-## Not using VS Code? Install the Cosmos DB Agent Kit instead
+## Not using Visual Studio Code? Install the Cosmos DB Agent Kit instead
 
 The [**Azure Cosmos DB Agent Kit**](https://learn.microsoft.com/azure/cosmos-db/gen-ai/agent-kit)
 ([repo](https://github.com/AzureCosmosDB/cosmosdb-agent-kit)) is an open-source
 collection of [Agent Skills](https://agentskills.io/) that teaches
 **any** Agent Skills–compatible assistant the same Cosmos DB best
-practices the VS Code agent uses — partition-key design, RU
+practices the Visual Studio Code agent uses — partition-key design, RU
 optimization, modeling, indexing, SDK patterns, and monitoring.
 
 It works with:

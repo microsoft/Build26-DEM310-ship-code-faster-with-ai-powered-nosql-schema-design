@@ -61,4 +61,4 @@ accepts connections before the data plane is fully ready.
 - [Develop locally using the Azure Cosmos DB emulator](https://learn.microsoft.com/azure/cosmos-db/how-to-develop-emulator)
   — top-level Microsoft Learn page covering both emulators.
 
-Continue with [3 — VS Code + Cosmos DB Agent](./3-vscode-agent.md).
+Continue with [3 — Visual Studio Code + Cosmos DB Agent](./3-vscode-agent.md).

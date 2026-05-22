@@ -19,7 +19,7 @@ execution.
 > (embed vs reference), **Partition Key Design** (cardinality + access
 > pattern fit), **Query Optimization** (RU reduction), and **SDK Best
 > Practices** (singleton client, transactional batch, retry). If you're
-> not on VS Code, install it with
+> not on Visual Studio Code, install it with
 > `npx skills add AzureCosmosDB/cosmosdb-agent-kit` (see
 > [setup step 3](../01-setup/3-vscode-agent.md)) and the same prompts
 > below work with Claude Code, Gemini CLI, or Copilot in JetBrains.
