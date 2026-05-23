@@ -54,29 +54,4 @@ updates in place.
 3. Run `db.databases.list()` — you should see an empty result until the
    first seed script runs.
 
-## Talk to the agent
-
-Open Copilot Chat and try, for example:
-
-> @cosmos given these four access patterns: (1) get a customer and their
-> 5 most recent orders, (2) get an order with its line items, (3) place an
-> order, (4) list all products in a category — and these container shapes,
-> what should I change to keep most reads single-partition?
-
-Continue with [4 — Python environment](./4-python-env.md).
-
-1. Open the Cosmos DB Shell from the command palette: *Cosmos DB: Open Shell*.
-2. Choose **Connect to emulator** (or paste the endpoint + key manually).
-3. Run `db.databases.list()` — you should see an empty result until the
-   first seed script runs.
-
-## Talk to the agent
-
-Open Copilot Chat and try, for example:
-
-> @cosmos given these four access patterns: (1) get a customer and their
-> 5 most recent orders, (2) get an order with its line items, (3) place an
-> order, (4) list all products in a category — and these container shapes,
-> what should I change to keep most reads single-partition?
-
 Continue with [4 — Python environment](./4-python-env.md).
