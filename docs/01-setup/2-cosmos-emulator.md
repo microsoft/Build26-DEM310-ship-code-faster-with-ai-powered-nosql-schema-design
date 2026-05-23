@@ -30,14 +30,8 @@ The seed and pattern scripts handle the cert with `connection_verify=False`.
 
 ## Validate
 
-```powershell
-python -c "import urllib3, requests; urllib3.disable_warnings(); print(requests.get('https://localhost:8081/_explorer/emulator.pem', verify=False).status_code)"
-```
+Test [Azure Cosmos DB Emulator](https://localhost:8081/_explorer/index.html) and do to Explorer to validate view.
 
-A response of `200` means the emulator is reachable. If the first SDK call
-returns `(InternalServerError) Service is currently unavailable`, give the
-emulator another minute to finish warming up and retry — the gateway
-accepts connections before the data plane is fully ready.
 
 > The emulator ships with a **well-known** primary key:
 > `C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==`
