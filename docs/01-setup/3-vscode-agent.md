@@ -44,7 +44,7 @@ detects a Cosmos DB task. Use the same prompts you'd use against the VS
 Code agent (the ones in [iteration 2's walkthrough](../03-walkthrough/2-iteration-02-optimized.md)
 are a good warm-up).
 
-Keep it current periodically with the same command — `npx skills add`
+Keep it current periodically with the same command — `npx skills update`
 updates in place.
 
 ## Connect to the emulator
