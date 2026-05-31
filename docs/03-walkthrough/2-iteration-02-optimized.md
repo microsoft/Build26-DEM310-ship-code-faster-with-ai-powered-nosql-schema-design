@@ -104,8 +104,7 @@ so I can verify the embedded shapes are right.
   ├── service.py      # business logic; P3 must use a transactional batch
   └── main.py         # argv -> service -> stdout
 
-Follow the Agent Kit's SDK Best Practices rules: singleton CosmosClient,
-async where appropriate, retry on 429, and log requestCharge +
+Follow the Agent Kit's SDK Best Practices rules and add logging requestCharge +
 x-ms-item-count + a compact query-metrics summary on every call as curated output.
 
 Patterns to be covered: P1, P2, P2b (compare-reads), P3, P4, use  IDs (C00005, O0000003, CAT006) to match log comparisons with other iterations. Iteration should have a benchmark script `scripts/patterns_iteration_NN_<variant>.py` with --pattern {P1|P2|P2b|P3|P4|all} and --log <path>; logs go to logs/iter-NN/step5-P<N>.log . Output is curated only: banner + [RU] lines + 4-field metrics: line + a final Result: key/value block. Silence azure/azure.cosmos/urllib3/aiohttp loggers to WARNING. Demo modules expose _query(...) (returns (rows, ru, n, metrics)) and pX(...) (returns a dict). 
