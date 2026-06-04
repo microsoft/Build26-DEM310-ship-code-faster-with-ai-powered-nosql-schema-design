@@ -117,6 +117,7 @@ Use these as a starting point — or write your own!
 | [Azure Cosmos DB service quotas — per-item limits](https://learn.microsoft.com/azure/cosmos-db/concepts-limits#per-item-limits) | The 2 MB item ceiling that the unbounded-array simulator (`naive-b`) drives toward |
 | [Hierarchical partition keys (unlimited logical partition storage)](https://learn.microsoft.com/azure/cosmos-db/hierarchical-partition-keys-unlimited-scale) | The deferred next step called out in `04-takeaways.md` for customers whose history grows past 10 GB |
 | [Microsoft Build 2026 — Next Steps](https://aka.ms/build26-next-steps) | Explore lab and session repos to further your learning from Microsoft Build |
+| [Watch the session recording](https://aka.ms/build26/DEM310/youtube) | Watch the recorded Microsoft Build session. |
 
 
 ### 🌟 Microsoft Learn MCP Server
